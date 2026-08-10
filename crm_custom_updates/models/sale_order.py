@@ -239,28 +239,78 @@ class SaleOrderLine(models.Model):
                
 
 
-    @api.onchange('price_subtotal')
-    def _onchange_amount(self):
-        print("hello")  # Print statement for debugging, can be removed in production
-        for record in self:
-            # if record.cus_price_subtotal:
-            #     # Reset quantity to 1
-            #     # record.product_uom_qty = 1
+    def action_open_po_entry_wizard(self):
+        """Open PO Entry Wizard pre-filled with quotation order lines."""
+        self.ensure_one()
+        wizard_lines = []
+        for line in self.order_line:
+            total_amt = line.cus_price_subtotal or line.price_subtotal
+            wizard_lines.append((0, 0, {
+                'order_line_id': line.id,
+                'product_id': line.product_id.id,
+                'total_amount': total_amt,
+                'cus_po_amount': line.cus_po_amount,
+            }))
 
-            #     # Set the price unit to match the subtotal
-            #     record.price_unit = record.cus_price_subtotal
+        wizard = self.env['sale.po.entry.wizard'].create({
+            'order_id': self.id,
+            'line_ids': wizard_lines,
+        })
 
-                # Ensure there is an associated opportunity before setting expected_revenue
-                if record.order_id and record.order_id.opportunity_id:
-                    print("hai")
-                    # Update the expected_revenue on the associated opportunity (CRM lead)
-                    record.order_id.opportunity_id.expected_revenue = record.cus_price_subtotal
+        return {
+            'name': 'PO Entry',
+            'type': 'ir.actions.act_window',
+            'res_model': 'sale.po.entry.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
 
-        
-    # @api.onchange('cus_po_amount')
-    # def _onchange_po_amount(self):
-    #     """
-    #     Ensure that price_subtotal is less than or equal to cus_total_amount.
-    #     """
-       
-    
+
+class SalePoEntryWizard(models.TransientModel):
+    _name = 'sale.po.entry.wizard'
+    _description = 'Sale Order PO Entry Wizard'
+
+    order_id = fields.Many2one('sale.order', string="Quotation", required=True, readonly=True)
+    line_ids = fields.One2many('sale.po.entry.wizard.line', 'wizard_id', string="PO Entry Lines")
+
+    def action_confirm_po_entry(self):
+        """Apply entered PO Amounts to Sale Order Lines."""
+        self.ensure_one()
+        self.order_id.write({'show_amount_fields': True})
+
+        for line in self.line_ids:
+            if line.order_line_id:
+                if line.cus_po_amount > line.total_amount:
+                    raise ValidationError(
+                        f"The PO Amount ({line.cus_po_amount}) for {line.product_id.display_name} cannot exceed the Total Amount ({line.total_amount})."
+                    )
+                line.order_line_id.write({
+                    'cus_po_amount': line.cus_po_amount,
+                })
+                if hasattr(line.order_line_id, '_onchange_cus_po_amount'):
+                    line.order_line_id._onchange_cus_po_amount()
+
+        if hasattr(self.order_id, '_sync_opportunity_products_and_revenue'):
+            self.order_id._sync_opportunity_products_and_revenue()
+        if hasattr(self.order_id, '_sync_opportunity_stage'):
+            self.order_id._sync_opportunity_stage()
+
+        return {'type': 'ir.actions.act_window_close'}
+
+
+class SalePoEntryWizardLine(models.TransientModel):
+    _name = 'sale.po.entry.wizard.line'
+    _description = 'Sale Order PO Entry Wizard Line'
+
+    wizard_id = fields.Many2one('sale.po.entry.wizard', required=True, ondelete='cascade')
+    order_line_id = fields.Many2one('sale.order.line', string="Quotation Line", required=True)
+    product_id = fields.Many2one('product.product', string="Product", readonly=True)
+    total_amount = fields.Float(string="Total Amount", readonly=True)
+    cus_po_amount = fields.Float(string="PO Amount")
+    cus_bal_amount = fields.Float(string="Balance Amount", compute="_compute_cus_bal_amount")
+
+    @api.depends('total_amount', 'cus_po_amount')
+    def _compute_cus_bal_amount(self):
+        for line in self:
+            line.cus_bal_amount = max(line.total_amount - line.cus_po_amount, 0.0)

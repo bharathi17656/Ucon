@@ -4,6 +4,9 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_po_entry_wizard" string="PO Entry" type="object" class="btn-primary" invisible="state == 'draft'"/>
+            </xpath>
             <xpath expr="//field[@name='validity_date']" position="before">
                 <field name="show_amount_fields" string="Partial Released" invisible="state == 'draft'"/>
             </xpath>
@@ -20,6 +23,32 @@
                 <field name="cus_bal_amount" column_invisible="not parent.show_amount_fields"/>
                 <field name="cus_po_amount" column_invisible="not parent.show_amount_fields"/>
             </xpath>
+        </field>
+    </record>
+
+    <record id="view_sale_po_entry_wizard_form" model="ir.ui.view">
+        <field name="name">sale.po.entry.wizard.form</field>
+        <field name="model">sale.po.entry.wizard</field>
+        <field name="arch" type="xml">
+            <form string="PO Amount Entry">
+                <sheet>
+                    <group>
+                        <field name="order_id"/>
+                    </group>
+                    <field name="line_ids">
+                        <list editable="bottom" create="0" delete="0">
+                            <field name="product_id" readonly="1"/>
+                            <field name="total_amount" readonly="1"/>
+                            <field name="cus_po_amount"/>
+                            <field name="cus_bal_amount" readonly="1"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_po_entry" string="Confirm PO Entry" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
         </field>
     </record>
 </odoo>
