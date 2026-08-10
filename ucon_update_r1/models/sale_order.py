@@ -17,6 +17,15 @@ class SaleOrder(models.Model):
                     # Update the stage of the related opportunity (CRM lead)
                     record.opportunity_id.stage_id = mapping.crm_lead_stage
 
+    @api.onchange('show_amount_fields')
+    def _onchange_show_amount_fields_sync_stage(self):
+        if self.opportunity_id and self.show_amount_fields:
+            mapping = self.env['quotation.stage.mapping'].search(
+                [('sale_order_state', '=', 'partial')], limit=1
+            )
+            if mapping and mapping.crm_lead_stage:
+                self.opportunity_id.stage_id = mapping.crm_lead_stage
+
     def _sync_opportunity_stage(self):
         """Update linked CRM Lead (Opportunity) stage based on highest state across all linked quotations."""
         state_priority = {
@@ -35,15 +44,21 @@ class SaleOrder(models.Model):
                 if not linked_quotes:
                     continue
 
-                best_quote = max(linked_quotes, key=lambda q: state_priority.get(q.state, 0))
+                def get_effective_state(q):
+                    if q.show_amount_fields and q.state not in ['sale', 'cancel']:
+                        return 'partial'
+                    return q.state
+
+                best_quote = max(linked_quotes, key=lambda q: state_priority.get(get_effective_state(q), 0))
+                effective_state = get_effective_state(best_quote)
+
                 mapping = self.env['quotation.stage.mapping'].search(
-                    [('sale_order_state', '=', best_quote.state)], limit=1
+                    [('sale_order_state', '=', effective_state)], limit=1
                 )
                 if mapping and mapping.crm_lead_stage:
                     current_stage = order.opportunity_id.stage_id
-                    if not current_stage or mapping.crm_lead_stage.sequence >= current_stage.sequence:
-                        if current_stage != mapping.crm_lead_stage:
-                            order.opportunity_id.write({'stage_id': mapping.crm_lead_stage.id})
+                    if current_stage != mapping.crm_lead_stage:
+                        order.opportunity_id.write({'stage_id': mapping.crm_lead_stage.id})
 
     def _sync_opportunity_products_and_revenue(self):
         """Automatically populate linked CRM Opportunity product_ids and expected_revenue from the latest quotation."""
@@ -71,7 +86,7 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).write(vals)
         if any(field in vals for field in ['order_line', 'opportunity_id', 'amount_total', 'amount_untaxed']):
             self._sync_opportunity_products_and_revenue()
-        if 'state' in vals or 'opportunity_id' in vals:
+        if any(field in vals for field in ['state', 'opportunity_id', 'show_amount_fields']):
             self._sync_opportunity_stage()
         return res
 
