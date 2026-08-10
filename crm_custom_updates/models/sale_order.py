@@ -34,7 +34,8 @@ class SaleOrder(models.Model):
         if not wizard:
             wizard_lines = []
             for line in self.order_line:
-                sor_num = f"{self.po_ref or self.name} - {line.cus_po_amount or line.cus_price_subtotal:,.2f}"
+                po_ref_val = getattr(self, 'po_ref', False) or (self.opportunity_id and getattr(self.opportunity_id, 'po_ref', False)) or self.name
+                sor_num = f"{po_ref_val} - {line.cus_po_amount or line.cus_price_subtotal:,.2f}"
                 wizard_lines.append((0, 0, {
                     'sor_po_number': sor_num,
                     'order_line_id': line.id,
@@ -88,7 +89,9 @@ class SalePoEntryWizardLine(models.TransientModel):
             if matching_line:
                 self.order_line_id = matching_line.id
                 self.cus_po_amount = matching_line.cus_po_amount
-                self.sor_po_number = f"{self.wizard_id.order_id.po_ref or self.wizard_id.order_id.name} - {matching_line.cus_price_subtotal:,.2f}"
+                order = self.wizard_id.order_id
+                po_ref_val = getattr(order, 'po_ref', False) or (order and order.opportunity_id and getattr(order.opportunity_id, 'po_ref', False)) or order.name
+                self.sor_po_number = f"{po_ref_val} - {matching_line.cus_price_subtotal:,.2f}"
 
     @api.model_create_multi
     def create(self, vals_list):
