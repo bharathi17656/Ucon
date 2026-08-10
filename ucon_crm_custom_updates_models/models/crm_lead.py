@@ -20,7 +20,7 @@ class CrmLead(models.Model):
         ('JIH-MAINTENANCE', 'JIH-MAINTENANCE'),
         ('TENDER', 'TENDER')
     ], string="Job Type")
-    x_studio_products = fields.Many2many('crm.tag', 'crm_lead_studio_products_rel', 'lead_id', 'tag_id', string="Products")
+    x_studio_products = fields.Many2many('product.template', 'crm_lead_product_template_rel', 'lead_id', 'product_id', string="Products")
 
     @api.onchange("partner_id")
     def _onchange_partner_id_set_user(self):
