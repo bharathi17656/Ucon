@@ -457,6 +457,20 @@ class CrmLead(models.Model):
 
 
 
+    @api.model
+    def get_company_currency(self, comp_id=None):
+        """Fetch the dynamic currency name/symbol for the current or selected company."""
+        if comp_id:
+            try:
+                company = self.env['res.company'].browse(int(comp_id))
+            except Exception:
+                company = self.env.company
+        else:
+            company = self.env.company
+        if company and company.currency_id:
+            return company.currency_id.name or company.currency_id.symbol or 'QR'
+        return 'QR'
+
     def get_product_list(self, divition=None):
         domain = []
         if divition:  # Only add filter if divition is provided
