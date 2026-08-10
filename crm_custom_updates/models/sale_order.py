@@ -188,6 +188,18 @@ class SalePoEntryWizardLine(models.TransientModel):
 
     
 
+    def action_confirm(self):
+        for order in self:
+            is_partial = order.show_amount_fields or (order.opportunity_id and order.opportunity_id.stage_id and order.opportunity_id.stage_id.name == 'Partial Order Released')
+            if is_partial:
+                total_balance = sum(line.cus_bal_amount for line in order.order_line)
+                if total_balance > 0:
+                    raise ValidationError(
+                        f"Cannot confirm Sale Order '{order.name}'. The Opportunity is in Partial Order Released stage with a remaining Balance Amount ({total_balance:,.2f}). "
+                        "The Balance Amount must be 0 (Partial Amount equal to Total Amount) before confirming."
+                    )
+        return super().action_confirm()
+
     @api.model
     def write(self, vals):
         # Existing code to handle state changes
@@ -212,6 +224,14 @@ class SalePoEntryWizardLine(models.TransientModel):
 
             if vals['state'] == 'sale':
                 for record in self:
+                    is_partial = record.show_amount_fields or (record.opportunity_id and record.opportunity_id.stage_id and record.opportunity_id.stage_id.name == 'Partial Order Released')
+                    if is_partial:
+                        total_balance = sum(line.cus_bal_amount for line in record.order_line)
+                        if total_balance > 0:
+                            raise ValidationError(
+                                f"Cannot confirm Sale Order '{record.name}'. The Opportunity is in Partial Order Released stage with a remaining Balance Amount ({total_balance:,.2f}). "
+                                "The Balance Amount must be 0 (Partial Amount equal to Total Amount) before confirming."
+                            )
                     if record.opportunity_id:
                         # Use the opportunity_id record directly
                         lead = record.opportunity_id

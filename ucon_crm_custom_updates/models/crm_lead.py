@@ -36,6 +36,21 @@ class CrmLead(models.Model):
                 lead.po_amount = 0.0
                 lead.balance_amount = 0.0
 
+    @api.constrains('stage_id', 'balance_amount', 'po_amount')
+    def _check_won_stage_requirements(self):
+        for lead in self:
+            if lead.stage_id and lead.stage_id.name == 'Won':
+                has_partial = lead.po_amount > 0 or any(q.show_amount_fields for q in lead.order_ids)
+                if not has_partial:
+                    raise ValidationError(
+                        "Cannot move Opportunity to 'Won' stage. Only leads with Partial PO released can move to 'Won'."
+                    )
+                if lead.balance_amount > 0:
+                    raise ValidationError(
+                        f"Cannot move Opportunity to 'Won' stage. Remaining Balance Amount is {lead.balance_amount:,.2f}. "
+                        "The Balance Amount must be 0 (Partial Amount equal to Total Amount) before moving to 'Won'."
+                    )
+
     def _compute_is_ucon_admin(self):
         has_group = self.env.user.has_group('ucon_crm_custom_updates.group_ucon_administrative')
         for lead in self:
