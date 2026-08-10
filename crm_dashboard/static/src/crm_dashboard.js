@@ -137,9 +137,16 @@ export class CrmDashboard extends Component {
         })
         onWillStart(async () => {
             this.state.userId=user.userId
-            const company = await this.orm.read("res.company", [user.companyId], ["currency_id"]);
-            if (company && company.length > 0 && company[0].currency_id) {
-                this.state.currency_name = company[0].currency_id[1] || 'QR';
+            try {
+                const companyId = user.companyId || (user.company && user.company.id) || (session.user_companies && session.user_companies.current_company) || session.company_id;
+                if (companyId) {
+                    const companies = await this.orm.searchRead("res.company", [["id", "=", Number(companyId)]], ["currency_id"]);
+                    if (companies && companies.length > 0 && companies[0].currency_id) {
+                        this.state.currency_name = companies[0].currency_id[1] || 'QR';
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not fetch company currency name:", err);
             }
             this.state.isAdmin = await user.hasGroup("base.group_system");
             this.state.account_admin = await user.hasGroup("base.group_system");
