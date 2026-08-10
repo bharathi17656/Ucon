@@ -22,6 +22,8 @@
                             <group string="PO Reference Information">
                                 <field name="po_date" readonly="not is_ucon_admin"/>
                                 <field name="po_ref" readonly="not is_ucon_admin"/>
+                                <field name="po_amount" readonly="1"/>
+                                <field name="balance_amount" readonly="1"/>
                             </group>
                             <group string="PO Document Attachments">
                                 <field name="po_filename" invisible="1"/>

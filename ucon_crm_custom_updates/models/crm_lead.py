@@ -18,7 +18,23 @@ class CrmLead(models.Model):
     po_attachment = fields.Binary(string="PO Attachment", attachment=True)
     po_filename = fields.Char(string="PO File Name")
     po_attachment_ids = fields.Many2many('ir.attachment', 'crm_lead_po_attachment_rel', 'lead_id', 'attachment_id', string="PO Attachments")
+    po_amount = fields.Float(string="Partial Amount", compute="_compute_po_and_balance_amounts", store=True)
+    balance_amount = fields.Float(string="Balance Amount", compute="_compute_po_and_balance_amounts", store=True)
     is_ucon_admin = fields.Boolean(compute='_compute_is_ucon_admin')
+
+    @api.depends('order_ids', 'order_ids.order_line.cus_po_amount', 'order_ids.order_line.cus_price_subtotal', 'order_ids.order_line.price_subtotal', 'order_ids.date_order', 'order_ids.create_date', 'order_ids.show_amount_fields')
+    def _compute_po_and_balance_amounts(self):
+        from datetime import datetime
+        for lead in self:
+            latest_order = lead.order_ids.sorted(key=lambda o: (o.date_order or o.create_date or datetime.min), reverse=True)[:1]
+            if latest_order:
+                total_po = sum(latest_order.order_line.mapped('cus_po_amount'))
+                total_subtotal = sum(latest_order.order_line.mapped('cus_price_subtotal') or latest_order.order_line.mapped('price_subtotal'))
+                lead.po_amount = total_po
+                lead.balance_amount = max(total_subtotal - total_po, 0.0)
+            else:
+                lead.po_amount = 0.0
+                lead.balance_amount = 0.0
 
     def _compute_is_ucon_admin(self):
         has_group = self.env.user.has_group('ucon_crm_custom_updates.group_ucon_administrative')

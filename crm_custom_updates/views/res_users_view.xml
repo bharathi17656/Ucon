@@ -31,7 +31,6 @@
         <field name="model">sale.po.entry.wizard.line</field>
         <field name="arch" type="xml">
             <list editable="bottom" string="PO Amount Entry">
-                <field name="sor_po_number" string="SOR PO Number"/>
                 <field name="product_id" string="Product" domain="[('id', 'in', context.get('allowed_product_ids', []))]"/>
                 <field name="cus_po_amount" string="Po Amount"/>
             </list>
