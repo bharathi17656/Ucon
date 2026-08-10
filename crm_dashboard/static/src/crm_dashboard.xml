@@ -108,13 +108,13 @@
                                     <p>Others</p>
                                 </div>
                                 <div class="b2" >
-                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_target"><t t-esc="state.currency_name || 'QR'"/> 
+                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_target"><t t-esc="state.currency_name"/> 
                                         <t t-esc="state.getorderbooking?.total_target || 0" /> M
                                     </p>
-                                    <p class="second onclick-box" t-on-click="Onclick_getorderbooking_achieve"><t t-esc="state.currency_name || 'QR'"/> 
+                                    <p class="second onclick-box" t-on-click="Onclick_getorderbooking_achieve"><t t-esc="state.currency_name"/> 
                                         <t t-esc="state.getorderbooking?.total_achieved || 0" /> M
                                     </p>
-                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_others"><t t-esc="state.currency_name || 'QR'"/> 
+                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_others"><t t-esc="state.currency_name"/> 
                                          <t t-esc="state.getorderbooking?.total_achieved_others || 0" /> M
                                     </p>
                                 </div>
@@ -145,10 +145,10 @@
                                     <p>Achieved</p>
                                 </div>
                                 <div class="b2 justify-div">
-                                    <p class="first onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name || 'QR'"/> 
+                                    <p class="first onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name"/> 
                                         <t t-esc="state.getorderrevenue?.total_target || 0" /> M
                                     </p>
-                                    <p class="second onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name || 'QR'"/> 
+                                    <p class="second onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name"/> 
                                         <t t-esc="state.getorderrevenue?.total_achieved || 0" /> M
                                     </p>
                                 </div>
@@ -172,7 +172,7 @@
                             <div class="quote-submit-value onclick-box" t-on-click="Onclick_get_quote_submitted">
                                 <div class="quote-value others-div">
                                     <p>Quotation Value</p>
-                                    <h1><t t-esc="state.currency_name || 'QR'"/> 
+                                    <h1><t t-esc="state.currency_name"/> 
                                         <t t-esc="state.get_quote_submitted?.total_expected_revenue || 0" /> M
                                     </h1>
                                 </div>
@@ -288,7 +288,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">Probability</th>
-                                            <th scope="col">Quotation value (<t t-esc="state.currency_name || 'QR'"/>)</th>
+                                            <th scope="col">Quotation value (<t t-esc="state.currency_name"/>)</th>
                                             <th scope="col">No Of Leads</th>
                                         </tr>
                                     </thead>

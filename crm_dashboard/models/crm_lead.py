@@ -468,8 +468,8 @@ class CrmLead(models.Model):
         else:
             company = self.env.company
         if company and company.currency_id:
-            return company.currency_id.name or company.currency_id.symbol or 'QR'
-        return 'QR'
+            return company.currency_id.name or company.currency_id.symbol or ''
+        return ''
 
     def get_product_list(self, divition=None):
         domain = []

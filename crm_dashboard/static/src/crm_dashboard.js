@@ -33,7 +33,7 @@ export class CrmDashboard extends Component {
 
 
         this.state=useState({
-            currency_name: 'QR',
+            currency_name: '',
             selected_company_id:0,
             selected_product_id:0,
             selected_job_id:0,
@@ -138,17 +138,14 @@ export class CrmDashboard extends Component {
         onWillStart(async () => {
             this.state.userId=user.userId
             try {
-                const currName = await rpc('/web/dataset/call_kw', {
-                    model: 'crm.lead',
-                    method: 'get_company_currency',
-                    args: [[]],
-                    kwargs: { comp_id: this.state.comp_id || false },
+                const currName = await this.orm.call('crm.lead', 'get_company_currency', [], {
+                    comp_id: this.state.comp_id || false,
                 });
                 if (currName) {
                     this.state.currency_name = currName;
                 }
             } catch (err) {
-                console.warn("Could not fetch company currency name:", err);
+                console.error("Could not fetch company currency name:", err);
             }
             this.state.isAdmin = await user.hasGroup("base.group_system");
             this.state.account_admin = await user.hasGroup("base.group_system");
@@ -1101,11 +1098,8 @@ export class CrmDashboard extends Component {
 
         get_company_changes=async()=>{
         try{
-            const currName = await rpc('/web/dataset/call_kw', {
-                model: 'crm.lead',
-                method: 'get_company_currency',
-                args: [[]],
-                kwargs: { comp_id: this.state.comp_id || false },
+            const currName = await this.orm.call('crm.lead', 'get_company_currency', [], {
+                comp_id: this.state.comp_id || false,
             });
             if (currName) {
                 this.state.currency_name = currName;
