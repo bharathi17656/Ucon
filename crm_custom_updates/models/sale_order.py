@@ -73,6 +73,24 @@ class SalePoEntryWizard(models.TransientModel):
     order_id = fields.Many2one('sale.order', string="Quotation", required=True, readonly=True)
     line_ids = fields.One2many('sale.po.entry.wizard.line', 'wizard_id', string="PO Entry Lines")
 
+    def _sync_po_amounts(self):
+        for wizard in self:
+            if wizard.order_id:
+                order = wizard.order_id
+                order.write({'show_amount_fields': True})
+                for line in order.order_line:
+                    matching_wiz_lines = wizard.line_ids.filtered(
+                        lambda w: (w.order_line_id and w.order_line_id == line) or (w.product_id and w.product_id == line.product_id)
+                    )
+                    total_po = sum(matching_wiz_lines.mapped('cus_po_amount'))
+                    line.write({'cus_po_amount': total_po})
+                    if hasattr(line, '_onchange_cus_po_amount'):
+                        line._onchange_cus_po_amount()
+                if hasattr(order, '_sync_opportunity_products_and_revenue'):
+                    order._sync_opportunity_products_and_revenue()
+                if hasattr(order, '_sync_opportunity_stage'):
+                    order._sync_opportunity_stage()
+
 
 class SalePoEntryWizardLine(models.TransientModel):
     _name = 'sale.po.entry.wizard.line'
@@ -131,39 +149,9 @@ class SalePoEntryWizardLine(models.TransientModel):
         return res
 
     def _apply_po_amount(self):
-        for rec in self:
-            if rec.wizard_id and rec.wizard_id.order_id:
-                order = rec.wizard_id.order_id
-                order.write({'show_amount_fields': True})
-                for line in order.order_line:
-                    matching_wiz_lines = rec.wizard_id.line_ids.filtered(
-                        lambda w: (w.order_line_id and w.order_line_id == line) or (w.product_id and w.product_id == line.product_id)
-                    )
-                    total_po = sum(matching_wiz_lines.mapped('cus_po_amount'))
-                    line.write({'cus_po_amount': total_po})
-                    if hasattr(line, '_onchange_cus_po_amount'):
-                        line._onchange_cus_po_amount()
-                if hasattr(order, '_sync_opportunity_products_and_revenue'):
-                    order._sync_opportunity_products_and_revenue()
-                if hasattr(order, '_sync_opportunity_stage'):
-                    order._sync_opportunity_stage()
-
-    def _sync_po_amounts(self):
-        for rec in self:
-            if rec.wizard_id and rec.wizard_id.order_id:
-                order = rec.wizard_id.order_id
-                for line in order.order_line:
-                    matching_wiz_lines = rec.wizard_id.line_ids.filtered(
-                        lambda w: (w.order_line_id and w.order_line_id == line) or (w.product_id and w.product_id == line.product_id)
-                    )
-                    total_po = sum(matching_wiz_lines.mapped('cus_po_amount'))
-                    line.write({'cus_po_amount': total_po})
-                    if hasattr(line, '_onchange_cus_po_amount'):
-                        line._onchange_cus_po_amount()
-                if hasattr(order, '_sync_opportunity_products_and_revenue'):
-                    order._sync_opportunity_products_and_revenue()
-                if hasattr(order, '_sync_opportunity_stage'):
-                    order._sync_opportunity_stage()
+        wizards = self.mapped('wizard_id')
+        for wizard in wizards:
+            wizard._sync_po_amounts()
 
    
 
