@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- CRM Stages used across UCON modules -->
+        <record id="crm_stage_new" model="crm.stage">
+            <field name="name">New</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="crm_stage_discovery" model="crm.stage">
+            <field name="name">Discovery</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="crm_stage_quote_preparation" model="crm.stage">
+            <field name="name">Quote Preparation</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="crm_stage_quote_submitted" model="crm.stage">
+            <field name="name">Quote Submitted</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="crm_stage_expecting_60" model="crm.stage">
+            <field name="name">Expecting (60%)</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="crm_stage_commit_90" model="crm.stage">
+            <field name="name">Commit (90%)</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="crm_stage_won" model="crm.stage">
+            <field name="name">Won</field>
+            <field name="sequence">60</field>
+            <field name="is_won">True</field>
+        </record>
+
+        <record id="crm_stage_lost" model="crm.stage">
+            <field name="name">Lost</field>
+            <field name="sequence">70</field>
+            <field name="fold">True</field>
+        </record>
+
+        <record id="crm_stage_regret" model="crm.stage">
+            <field name="name">Regret</field>
+            <field name="sequence">80</field>
+            <field name="fold">True</field>
+        </record>
+
+        <record id="crm_stage_partial_order_released" model="crm.stage">
+            <field name="name">Partial Order Released</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <!-- Initial Quotation Stage Mappings -->
+        <record id="mapping_quotation_draft" model="quotation.stage.mapping">
+            <field name="sale_order_state">draft</field>
+            <field name="crm_lead_stage" ref="crm_stage_quote_preparation"/>
+        </record>
+
+        <record id="mapping_quotation_sent" model="quotation.stage.mapping">
+            <field name="sale_order_state">sent</field>
+            <field name="crm_lead_stage" ref="crm_stage_quote_submitted"/>
+        </record>
+
+        <record id="mapping_quotation_sale" model="quotation.stage.mapping">
+            <field name="sale_order_state">sale</field>
+            <field name="crm_lead_stage" ref="crm_stage_won"/>
+        </record>
+
+        <record id="mapping_quotation_partial" model="quotation.stage.mapping">
+            <field name="sale_order_state">partial</field>
+            <field name="crm_lead_stage" ref="crm_stage_partial_order_released"/>
+        </record>
+    </data>
+</odoo>

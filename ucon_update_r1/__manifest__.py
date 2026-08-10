@@ -5,9 +5,10 @@
     "author": "bharathikannan17656@gmail.com",
     "depends": ['base', 'crm', 'web', 'sale', 'sale_crm', 'project', 'hr', 'mail'],
     "data": [
-           'data/custom_assign_email.xml',
-          'security/crm_lead_security.xml',
-         'security/ir.model.access.csv',
+        'data/crm_stage_data.xml',
+        'data/custom_assign_email.xml',
+        'security/crm_lead_security.xml',
+        'security/ir.model.access.csv',
         'views/crm_lead_view.xml',
         'views/employee_target.xml',
         'views/employee_target_view.xml',
