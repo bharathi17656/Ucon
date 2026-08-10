@@ -108,11 +108,11 @@
                                     <p>Others</p>
                                 </div>
                                 <div class="b2" >
-                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_target"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="state.getorderbooking?.total_target || 0" /> M
+                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_target"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderbooking?.total_target)"/>
                                     </p>
-                                    <p class="second onclick-box" t-on-click="Onclick_getorderbooking_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="state.getorderbooking?.total_achieved || 0" /> M
+                                    <p class="second onclick-box" t-on-click="Onclick_getorderbooking_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderbooking?.total_achieved)"/>
                                     </p>
-                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_others"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="state.getorderbooking?.total_achieved_others || 0" /> M
+                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_others"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderbooking?.total_achieved_others)"/>
                                     </p>
                                 </div>
                                  <div class="b3 order-book-person">
@@ -142,9 +142,9 @@
                                     <p>Achieved</p>
                                 </div>
                                 <div class="b2 justify-div">
-                                    <p class="first onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="state.getorderrevenue?.total_target || 0" /> M
+                                    <p class="first onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderrevenue?.total_target)"/>
                                     </p>
-                                    <p class="second onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="state.getorderrevenue?.total_achieved || 0" /> M
+                                    <p class="second onclick-box" t-on-click="Onclick_getorder_invoice_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderrevenue?.total_achieved)"/>
                                     </p>
                                 </div>
                                 <div class="b3 others-persontage">
@@ -167,7 +167,7 @@
                             <div class="quote-submit-value onclick-box" t-on-click="Onclick_get_quote_submitted">
                                 <div class="quote-value others-div">
                                     <p>Quotation Value</p>
-                                    <h1><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="state.get_quote_submitted?.total_expected_revenue || 0" /> M
+                                    <h1><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.get_quote_submitted?.total_expected_revenue)"/>
                                     </h1>
                                 </div>
                                 <div class="quote-value others-div quote-count-bg">

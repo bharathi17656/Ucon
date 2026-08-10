@@ -9,6 +9,26 @@ import { registry } from "@web/core/registry";
 import { loadJS } from "@web/core/assets";
 import { useService } from "@web/core/utils/hooks";
 export class CrmDashboard extends Component {
+    formatAmount(val) {
+        if (val === undefined || val === null || val === "" || isNaN(val)) {
+            return "0";
+        }
+        const num = Number(val);
+        const absNum = Math.abs(num);
+        if (absNum < 1000) {
+            return Number.isInteger(num) ? num.toString() : num.toFixed(1);
+        } else if (absNum < 1000000) {
+            const kVal = num / 1000;
+            return (Number.isInteger(kVal) ? kVal.toString() : kVal.toFixed(1)) + " K";
+        } else if (absNum < 1000000000) {
+            const mVal = num / 1000000;
+            return (Number.isInteger(mVal) ? mVal.toString() : mVal.toFixed(1)) + " M";
+        } else {
+            const bVal = num / 1000000000;
+            return (Number.isInteger(bVal) ? bVal.toString() : bVal.toFixed(1)) + " B";
+        }
+    }
+
     setup() {
 
        

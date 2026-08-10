@@ -1130,9 +1130,9 @@ class CrmLead(models.Model):
         
 
             return {
-                'total_target': round(total_booking_target / 1_000_000, 2) if total_booking_target else 0,
-                'total_achieved': round(total_booking_achieved / 1_000_000, 2) if total_booking_achieved else 0,
-                'total_achieved_others': round(total_booking_achieved_others / 1_000_000, 2) if total_booking_achieved_others else 0,
+                'total_target': round(total_booking_target, 2) if total_booking_target else 0,
+                'total_achieved': round(total_booking_achieved, 2) if total_booking_achieved else 0,
+                'total_achieved_others': round(total_booking_achieved_others, 2) if total_booking_achieved_others else 0,
                 'percentage':percentage_achieved,
                  'achieved_domain_base':achieved_domain_base,
                 'domain_main':domain_main,
@@ -1207,8 +1207,8 @@ class CrmLead(models.Model):
         percentage_achieved = round((total_invoice_achieved / total_invoice_target * 100), 2) if total_invoice_target else 0
 
         return {
-            'total_target': round(total_invoice_target / 1_000_000, 2) if total_invoice_target else 0,
-            'total_achieved': round(total_invoice_achieved / 1_000_000, 2) if total_invoice_achieved else 0,
+            'total_target': round(total_invoice_target, 2) if total_invoice_target else 0,
+            'total_achieved': round(total_invoice_achieved, 2) if total_invoice_achieved else 0,
             'percentage': percentage_achieved,       
              'target_domain':target_domain
         }
@@ -1287,7 +1287,7 @@ class CrmLead(models.Model):
         
         # Calculate total expected revenue & lead count
         total_expected_revenue = sum(leads_in_stage.mapped('expected_revenue') or [0])
-        total_expected_revenue = f"{round(total_expected_revenue / 1000000, 1)}"
+        total_expected_revenue = round(total_expected_revenue, 2)
         lead_count = len(leads_in_stage)
         
         leads_in_stage1 = self.env['crm.lead'].search(domain).mapped('name') 
