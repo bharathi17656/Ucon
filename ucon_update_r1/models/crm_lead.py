@@ -179,11 +179,11 @@ class Lead(models.Model):
             if new_stage.name == 'Won':
                 for record in self:
 
-                        if not record.x_studio_po_date :
+                        if not record.po_date:
                             raise ValidationError(
                                 "The PO Date and PO Ref are required for this lead to be converted to a sale order."
                             )
-                        if not record.x_studio_po_ref_:
+                        if not record.po_ref:
                               raise ValidationError(
                                 "The PO Date and PO Ref are required for this lead to be converted to a sale order."
                             )

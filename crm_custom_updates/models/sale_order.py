@@ -105,11 +105,11 @@ class SaleOrder(models.Model):
                     if record.opportunity_id:
                         # Use the opportunity_id record directly
                         lead = record.opportunity_id
-                        if not lead.x_studio_po_date:
+                        if not lead.po_date:
                             raise ValidationError(
                                 "The PO Date and PO Ref are required for this lead to be converted to a sale order."
                             )
-                        if not lead.x_studio_po_ref_:
+                        if not lead.po_ref:
                               raise ValidationError(
                                 "The PO Date and PO Ref are required for this lead to be converted to a sale order."
                             )

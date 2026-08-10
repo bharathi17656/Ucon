@@ -21,6 +21,8 @@ class CrmLead(models.Model):
         ('TENDER', 'TENDER')
     ], string="Job Type")
     product_ids = fields.Many2many('product.template', 'crm_lead_product_template_rel', 'lead_id', 'product_id', string="Products")
+    po_date = fields.Date(string="PO Date")
+    po_ref = fields.Char(string="PO Reference")
     is_ucon_admin = fields.Boolean(compute='_compute_is_ucon_admin')
 
     def _compute_is_ucon_admin(self):

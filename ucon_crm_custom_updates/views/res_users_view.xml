@@ -15,6 +15,17 @@
                     <field name="product_ids" widget="many2many_tags" readonly="1"/>
                     <field name="rfq_number" required="type == 'opportunity'" readonly="not is_ucon_admin"/>
                 </xpath>
+
+                <xpath expr="//notebook" position="inside">
+                    <page string="PO Details" name="po_details">
+                        <group>
+                            <group>
+                                <field name="po_date" readonly="not is_ucon_admin"/>
+                                <field name="po_ref" readonly="not is_ucon_admin"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
             </field>
         </record>
     </data>
