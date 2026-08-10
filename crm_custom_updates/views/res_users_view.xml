@@ -4,9 +4,6 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header" position="inside">
-                <button name="action_open_po_entry_wizard" string="PO Entry" type="object" class="btn-primary" invisible="state == 'draft'"/>
-            </xpath>
             <xpath expr="//field[@name='validity_date']" position="before">
                 <field name="show_amount_fields" string="Partial Released" invisible="state == 'draft'"/>
             </xpath>
@@ -23,6 +20,11 @@
                 <field name="cus_bal_amount" column_invisible="not parent.show_amount_fields"/>
                 <field name="cus_po_amount" column_invisible="not parent.show_amount_fields"/>
             </xpath>
+            <xpath expr="//field[@name='order_line']" position="after">
+                <div class="mt-2 mb-2">
+                    <button name="action_open_po_entry_wizard" string="Partial PO Entry" type="object" class="btn btn-outline-secondary" invisible="state == 'draft'"/>
+                </div>
+            </xpath>
         </field>
     </record>
 
@@ -32,21 +34,19 @@
         <field name="arch" type="xml">
             <form string="PO Amount Entry">
                 <sheet>
-                    <group>
-                        <field name="order_id"/>
-                    </group>
+                    <field name="order_id" invisible="1"/>
+                    <field name="order_product_ids" invisible="1"/>
                     <field name="line_ids">
-                        <list editable="bottom" create="0" delete="0">
-                            <field name="product_id" readonly="1"/>
-                            <field name="total_amount" readonly="1"/>
-                            <field name="cus_po_amount"/>
-                            <field name="cus_bal_amount" readonly="1"/>
+                        <list editable="bottom">
+                            <field name="sor_po_number" string="SOR PO Number"/>
+                            <field name="product_id" string="Product" domain="[('id', 'in', parent.order_product_ids)]"/>
+                            <field name="cus_po_amount" string="Po Amount"/>
                         </list>
                     </field>
                 </sheet>
                 <footer>
-                    <button name="action_confirm_po_entry" string="Confirm PO Entry" type="object" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button name="action_confirm_po_entry" string="Save &amp; Apply" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>

@@ -28,15 +28,15 @@ class SaleOrder(models.Model):
             else:
                 order.due_days = 0
     def action_open_po_entry_wizard(self):
-        """Open PO Entry Wizard pre-filled with quotation order lines."""
+        """Open Partial PO Entry Wizard where users can manually add products and set PO amounts."""
         self.ensure_one()
         wizard_lines = []
         for line in self.order_line:
-            total_amt = line.cus_price_subtotal or line.price_subtotal
+            sor_num = f"{self.po_ref or self.name} - {line.cus_po_amount or line.cus_price_subtotal:,.2f}"
             wizard_lines.append((0, 0, {
+                'sor_po_number': sor_num,
                 'order_line_id': line.id,
                 'product_id': line.product_id.id,
-                'total_amount': total_amt,
                 'cus_po_amount': line.cus_po_amount,
             }))
 
@@ -46,13 +46,71 @@ class SaleOrder(models.Model):
         })
 
         return {
-            'name': 'PO Entry',
+            'name': 'PO Amount Entry',
             'type': 'ir.actions.act_window',
             'res_model': 'sale.po.entry.wizard',
             'res_id': wizard.id,
             'view_mode': 'form',
             'target': 'new',
         }
+
+
+class SalePoEntryWizard(models.TransientModel):
+    _name = 'sale.po.entry.wizard'
+    _description = 'Sale Order PO Entry Wizard'
+
+    order_id = fields.Many2one('sale.order', string="Quotation", required=True, readonly=True)
+    line_ids = fields.One2many('sale.po.entry.wizard.line', 'wizard_id', string="PO Entry Lines")
+    order_product_ids = fields.Many2many('product.product', compute='_compute_order_product_ids')
+
+    @api.depends('order_id')
+    def _compute_order_product_ids(self):
+        for wizard in self:
+            wizard.order_product_ids = wizard.order_id.order_line.mapped('product_id')
+
+    def action_confirm_po_entry(self):
+        """Apply entered PO Amounts to Sale Order Lines."""
+        self.ensure_one()
+        self.order_id.write({'show_amount_fields': True})
+
+        for line in self.line_ids:
+            target_order_line = line.order_line_id
+            if not target_order_line and line.product_id:
+                target_order_line = self.order_id.order_line.filtered(lambda l: l.product_id == line.product_id)[:1]
+
+            if target_order_line:
+                target_order_line.write({
+                    'cus_po_amount': line.cus_po_amount,
+                })
+                if hasattr(target_order_line, '_onchange_cus_po_amount'):
+                    target_order_line._onchange_cus_po_amount()
+
+        if hasattr(self.order_id, '_sync_opportunity_products_and_revenue'):
+            self.order_id._sync_opportunity_products_and_revenue()
+        if hasattr(self.order_id, '_sync_opportunity_stage'):
+            self.order_id._sync_opportunity_stage()
+
+        return {'type': 'ir.actions.act_window_close'}
+
+
+class SalePoEntryWizardLine(models.TransientModel):
+    _name = 'sale.po.entry.wizard.line'
+    _description = 'Sale Order PO Entry Wizard Line'
+
+    wizard_id = fields.Many2one('sale.po.entry.wizard', required=True, ondelete='cascade')
+    sor_po_number = fields.Char(string="SOR PO Number")
+    order_line_id = fields.Many2one('sale.order.line', string="Quotation Line")
+    product_id = fields.Many2one('product.product', string="Product", required=True)
+    cus_po_amount = fields.Float(string="Po Amount")
+
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        if self.product_id and self.wizard_id.order_id:
+            matching_line = self.wizard_id.order_id.order_line.filtered(lambda l: l.product_id == self.product_id)[:1]
+            if matching_line:
+                self.order_line_id = matching_line.id
+                self.cus_po_amount = matching_line.cus_po_amount
+                self.sor_po_number = f"{self.wizard_id.order_id.po_ref or self.wizard_id.order_id.name} - {matching_line.cus_price_subtotal:,.2f}"
 
    
 
@@ -261,52 +319,3 @@ class SaleOrderLine(models.Model):
                         record.price_subtotal=record.cus_po_amount
                         record.price_unit=record.cus_po_amount
                         print('record custom po value',record.price_subtotal,record.price_unit)
-
-
-class SalePoEntryWizard(models.TransientModel):
-    _name = 'sale.po.entry.wizard'
-    _description = 'Sale Order PO Entry Wizard'
-
-    order_id = fields.Many2one('sale.order', string="Quotation", required=True, readonly=True)
-    line_ids = fields.One2many('sale.po.entry.wizard.line', 'wizard_id', string="PO Entry Lines")
-
-    def action_confirm_po_entry(self):
-        """Apply entered PO Amounts to Sale Order Lines."""
-        self.ensure_one()
-        self.order_id.write({'show_amount_fields': True})
-
-        for line in self.line_ids:
-            if line.order_line_id:
-                if line.cus_po_amount > line.total_amount:
-                    raise ValidationError(
-                        f"The PO Amount ({line.cus_po_amount}) for {line.product_id.display_name} cannot exceed the Total Amount ({line.total_amount})."
-                    )
-                line.order_line_id.write({
-                    'cus_po_amount': line.cus_po_amount,
-                })
-                if hasattr(line.order_line_id, '_onchange_cus_po_amount'):
-                    line.order_line_id._onchange_cus_po_amount()
-
-        if hasattr(self.order_id, '_sync_opportunity_products_and_revenue'):
-            self.order_id._sync_opportunity_products_and_revenue()
-        if hasattr(self.order_id, '_sync_opportunity_stage'):
-            self.order_id._sync_opportunity_stage()
-
-        return {'type': 'ir.actions.act_window_close'}
-
-
-class SalePoEntryWizardLine(models.TransientModel):
-    _name = 'sale.po.entry.wizard.line'
-    _description = 'Sale Order PO Entry Wizard Line'
-
-    wizard_id = fields.Many2one('sale.po.entry.wizard', required=True, ondelete='cascade')
-    order_line_id = fields.Many2one('sale.order.line', string="Quotation Line", required=True)
-    product_id = fields.Many2one('product.product', string="Product", readonly=True)
-    total_amount = fields.Float(string="Total Amount", readonly=True)
-    cus_po_amount = fields.Float(string="PO Amount")
-    cus_bal_amount = fields.Float(string="Balance Amount", compute="_compute_cus_bal_amount")
-
-    @api.depends('total_amount', 'cus_po_amount')
-    def _compute_cus_bal_amount(self):
-        for line in self:
-            line.cus_bal_amount = max(line.total_amount - line.cus_po_amount, 0.0)
