@@ -17,6 +17,16 @@ class SaleOrder(models.Model):
                     # Update the stage of the related opportunity (CRM lead)
                     record.opportunity_id.stage_id = mapping.crm_lead_stage
 
+    def _sync_opportunity_stage(self):
+        """Update linked CRM Lead (Opportunity) stage based on quotation.stage.mapping."""
+        for order in self:
+            if order.opportunity_id:
+                mapping = self.env['quotation.stage.mapping'].search(
+                    [('sale_order_state', '=', order.state)], limit=1
+                )
+                if mapping and mapping.crm_lead_stage and order.opportunity_id.stage_id != mapping.crm_lead_stage:
+                    order.opportunity_id.write({'stage_id': mapping.crm_lead_stage.id})
+
     def _sync_opportunity_products(self):
         """Automatically populate linked CRM Opportunity product_ids from the latest quotation's order lines."""
         for order in self:
@@ -35,12 +45,20 @@ class SaleOrder(models.Model):
     def create(self, vals_list):
         orders = super(SaleOrder, self).create(vals_list)
         orders._sync_opportunity_products()
+        orders._sync_opportunity_stage()
         return orders
 
     def write(self, vals):
         res = super(SaleOrder, self).write(vals)
         if 'order_line' in vals or 'opportunity_id' in vals:
             self._sync_opportunity_products()
+        if 'state' in vals or 'opportunity_id' in vals:
+            self._sync_opportunity_stage()
+        return res
+
+    def action_quotation_sent(self):
+        res = super(SaleOrder, self).action_quotation_sent()
+        self._sync_opportunity_stage()
         return res
                  
     
