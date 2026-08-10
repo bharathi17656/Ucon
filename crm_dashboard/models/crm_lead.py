@@ -2543,7 +2543,7 @@ class CrmLead(models.Model):
 
     
      
-    def get_employee_payment_totals(self, user_id=None, team_id=None, comp_id=None, month_name=None):
+    def get_employee_payment_totals(self, user_id=None, team_id=None, comp_id=None, month_name=None, selected_year=None):
         """
         Returns structured payment data with formatted amounts (with commas).
         """
@@ -2564,8 +2564,11 @@ class CrmLead(models.Model):
             domain.append(('divition_id', '=', int(comp_id)))
                 
         
-        if month_name:
+        if month_name and month_name != '0':
             domain.append(('month_name', '=', month_name))
+
+        if selected_year:
+            domain.append(('year', '=', str(selected_year)))
     
         if user_id:
             domain.append(('employee_id.user_id', '=', int(user_id)))
