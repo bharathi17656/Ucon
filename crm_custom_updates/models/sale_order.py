@@ -30,24 +30,11 @@ class SaleOrder(models.Model):
     def action_open_po_entry_wizard(self):
         """Open PO Amount Entry editable list view popup."""
         self.ensure_one()
-        existing_wizards = self.env['sale.po.entry.wizard'].search([('order_id', '=', self.id)])
-        if existing_wizards:
-            existing_wizards.unlink()
-
-        wizard_lines = []
-        for line in self.order_line:
-            po_ref_val = getattr(self, 'po_ref', False) or (self.opportunity_id and getattr(self.opportunity_id, 'po_ref', False)) or self.name
-            sor_num = f"{po_ref_val} - {(line.cus_price_subtotal or line.price_subtotal):,.2f}"
-            wizard_lines.append((0, 0, {
-                'sor_po_number': sor_num,
-                'order_line_id': line.id,
-                'product_id': line.product_id.id,
-                'cus_po_amount': line.cus_po_amount,
-            }))
-        wizard = self.env['sale.po.entry.wizard'].create({
-            'order_id': self.id,
-            'line_ids': wizard_lines,
-        })
+        wizard = self.env['sale.po.entry.wizard'].search([('order_id', '=', self.id)], limit=1)
+        if not wizard:
+            wizard = self.env['sale.po.entry.wizard'].create({
+                'order_id': self.id,
+            })
 
         view_id = self.env.ref('crm_custom_updates.view_sale_po_entry_wizard_line_tree').id
         return {
@@ -125,10 +112,9 @@ class SalePoEntryWizardLine(models.TransientModel):
             matching_line = self.wizard_id.order_id.order_line.filtered(lambda l: l.product_id == self.product_id)[:1]
             if matching_line:
                 self.order_line_id = matching_line.id
-                self.cus_po_amount = matching_line.cus_po_amount
                 order = self.wizard_id.order_id
                 po_ref_val = getattr(order, 'po_ref', False) or (order and order.opportunity_id and getattr(order.opportunity_id, 'po_ref', False)) or order.name
-                self.sor_po_number = f"{po_ref_val} - {matching_line.cus_price_subtotal:,.2f}"
+                self.sor_po_number = f"{po_ref_val} - {(matching_line.cus_price_subtotal or matching_line.price_subtotal):,.2f}"
 
     @api.model_create_multi
     def create(self, vals_list):
