@@ -19,9 +19,14 @@
                 <xpath expr="//notebook" position="inside">
                     <page string="PO Details" name="po_details">
                         <group>
-                            <group>
+                            <group string="PO Reference Information">
                                 <field name="po_date" readonly="not is_ucon_admin"/>
                                 <field name="po_ref" readonly="not is_ucon_admin"/>
+                            </group>
+                            <group string="PO Document Attachments">
+                                <field name="po_filename" invisible="1"/>
+                                <field name="po_attachment" filename="po_filename" widget="binary" readonly="not is_ucon_admin"/>
+                                <field name="po_attachment_ids" widget="many2many_binary" readonly="not is_ucon_admin"/>
                             </group>
                         </group>
                     </page>

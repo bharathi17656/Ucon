@@ -23,6 +23,9 @@ class CrmLead(models.Model):
     product_ids = fields.Many2many('product.template', 'crm_lead_product_template_rel', 'lead_id', 'product_id', string="Products")
     po_date = fields.Date(string="PO Date")
     po_ref = fields.Char(string="PO Reference")
+    po_attachment = fields.Binary(string="PO Attachment", attachment=True)
+    po_filename = fields.Char(string="PO File Name")
+    po_attachment_ids = fields.Many2many('ir.attachment', 'crm_lead_po_attachment_rel', 'lead_id', 'attachment_id', string="PO Attachments")
     is_ucon_admin = fields.Boolean(compute='_compute_is_ucon_admin')
 
     def _compute_is_ucon_admin(self):
