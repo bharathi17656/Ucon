@@ -300,6 +300,8 @@ class SaleOrderLine(models.Model):
         return True
 
 
+    cus_po_amount = fields.Float(string='Po Amount', default=0.0, store=True)
+    cus_bal_amount = fields.Float(string='Balance Amount', compute='_compute_cus_bal_amount', store=True)
     cus_price_subtotal = fields.Float(string='Total Amount', compute='_compute_cus_price_subtotal', store=True, readonly=False)
 
     @api.depends('price_subtotal')
