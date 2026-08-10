@@ -946,7 +946,7 @@ class CrmLead(models.Model):
     #         }
 
 
-    def get_employee_order_booking_target_and_achieved(self, team_id=None, user_id=None, comp_id=None, product_id=None, job_id=None,month_name=None):
+    def get_employee_order_booking_target_and_achieved(self, team_id=None, user_id=None, comp_id=None, product_id=None, job_id=None, month_name=None, selected_year=None):
             user = self.env.user
             is_admin = user.has_group('base.group_system')
             is_team_lead = user.has_group('crm_dashboard.dashboard_team_leader')
@@ -961,21 +961,17 @@ class CrmLead(models.Model):
             if comp_id:
                 comp_id = int(comp_id)
                 
-            start_date=''
-            end_date=''
+            today = fields.Date.today()
+            target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
         
             if not month_name:
-                today = fields.Date.today()
-                start_date = today.replace(month=1, day=1)
-                end_date = today.replace(month=12, day=31)
+                start_date = date(target_year, 1, 1)
+                end_date = date(target_year, 12, 31)
             else:
-                year =  datetime.today().year
                 month = int(month_name)
-            
-                start_date = datetime(year, month, 1).date()
-                # Get last day of the month
-                last_day = calendar.monthrange(year, month)[1]
-                end_date = datetime(year, month, last_day).date()
+                start_date = date(target_year, month, 1)
+                last_day = calendar.monthrange(target_year, month)[1]
+                end_date = date(target_year, month, last_day)
         
             achieved_domain_base = [
                 ('stage_id.name', 'in', ['Won', 'Partial Order Released']),
@@ -1152,29 +1148,33 @@ class CrmLead(models.Model):
         
               
 
-    def get_employee_invoice_target_and_achieved(self,comp_id=None,team_id=None,user_id=None,product_id=None,job_id=None,month_name=None):
+    def get_employee_invoice_target_and_achieved(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, month_name=None, selected_year=None):
         user=self.env.user
         is_admin = user.has_group('base.group_system')  # Admin check
         is_team_lead = user.has_group('crm_dashboard.dashboard_team_leader')
 
-        
-
         if is_team_lead and not user_id and not team_id:
             user_id =user.id
             
+        today = fields.Date.today()
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
+
         target_domain=[]
         if comp_id:
             target_domain.append(('tag_id', '=', int(comp_id)))
 
         if month_name:
-             current_year = str(fields.Date.today().year)
-             revenue_rec = self.env['monthly.crm.revenue'].search([('name', '=', month_name), ('year', '=', current_year)], limit=1)
+             revenue_rec = self.env['monthly.crm.revenue'].search([('name', '=', month_name), ('year', '=', str(target_year))], limit=1)
              if not revenue_rec:
                  revenue_rec = self.env['monthly.crm.revenue'].search([('name', '=', month_name)], limit=1)
              if revenue_rec:
                  target_domain.append(('revenue_id', '=', revenue_rec.id))
              else:
                  target_domain.append(('revenue_id', '=', 0))
+        else:
+             revenue_recs = self.env['monthly.crm.revenue'].search([('year', '=', str(target_year))])
+             if revenue_recs:
+                 target_domain.append(('revenue_id', 'in', revenue_recs.ids))
             
         if team_id:
                 if not comp_id:
@@ -1219,20 +1219,12 @@ class CrmLead(models.Model):
 
     
 
-    def get_quote_submitted(self, comp_id=None, team_id=None, user_id=None,product_id=None,job_id=None,filter_by='month'):
-        """Retrieve total expected revenue and lead count in the 'Quote Submitted' stage.
-    
-        - If admin, return overall data with optional filters (comp_id, team_id, user_id).
-        - If not admin, return only the logged-in user's own records.
-        - Filters by 'month' (default) or 'year'.
-        """
+    def get_quote_submitted(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, filter_by='month', selected_year=None):
+        """Retrieve total expected revenue and lead count in the 'Quote Submitted' stage."""
         user = self.env.user
-        is_admin = user.has_group('base.group_system')  # Admin check
+        is_admin = user.has_group('base.group_system')
         is_team_lead = user.has_group('crm_dashboard.dashboard_team_leader')
         
-            
-    
-        # Define valid CRM stages
         stages = [
             'Quote Submitted',
             'Expecting (60%)',
@@ -1246,46 +1238,43 @@ class CrmLead(models.Model):
         if not stage_ids:
             return {'error': 'Stage list not found.'}
     
-        # Initialize domain
         domain = [('stage_id', 'in', stage_list)]
     
-        # Apply admin filters
         if comp_id:
-                domain.append(('tag_ids', '=', int(comp_id)))
+            domain.append(('tag_ids', '=', int(comp_id)))
 
         if job_id:
             domain.append(('job_type', '=', job_id))
         if product_id:
             domain.append(('product_ids','=',int(product_id)))
         if is_admin:
-           
             if team_id:
                 domain.append(('team_id', '=', int(team_id)))
             if user_id:
                 domain.append(('user_id', '=', int(user_id)))
-                
-        elif is_team_lead  and not is_admin:
-            
+        elif is_team_lead and not is_admin:
              if team_id:
                 domain.append(('team_id', '=', int(team_id)))
              if user_id:
                 domain.append(('user_id', '=', int(user_id)))
-      
         else:
             domain.append(('user_id', '=', user.id))
     
-        # # Define time filter
         today = fields.Date.today()
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
         
         if filter_by == 'month':
-            start_date = today.replace(day=1)  # First day of the current month
-        else:  # Default to 'year'
-            start_date = today.replace(month=1, day=1)  # First day of the year
+            start_date = date(target_year, today.month, 1)
+            last_day = calendar.monthrange(target_year, today.month)[1]
+            end_date = date(target_year, today.month, last_day)
+        else:
+            start_date = date(target_year, 1, 1)
+            end_date = date(target_year, 12, 31)
         
         domain.extend([
             '|',
-            '&', ('date_open', '>=', start_date), ('date_open', '<=', today),
-            '&', ('create_date', '>=', start_date), ('create_date', '<=', today)
+            '&', ('date_open', '>=', start_date), ('date_open', '<=', end_date),
+            '&', ('create_date', '>=', start_date), ('create_date', '<=', end_date)
         ])
     
         # Search leads
@@ -1309,16 +1298,8 @@ class CrmLead(models.Model):
     
 
 
-    def get_probability_values(self, comp_id=None,team_id=None,user_id=None,product_id=None,job_id=None,filter_by='month'):
-        """Retrieve total expected revenue and lead count for different probability stages (above 50%, below 50%, won, loss).
-        
-        - If admin, show total expected revenue and lead count for all employees.
-        - Admin can pass `employee_id` to get data for a particular employee.
-        - If not admin, return only the logged-in user's own record.
-        - Filter by 'year' (default) or 'month'.
-        """
-
-
+    def get_probability_values(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, filter_by='month', selected_year=None):
+        """Retrieve total expected revenue and lead count for different probability stages."""
         domain=[]
 
         if comp_id:
@@ -1328,35 +1309,20 @@ class CrmLead(models.Model):
         if product_id:
             domain.append(('product_ids','=',int(product_id)))
         if team_id:
-            domain.append(['team_id','=',int(team_id)])
+            domain.append(('team_id', '=', int(team_id)))
         if user_id:
-            domain.append(['user_id','=',int(user_id)])
+            domain.append(('user_id', '=', int(user_id)))
 
-
-        
-
-        # leads=self.env['crm.lead'].search(domain)
-        # lead_list = [lead['id'] for lead in leads.read(['id'])]  
-    
-        # print("this is my lead list",lead_list,domain)
-
-
-  
         user = self.env.user
-
-        is_admin = user.has_group('base.group_system')  # Admin check
+        is_admin = user.has_group('base.group_system')
         is_team_lead = user.has_group('crm_dashboard.dashboard_team_leader')
-        
-        
+
         if not user_id and not team_id:
             if is_team_lead:
-                # If not admin, return leads assigned to the logged-in user
                 employee = self.env['hr.employee'].search([('user_id', '=', user.id)], limit=1)
                 if employee:
-                    domain.append(('user_id', '=', user.id))  # Filter leads assigned to the logged-in user
-        
+                    domain.append(('user_id', '=', user.id))
 
-        # Define possible probability stages
         stages = [
             'Quote Submitted',
             'Expecting (60%)',
@@ -1366,17 +1332,16 @@ class CrmLead(models.Model):
             'Hold'    
         ]
 
-        # Define domain for search
-       
         today = fields.Date.today()
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
 
-        # Set the date range based on the filter (month or year)
         if filter_by == 'month':
-            start_date = today.replace(day=1)  # First day of the current month
-            end_date = today  # Today's date
-        else:  # Default to year filter
-            start_date = today.replace(month=1, day=1)  # First day of the current year
-            end_date = today  # Today's date
+            start_date = date(target_year, today.month, 1)
+            last_day = calendar.monthrange(target_year, today.month)[1]
+            end_date = date(target_year, today.month, last_day)
+        else:
+            start_date = date(target_year, 1, 1)
+            end_date = date(target_year, 12, 31)
 
         # Filter by the current year
         domain += [('date_open', '>=', start_date), ('date_open', '<=', end_date)]
@@ -1764,7 +1729,7 @@ class CrmLead(models.Model):
 
 
 
-    def get_quote_submitted_graph_company(self, comp_id=None, team_id=None, user_id=None, job_id=None, filter_by='month'):
+    def get_quote_submitted_graph_company(self, comp_id=None, team_id=None, user_id=None, job_id=None, filter_by='month', selected_year=None):
         domain = []
         onclick_domain = []
     
@@ -1794,12 +1759,14 @@ class CrmLead(models.Model):
         onclick_domain.append(('stage_id', 'in', stage_list))
     
         today = fields.Date.today()
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
         if filter_by == 'month':
-            start_date = today.replace(day=1)
-            end_date = today
+            start_date = date(target_year, today.month, 1)
+            last_day = calendar.monthrange(target_year, today.month)[1]
+            end_date = date(target_year, today.month, last_day)
         else:
-            start_date = today.replace(month=1, day=1)
-            end_date = today
+            start_date = date(target_year, 1, 1)
+            end_date = date(target_year, 12, 31)
         domain.append(f"crm.date_open >= '{start_date}'")
         domain.append(f"crm.date_open <= '{end_date}'")
         onclick_domain.append(('date_open', '>=', start_date))

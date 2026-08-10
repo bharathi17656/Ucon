@@ -22,7 +22,7 @@ class MonthlyCRMRevenue(models.Model):
         required=True
     )
     year = fields.Selection(
-        [(str(y), str(y)) for y in range(2020, 2035)],
+        [(str(y), str(y)) for y in range(2025, 2036)],
         string="Year",
         required=True,
         default=lambda self: str(fields.Date.today().year)

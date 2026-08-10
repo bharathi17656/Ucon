@@ -1229,7 +1229,8 @@ export class CrmDashboard extends Component {
                     user_id:this.state.user_id,
                     product_id:this.state.product_id,
                     job_id:this.state.job_id,
-                    month_name:this.state.select_month_revenue
+                    month_name:this.state.select_month_revenue,
+                    selected_year:this.state.selected_year
                 },
             });
             console.log("getorderbooking--------------------------------->",result)
@@ -1253,7 +1254,8 @@ export class CrmDashboard extends Component {
                     comp_id:this.state.comp_id,
                     team_id:this.state.team_id,
                     user_id:this.state.user_id,
-                    month_name:this.state.select_month_revenue
+                    month_name:this.state.select_month_revenue,
+                    selected_year:this.state.selected_year
                 },
             });
             console.log("getorderrevenue",result)
@@ -1279,7 +1281,8 @@ export class CrmDashboard extends Component {
                     user_id:this.state.user_id,
                     product_id:this.state.product_id,
                     job_id:this.state.job_id,
-                    filter_by:this.state.filter_by.b1
+                    filter_by:this.state.filter_by.b1,
+                    selected_year:this.state.selected_year
                 },
             });
             console.log("get_quote_submitted",result)
@@ -1307,7 +1310,8 @@ export class CrmDashboard extends Component {
                     user_id:this.state.user_id,
                     product_id:this.state.product_id,
                     job_id:this.state.job_id,
-                    filter_by:this.state.filter_by.b4
+                    filter_by:this.state.filter_by.b4,
+                    selected_year:this.state.selected_year
                 },
             });
             console.log("get_probability_values",result)
@@ -1357,7 +1361,8 @@ export class CrmDashboard extends Component {
                     comp_id:this.state.comp_id,
                     team_id:this.state.team_id,
                     user_id:this.state.user_id,
-                    month_name:this.state.select_month
+                    month_name:this.state.select_month,
+                    selected_year:this.state.selected_year
                     // product_id:this.state.product_id,
                     // job_id:this.state.job_id,
                     
@@ -1525,7 +1530,8 @@ export class CrmDashboard extends Component {
                     user_id:this.state.user_id,
                     // product_id:this.state.product_id,
                     job_id:this.state.job_id,
-                    filter_by:this.state.filter_by.b2
+                    filter_by:this.state.filter_by.b2,
+                    selected_year:this.state.selected_year
                 },
             });
 
@@ -1552,7 +1558,8 @@ export class CrmDashboard extends Component {
                     user_id:this.state.user_id,
                     // product_id:this.state.product_id,
                     job_id:this.state.job_id,
-                    filter_by:this.state.filter_by.b5
+                    filter_by:this.state.filter_by.b5,
+                    selected_year:this.state.selected_year
                 },
             });
 
@@ -1580,7 +1587,8 @@ export class CrmDashboard extends Component {
                     user_id:this.state.user_id,
                     product_id:this.state.product_id,
                     job_id:this.state.job_id,
-                    filter_by:this.state.filter_by.b2
+                    filter_by:this.state.filter_by.b2,
+                    selected_year:this.state.selected_year
                 },
             });
 
@@ -1603,10 +1611,10 @@ export class CrmDashboard extends Component {
                     comp_id:this.state.comp_id,
                     team_id:this.state.team_id,
                     user_id:this.state.user_id,
-                    
                     job_id:this.state.job_id,
                     filter_by:this.state.filter_by.b3,
                     month_name:this.state.select_month_forecast,
+                    selected_year:this.state.selected_year
 
                 },
             });

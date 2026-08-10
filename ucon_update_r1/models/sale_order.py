@@ -243,7 +243,7 @@ class EmployeeTarget(models.Model):
     _description = 'Employee Sales and Invoice Targets'
 
     employee_id = fields.Many2one(comodel_name='hr.employee', string="Employee",  required=True, ondelete='cascade')
-    year = fields.Selection([(str(y), str(y)) for y in range(2020, 2035)], string="Year", required=True, default=lambda self: str(fields.Date.today().year))
+    year = fields.Selection([(str(y), str(y)) for y in range(2025, 2036)], string="Year", required=True, default=lambda self: str(fields.Date.today().year))
 
     # Order Booking Fields
     order_booking_target = fields.Float(string="Order Booking Target")
