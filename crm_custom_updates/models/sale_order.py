@@ -267,7 +267,7 @@ class SalePoEntryWizardLine(models.TransientModel):
                     if mapping:
                         record.opportunity_id.stage_id = mapping.crm_lead_stage
 
-        return super(SaleOrder, self).write(vals)
+        return super().write(vals)
 
 
 
