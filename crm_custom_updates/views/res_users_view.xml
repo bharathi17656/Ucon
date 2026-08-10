@@ -1,0 +1,25 @@
+<odoo>
+    <record id="cus_sale_view_order_form" model="ir.ui.view">
+        <field name="name">cus.sale.view.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='order_details']//field[@name='validity_date']" position="after">
+                <field name="due_days"/>
+            </xpath>
+            <xpath expr="//group[@name='order_details']//field[@name='validity_date']" position="before">
+                <field name="show_amount_fields"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//list/field[@name='price_subtotal']" position="attributes">
+                <attribute name="column_invisible">True</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//list/field[@name='price_total']" position="before">
+                <field name="cus_price_subtotal"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//list/field[@name='cus_price_subtotal']" position="after">
+                <field name="cus_bal_amount" column_invisible="not parent.show_amount_fields"/>
+                <field name="cus_po_amount" column_invisible="not parent.show_amount_fields"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

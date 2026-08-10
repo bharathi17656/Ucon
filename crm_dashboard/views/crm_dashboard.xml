@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="custom_crm_dashboard" model="ir.actions.client">
+        <field name="name">Crm Dashboard</field>
+        <field name="tag">custom_crm_dashboard</field>
+    </record>
+
+
+
+    <record id="view_crm_done_activity_tree" model="ir.ui.view">
+        <field name="name">crm.done.activitys.tree</field>
+        <field name="model">crm.done.activitys</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" />
+<!--                 <field name="lead_id"/> -->
+                <field name="activity_ref"/>
+                <field name="user_id"/>
+                <field name="date_done" />
+                <field name="expected_revenue"/>
+                
+            </list>
+        </field>
+    </record>
+
+    <record id="action_crm_done_activity" model="ir.actions.act_window">
+        <field name="name">Archived CRM Activities</field>
+        <field name="res_model">crm.done.activitys</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    
+    <menuitem name="Crm Dashboard" id="custom_crm_dashboard_menu" sequence="-1"  action="custom_crm_dashboard" />
+   
+    
+</odoo>

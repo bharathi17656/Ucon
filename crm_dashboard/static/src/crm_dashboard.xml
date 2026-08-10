@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="CrmDashboard" owl="1">
+        <div class="dashboard-parent p-6">
+            <div class="dashboard-main mx-auto">
+
+                 <div class="filter-navbar"> 
+                    <button class="filter-toggle" >
+                        <i class="fa fa-filter" t-on-click="toggleFilter"></i>
+                    </button>
+                    <div class="filter-dropdown" t-att-class="state.isFilterHidden ? '' : 'd-none1' ">
+                        <select class="form-select filter-select company-selector1" t-on-change='onchange_company' t-att-value="state.selected_company_id"  aria-label="Default select example">
+                            <option value="0" selected="true">Category</option>
+                            <t t-foreach="state.get_divition_list" t-as="comp" t-key="comp.id">
+                                <option t-att-value='comp.id' t-esc="comp.name" />
+                            </t>
+                        </select>
+
+                        <select class="form-select product-selector1 filter-select " t-on-change='onchange_Product' t-att-value="state.selected_product_id" aria-label="Default select example">
+                            <option value="0" selected="true" >Product</option>
+                            <t t-if="state.get_product_list.length > 0">
+                                <t t-foreach="state.get_product_list" t-as="product" t-key="product.id">
+                                    <option t-att-value='product.id'  t-esc="product.name" />
+                                </t>
+                            </t>
+                        </select> 
+
+                        <select class="form-select job-selector1 filter-select" t-on-change='onchange_Job' t-att-value="state.selected_job_id" aria-label="Default select example">
+                            <option value="0" selected="true" >Job Type</option>
+                            <t t-if="state.get_job_list.length > 0">
+                                <t t-foreach="state.get_job_list" t-as="job" t-key="job">
+                                    <option t-att-value="job"  t-esc="job" />
+                                </t>
+                            </t>
+                        </select>
+
+                        <t t-if="state.isAdmin">
+                            <select class="form-select team-selector1 filter-select" t-on-change='onchange_team' t-att-value="state.selected_team_id" aria-label="Default select example">
+                                <option value='0' selected="true">Team</option>
+                                <t t-foreach="state.get_team_list" t-as="team" t-key="team.id">
+                                    <option t-att-value='team.id' t-esc="team.name" />
+                                </t>
+                            </select>
+
+                            <select class="form-select  user-selector1 filter-select " t-on-change='onchange_employee' t-att-value="state.selected_employee_id" aria-label="Default select example">
+                                <option value="0" selected="true">Employee</option>
+                                <t t-foreach="state.get_employee_list" t-as="employee" t-key="employee.id">
+                                    <option t-att-value='employee.id' t-esc="employee.name" />
+                                </t>
+                            </select>
+                            
+                        </t>
+                         <button type="button" class="reset-btn-dashboard text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm w-24 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" t-on-click="reset_dashboard_filter">Reset</button>
+                    
+                    </div>
+                </div>
+
+                <div class="filter-tap flex gap-4 ml-auto justify-end">
+                    <select class="form-select vz company-selector filter-select w-64" t-on-change='onchange_company' t-att-value="state.selected_company_id"  aria-label="Default select example">
+                        
+                        <option value="0" selected="true" >Category</option>
+                        <t t-foreach="state.get_divition_list" t-as="comp" t-key="comp.id">
+                            <option t-att-value='comp.id'  t-esc="comp.name" />
+                        </t>
+                    </select>
+                    <select class="form-select product-selector filter-select w-64" t-on-change='onchange_Product' t-att-value="state.selected_product_id" aria-label="Default select example">
+                        <option value="0" selected="true" >Product</option>
+                        <t t-if="state.get_product_list.length > 0">
+                            <t t-foreach="state.get_product_list" t-as="product" t-key="product.id">
+                                <option t-att-value='product.id'  t-esc="product.name" />
+                            </t>
+                        </t>
+                    </select> 
+
+                    <select class="form-select job-selector filter-select w-64" t-on-change='onchange_Job' t-att-value="state.selected_job_id" aria-label="Default select example">
+                        <option value="0" selected="true" >Job Type</option>
+                        <t t-if="state.get_job_list.length > 0">
+                            <t t-foreach="state.get_job_list" t-as="job" t-key="job">
+                                <option t-att-value="job"  t-esc="job" />
+                            </t>
+                        </t>
+                    </select>
+                    <t t-if="state.isAdmin">
+                    <select class="form-select team-selector filter-select w-64"  t-on-change='onchange_team' t-att-value="state.selected_team_id" aria-label="Default select example">
+                        <option value='0' selected="true" >Team</option>
+                        <t t-foreach="state.get_team_list" t-as="team" t-key="team.id">
+                            <option t-att-value='team.id'  t-esc="team.name" />
+                        </t>
+                    </select>
+                    <select class="form-select user-selector filter-select  w-64"  t-on-change='onchange_employee' t-att-value="state.selected_employee_id" aria-label="Default select example">
+                        <option value="0" selected="true" >Employee</option>
+                        <t t-foreach="state.get_employee_list" t-as="employee" t-key="employee.id">
+                            <option t-att-value='employee.id'   t-esc="employee.name" />
+                        </t>
+                    </select>
+                   
+                    </t>
+                     <button type="button" class="reset-btn-dashboard text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm w-24 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" t-on-click="reset_dashboard_filter">Reset</button>
+                </div>
+                <div class="top-grid-box"  id="main-page">
+                    <div class="top-grid-left grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  gap-2">
+                        <div class="booking">
+                            <h1>Order Booking</h1>
+                            <div class="booking-value">
+                                <div class="b1">
+                                    <p>Target</p>
+                                    <p>Achieved</p>
+                                    <p>Others</p>
+                                </div>
+                                <div class="b2" >
+                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_target">QR
+                                        <t t-esc="state.getorderbooking?.total_target || 0" /> M
+                                    </p>
+                                    <p class="second onclick-box" t-on-click="Onclick_getorderbooking_achieve">QR
+                                        <t t-esc="state.getorderbooking?.total_achieved || 0" /> M
+                                    </p>
+                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_others">QR
+                                         <t t-esc="state.getorderbooking?.total_achieved_others || 0" /> M
+                                    </p>
+                                </div>
+                                 <div class="b3 order-book-person">
+                                    <p>
+                                        <t t-esc="state.getorderbooking?.percentage || 0" />%
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="booking">
+                            <h1 style="display: flex;justify-content: space-between;">Revenue <span> <t t-if="state.isAdmin">
+                                <div class="month-filter-revenue flex">
+                                   <select class="form-select month-selector-revenue filter-select-revenue"  t-on-change='onchange_revenue_month' aria-label="Default select example">
+                                    <option value='0' selected="true">month</option>
+                                    <t t-foreach="state.month_list" t-as="month" t-key="month.id">
+                                        <option t-att-value='month.id' t-esc="month.name" />
+                                    </t>
+                                  </select>
+                                </div>
+                                  </t>
+                            </span>
+                            </h1>
+                            
+                            <div class="booking-value others-div quote-bg">
+                                <div class="b1 justify-div">
+                                    <p>Target</p>
+                                    <p>Achieved</p>
+                                </div>
+                                <div class="b2 justify-div">
+                                    <p class="first onclick-box" t-on-click="Onclick_getorder_invoice_achieve">QR
+                                        <t t-esc="state.getorderrevenue?.total_target || 0" /> M
+                                    </p>
+                                    <p class="second onclick-box" t-on-click="Onclick_getorder_invoice_achieve">QR
+                                        <t t-esc="state.getorderrevenue?.total_achieved || 0" /> M
+                                    </p>
+                                </div>
+                                <div class="b3 others-persontage">
+                                    <p>
+                                        <t t-esc="state.getorderrevenue?.percentage || 0" />%
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="top-grid-right grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1  gap-4">
+                        <div class="qu-submit">
+                            <div class="header-filter flex">
+                                <h1>Quote Submitted</h1>
+                                <div class="month-filter flex">
+                                    <p t-on-click="()=>setfiltercolor('b1','month')" t-att-class="state.filter_by.b1 == 'month' ? 'month1' : 'year' " >Month</p>
+                                    <p t-on-click="()=>setfiltercolor('b1','year')" t-att-class="state.filter_by.b1 == 'year' ? 'month' : 'year' " >Year</p>
+                                </div>
+                            </div>
+                            <div class="quote-submit-value onclick-box" t-on-click="Onclick_get_quote_submitted">
+                                <div class="quote-value others-div">
+                                    <p>Quotation Value</p>
+                                    <h1>QR
+                                        <t t-esc="state.get_quote_submitted?.total_expected_revenue || 0" /> M
+                                    </h1>
+                                </div>
+                                <div class="quote-value others-div quote-count-bg">
+                                    <p>No of Quotes</p>
+                                    <h1>
+                                        <t t-esc="state.get_quote_submitted?.lead_count || 0" />
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="second-box-bottom"  id="second-page">
+                    <div class="graph-view-box">
+                      <div class="quote-graph-view-box" style="height: 440px !important;">
+                        <div class="header-filter flex">
+                            <h1>Won Stage</h1>
+                            <div class="month-filter flex">
+                                <p t-on-click="()=>setfiltercolor('b5','month')" 
+                                   t-att-class="state.filter_by.b5 == 'month' ? 'month1' : 'year' ">Month</p>
+                                <p t-on-click="()=>setfiltercolor('b5','year')" 
+                                   t-att-class="state.filter_by.b5 == 'year' ? 'month1' : 'year' ">Year</p>
+                            </div> 
+                        </div> 
+                    
+                        <div class="quote-graph-view-area flex">
+                            <div class="left-graph-area min-graph-area">
+                                <div class="chart-type">
+                                   <t t-if="state.comp_id">
+                                         <h1>Employee Wise</h1>
+                                    </t>
+                                    <t t-else="">
+                                             <h1>Company Wise</h1>
+                                    </t>
+                                </div>
+                                <div class="separate">
+                                    <t t-if="state.get_won_graph_company.tag_name.length > 0">
+                                        <canvas t-ref="chartWonStage"  t-on-click="Onclick_get_won_stage_company_graph" 
+                                            class="custom-graph-crm crm-graph-1 onclick-box" 
+                                            id="chartWonStage">
+                                        </canvas>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="no-data-chart"></div>
+                                    </t>
+                                    <div id="legend1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                        <div class="quote-graph-view-box"  id="third-page">
+                            <div class="header-filter flex">
+                                <h1>Quote Submitted</h1>
+                                <div class="month-filter flex">
+                                    <p t-on-click="()=>setfiltercolor('b2','month')" t-att-class="state.filter_by.b2 == 'month' ? 'month1' : 'year' " >Month</p>
+                                    <p t-on-click="()=>setfiltercolor('b2','year')" t-att-class="state.filter_by.b2 == 'year' ? 'month' : 'year' " >Year</p>
+                                </div>
+                            </div>
+                            <div class="quote-graph-view-area flex">
+                                <div class="left-graph-area min-graph-area">
+                                    <div class="chart-type">
+                                    <t t-if="state.comp_id">
+                                         <h1>Employee Wise</h1>
+                                    </t>
+                                    <t t-else="">
+                                             <h1>Company Wise</h1>
+                                    </t>
+
+                                    </div>
+                                    <div  class="separate">
+                                        <t t-if="state.get_quote_graph_company.tag_name.length > 0" >
+                                        <canvas t-ref="chartQuoteCompany" t-on-click="Onclick_get_quote_submitted_company_graph"  class="custom-graph-crm  crm-graph-1 onclick-box" id="chartQuoteCompany"> </canvas>
+                                        </t>
+                                         <t t-else="">
+                                           <div class="no-data-chart"> </div>
+                                         </t>
+                                            
+                                        <div id="legend1"></div>
+                                    </div>
+                                </div>
+                                <div class="right-graph-area min-graph-area onclick-box  " >
+                                    <div class="chart-type">
+                                        <h1>Product Wise</h1>
+
+                                    </div>
+                                    <div  class="separate">
+                                      <t t-if="(state.comp_id || state.product_id) and state.get_quote_graph_product.product.length > 0">
+                                        <canvas t-ref="chartQuoteProduct" class="custom-graph-crm crm-graph-1"  t-on-click="Onclick_get_quote_submitted_product_graph" id="chartQuoteProduct"></canvas>
+                                        </t>
+                                        <t t-else="">
+                                           <div class="no-data-chart"> </div>
+                                        </t>
+                                        <div id="legend2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-data-right">
+                        <div class="top-table-box">
+                            <div class="header-filter flex">
+                                <h1>Pipeline</h1>
+                                <div class="month-filter flex">
+                                    <p t-on-click="()=>setfiltercolor('b4','month')" t-att-class="state.filter_by.b4 == 'month' ? 'month1' : 'year' " >Month</p>
+                                    <p t-on-click="()=>setfiltercolor('b4','year')" t-att-class="state.filter_by.b4 == 'year' ? 'month' : 'year' " >Year</p>
+                                </div>
+                            </div>
+                            <div class="table-view-box" >
+                                <table class="table dashboard-table onclick-box">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Probability</th>
+                                            <th scope="col">Quotation value(QR)</th>
+                                            <th scope="col">No Of Leads</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                       <t t-set="counter" t-value="0" />
+                                         <t t-foreach="state.get_probability_values" t-as="probability" t-key="counter">
+                                             <t t-set="counter" t-value="counter + 1" />
+                                             <t t-if="probability.quote_submitted">
+                                                 <tr t-on-click="()=>Onclick_get_probability_values('Quote Submitted')">
+                                                     <td>Quote Submitted</td>
+                                                     <td>
+                                                         <t t-esc="probability.quote_submitted.expected_revenue" /> 
+                                                     </td>
+                                                     <td>
+                                                         <t t-esc="probability.quote_submitted.count" />
+                                                     </td>
+                                                 </tr>
+                                             </t>
+                                             <t t-if="probability.below_50">
+                                                 <tr t-on-click="()=>Onclick_get_probability_values('Expecting 60%')">
+                                                     <td>Expecting (60%)</td>
+                                                     <td>
+                                                         <t t-esc="probability.below_50.expected_revenue" /> 
+                                                     </td>
+                                                     <td>
+                                                         <t t-esc="probability.below_50.count" />
+                                                     </td>
+                                                 </tr>
+                                             </t>
+                                             <t t-if="probability.above_50">
+                                                 <tr t-on-click="()=>Onclick_get_probability_values('Commit 90%')">
+                                                     <td>Commit (90%)</td>
+                                                     <td>
+                                                         <t t-esc="probability.above_50.expected_revenue" /> 
+                                                     </td>
+                                                     <td>
+                                                         <t t-esc="probability.above_50.count" />
+                                                     </td>
+                                                 </tr>
+                                             </t>
+                                             <t t-if="probability.partial_order">
+                                                 <tr t-on-click="()=>Onclick_get_probability_values('Partial Order Released')">
+                                                     <td>Partial Order</td>
+                                                     <td>
+                                                         <t t-esc="probability.partial_order.expected_revenue" /> 
+                                                     </td>
+                                                     <td>
+                                                         <t t-esc="probability.partial_order.count" />
+                                                     </td>
+                                                 </tr>
+                                             </t>
+ 
+                                             <t t-if="probability.won">
+                                                 <tr t-on-click="()=>Onclick_get_probability_values('Won')">
+                                                     <td>Won</td>
+                                                     <td>
+                                                         <t t-esc="probability.won.expected_revenue" /> 
+                                                     </td>
+                                                     <td>
+                                                         <t t-esc="probability.won.count" />
+                                                     </td>
+                                                 </tr>
+                                             </t>
+                                              <t t-if="probability.tender">
+                                                 <tr t-on-click="()=>Onclick_get_probability_values('Hold')">
+                                                     <td>Hold</td>
+                                                     <td>
+                                                         <t t-esc="probability.tender.expected_revenue" /> 
+                                                     </td>
+                                                     <td>
+                                                         <t t-esc="probability.tender.count" />
+                                                     </td>
+                                                 </tr>
+                                             </t>
+                                             <t t-if="probability.lose">
+                                               <tr t-on-click="()=>Onclick_get_probability_values('Lost')">
+                                                     <td>Lost</td>
+                                                     <td>
+                                                         <t t-esc="probability.lose.expected_revenue" /> 
+                                                     </td>
+                                                     <td>
+                                                         <t t-esc="probability.lose.count" />
+                                                     </td>
+                                                 </tr> 
+                                             </t>
+                                         </t>
+                                     </tbody>
+                                 </table>
+                            </div>
+                        </div>
+                        <div class="below-pipeline-box">
+                        <div class="bottom-table-box">
+                            <div class="header-filter flex">
+                                <h1>Activity</h1>
+                            </div>
+                            <div class="quote-submit-value">
+                                <div class="activity-value">
+                                    <p>Day</p>
+                                    <h1>
+                                     
+                                             <span class="span1 onclick-box" t-on-click='Onclick_getDoneActivityToday'><t t-esc="state.get_activity_value.done_today" /> </span> /
+                                        <span class="span2 onclick-box" t-on-click="Onclick_getPlannedActivityToday">
+                                            <t t-esc="state.get_activity_value.planning_today" />
+                                        </span>
+                                    </h1>
+                                </div>
+                                <div class="activity-value activity-bg">
+                                    <p>Month</p>
+                                    <h1>
+                             
+                                        <span class="span1 onclick-box" t-on-click='Onclick_getDoneActivityMonth'><t t-esc="state.get_activity_value.done_month" /> </span> /
+                                        <span class="span2 onclick-box" t-on-click="Onclick_getPlannedActivityMonth">
+                                            <t t-esc="state.get_activity_value.planning_month" />
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="bottom-table-box payment-showbox"  id="fourth-page" >
+                            <div class="header-filter flex">
+                                <h1> Payments </h1> 
+                                  <t t-if="state.isAdmin">
+                                <div class="month-filter flex">
+                                   <select class="form-select month-selector filter-select"  t-on-change='onchange_payment_month' aria-label="Default select example">
+                                    <option value='0' selected="true">month</option>
+                                    <t t-foreach="state.month_list" t-as="month" t-key="month.id">
+                                        <option t-att-value='month.id' t-esc="month.name" />
+                                    </t>
+                                  </select>
+                                </div>
+                                  </t>
+                            </div>
+                            
+                            <div class="table-view-box" >
+                                <table class="table dashboard-table onclick-box">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Detail</th>
+                                            <th scope="col">Amount</th>
+                                            <th scope="col">Collected</th>
+                                            <th scope="col">% Collected</th>
+                                        </tr>
+                                    </thead>
+                                     <tbody>
+                                        <t t-set="payments" t-value="state.get_employee_payment_totals" />
+                            
+                                        <t t-if="payments.overdue">
+                                            <tr t-on-click="()=>onclick_employee_payment_collection('overdue')">
+                                                <td>Over Due</td>
+                                                <td><t t-esc="payments.overdue.amount" /></td>
+                                                <td><t t-esc="payments.overdue.collected" /></td>
+                                                <td>
+                                                    <span t-att-style="'color:' + (payments.overdue.collected_percentage >= 80 ? 'green' : 'red')">
+                                                        <t t-esc="payments.overdue.collected_percentage" />%
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                            
+                                        <t t-if="payments.due">
+                                            <tr t-on-click="()=>onclick_employee_payment_collection('due')">
+                                                <td>Due</td>
+                                                <td><t t-esc="payments.due.amount" /></td>
+                                                <td><t t-esc="payments.due.collected" /></td>
+                                                <td>
+                                                    <span t-att-style="'color:' + (payments.due.collected_percentage >= 80 ? 'green' : 'red')">
+                                                        <t t-esc="payments.due.collected_percentage" />%
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                            
+                                        <t t-if="payments.nondue">
+                                            <tr t-on-click="()=>onclick_employee_payment_collection('nodue')">
+                                                <td>Non Due</td>
+                                                <td><t t-esc="payments.nondue.amount" /></td>
+                                                <td><t t-esc="payments.nondue.collected" /></td>
+                                                <td>
+                                                    <span style="color:green;">
+                                                        <t t-esc="payments.nondue.collected_percentage" />%
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </t>
+                            
+                                        <t t-if="payments.total">
+                                            <tr t-on-click="()=>onclick_employee_payment_collection('total')">
+                                                <td><strong>Total</strong></td>
+                                                <td><strong><t t-esc="payments.total.totalamount" /></strong></td>
+                                                <td><strong><t t-esc="payments.total.totalcollected" /></strong></td>
+                                                <td>
+                                                    <strong>
+                                                        <span>
+                                                            <t t-esc="payments.total.totalcollected_percentage" />%
+                                                        </span>
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    
+
+                                 </table>
+                            </div>
+                        </div>
+                     </div>
+                    </div>
+                
+                </div>
+
+<!--             <t t-if="state.account_admin">
+                   <div class="activity-table-list" id="payment-page">
+                     <div class="table-data-right">
+                        <div class="top-table-box-two">
+                            <div class="header-filter flex">
+                                <h1>Payment  Collection</h1>
+                                   <t t-if="state.isAdmin">
+                                        <div class="month-filter flex">
+                                           <select class="form-select new-month-selector filter-select"  t-on-change='new_onchange_payment_month' aria-label="Default select example">
+                                            <option value='0' selected="true">month</option>
+                                            <t t-foreach="state.month_list" t-as="month" t-key="month.id">
+                                                <option t-att-value='month.id' t-esc="month.name" />
+                                            </t>
+                                          </select>
+                                        </div>
+                                    </t>
+                            </div>
+                           <div class="table-view-box table-view-box-height" >
+                                <table class="table dashboard-table payment-sector onclick-box">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2" style="text-align: center;background: #405684;border: solid 2px #fcfcfc;color: white;"><t t-if ="state.new_get_employee_payment_totals.summary.length > 0"><t t-esc="state.new_get_employee_payment_totals.group_by" /></t><t t-else="">CMP</t></th>
+                                            <th colspan="3" style="text-align: center;background: #8d8bd7;border: solid 2px #fcfcfc;color: white; font-size: 17px;">Total</th>
+                                            <th colspan="3" style="text-align: center;background: #e17171;border: solid 2px #fcfcfc;color: white; font-size: 17px;">OverDue</th>
+                                            <th colspan="3" style="text-align: center;background: #e2ac86;border: solid 2px #fcfcfc;color: white; font-size: 17px;">Due</th>
+                                            <th colspan="3" style="text-align: center;background: #b5e699;border: solid 2px #fcfcfc;color: white; font-size: 17px;">Not Due</th>
+                                        </tr>
+                                        <tr>
+                                            <th style="background: #716eca;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Total Outstanding</th>
+                                            <th style="background: #716eca;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Total Collected Amount</th>
+                                            <th style="background: #716eca;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Total %Collected</th>
+                                            
+                                            <th style="background: #e18585;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Outstanding</th>
+                                            <th style="background: #e18585;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Collected Amount</th>
+                                            <th style="background: #e18585;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">%Collected</th>
+                                
+                                            <th style="background: #cc9968;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Outstanding</th>
+                                            <th style="background: #cc9968;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Collected Amount</th>
+                                            <th style="background: #cc9968;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">%Collected</th>
+                                
+                                            <th style="background: #7fb97f;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Outstanding</th>
+                                            <th style="background: #7fb97f;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">Collected Amount</th>
+                                            <th style="background: #7fb97f;border: solid 2px #fcfcfc;color: white; font-size: 12px;text-align: center;">%Collected</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                      <t t-if="state.new_get_employee_payment_totals.summary.length > 0">
+                                        <t t-foreach="state.new_get_employee_payment_totals.summary" t-as="record" t-key="record.key">
+                                          <tr>
+                                          
+                                            <td><t t-esc="record.key"/></td>
+                                    
+                                          
+                                            <t t-set="total" t-value="record.summary.find(s => s.status === 'total')"/>
+                                            <t t-set="overdue" t-value="record.summary.find(s => s.status === 'overdue')"/>
+                                            <t t-set="due" t-value="record.summary.find(s => s.status === 'due')"/>
+                                            <t t-set="nodue" t-value="record.summary.find(s => s.status === 'nodue')"/>
+                                    
+                                         
+                                            <td style="text-align: right;"><t t-esc="total ? total.amount : '-'"/></td>
+                                            <td style="text-align: right;"><t t-esc="total ? total.collected : '-'"/></td>
+                                            <td style="text-align: right;"><t t-esc="total ? total.collected_percentage : '-'"/></td>
+                                    
+                                           
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('overdue', record.id)">
+                                              <t t-esc="overdue ? overdue.amount : '-'"/>
+                                            </td>
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('overdue', record.id)">
+                                              <t t-esc="overdue ? overdue.collected : '-'"/>
+                                            </td>
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('overdue', record.id)">
+                                              <t t-esc="overdue ? overdue.collected_percentage : '-'"/>
+                                            </td>
+                                    
+                                       
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('due', record.id)">
+                                              <t t-esc="due ? due.amount : '-'"/>
+                                            </td>
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('due', record.id)">
+                                              <t t-esc="due ? due.collected : '-'"/>
+                                            </td>
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('due', record.id)">
+                                              <t t-esc="due ? due.collected_percentage : '-'"/>
+                                            </td>
+                                    
+                                         
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('nodue', record.id)">
+                                              <t t-esc="nodue ? nodue.amount : '-'"/>
+                                            </td>
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('nodue', record.id)">
+                                              <t t-esc="nodue ? nodue.collected : '-'"/>
+                                            </td>
+                                            <td style="text-align: right; cursor: pointer;" t-on-click="() => Onclick_new_get_employee_payment_totals('nodue', record.id)">
+                                              <t t-esc="nodue ? nodue.collected_percentage : '-'"/>
+                                            </td>
+                                          </tr>
+                                        </t>
+
+                                          <tr class="total-row-payment">
+                                                  <td style="text-align:center !important;"><strong t-esc="state.total_payment_summary.key" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.total_outstanding" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.total_collected" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.total_percentage" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.overdue_outstanding" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.overdue_collected" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.overdue_percentage" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.due_outstanding" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.due_collected" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.due_percentage" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.nodue_outstanding" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.nodue_collected" /></td>
+                                                    <td><strong t-esc="state.total_payment_summary.nodue_percentage" /></td>
+                                                   
+                                                </tr>
+                                          </t>
+                                      <t t-else="">
+                                        <tr>
+                                          <td colspan="20" style="text-align: center;">
+                                            <h3>No Activity Available</h3>
+                                          </td>
+                                        </tr>
+                                      </t>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                  
+                    </div>
+                </div> -->
+
+<!--               <div class="activity-table-list"  id="realization-page">
+                    <div class="table-data-right">
+                        <div class="top-table-box-two">
+                            <div class="header-filter flex">
+                                <h1>Realization Summary</h1>
+                            </div>
+                            <div class="table-view-box table-view-box-height" >
+                                <table class="table dashboard-table payment-sector onclick-box">
+                                    <thead>
+                                        <tr>    
+                                            <th scope="col" style="text-align: center;background: #405684;color: white;border: 2px solid #fcfcfc;"><t t-if="state.comp_id">EMP</t>
+                                                                                                                                                      <t t-else="">CMP</t></th>
+                                            <th scope="col" style="text-align: center;background: #936fd6;color: white;border: 2px solid #fcfcfc;">Outstanding</th>
+                                            <th scope="col" style="text-align: center;background: #7888d2;color: white;border: 2px solid #fcfcfc;">Current Month PDC/LC</th>
+                                            <th scope="col" style="text-align: center;background: #78b9d1;color: white;border: 2px solid #fcfcfc;">Future Month PDC/LC</th>
+                                            <th scope="col" style="text-align: center;background: #d17070;color: white;border: 2px solid #fcfcfc;">Collection (Current)</th>
+                                            <th scope="col" style="text-align: center;background: #d4a774;color: white;border: 2px solid #fcfcfc;">Collection PDC/LC</th>
+                                            <th scope="col" style="text-align: center;background: #d771ae;color: white;border: 2px solid #fcfcfc;">Total Collection</th>
+                                            <th scope="col" style="text-align: center;background: #6caa88;color: white;border: 2px solid #fcfcfc;">Total Realized</th>
+                                             <th scope="col" style="text-align: center;background: #87aa54;color: white;border: 2px solid #fcfcfc;">Balance To Realize (Current)</th>
+                                            <th scope="col" style="text-align: center;background: #569a74;color: white;border: 2px solid #fcfcfc;">Balance To Realize (Future)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                       
+                                        <t t-if="state.get_realization_summary.length > 0 ">
+                                        <t t-foreach="state.get_realization_summary" t-as="record" t-key="record.order">
+                                            
+                                                <tr t-on-click="() => Onclick_get_realization_summary(record.employee_id || record.divition_id)">
+                                                  
+                                                    <td>
+                                                         <t t-esc="record.order"/> 
+                                                    </td>
+                            
+                                                    <td style="text-align: right;">
+                                                        <t t-esc="record.outstanding" /> 
+                                                    </td>
+                                                     <td style="text-align: right;">
+                                                         <t t-esc="record.current_month_pdc" /> 
+                                                    </td>
+                                                     <td style="text-align: right;">
+                                                         <t t-esc="record.future_month_pdc" /> 
+                                                    </td>
+                                                      <td style="text-align: right;">
+                                                         <t t-esc="record.collection_current" /> 
+                                                    </td>
+                                                      <td style="text-align: right;">
+                                                         <t t-esc="record.collection_pdc" /> 
+                                                    </td>
+                                                      <td style="text-align: right;">
+                                                         <t t-esc="record.total_collection" /> 
+                                                    </td>
+                                                      <td style="text-align: right;">
+                                                         <t t-esc="record.total_realised" /> 
+                                                    </td>
+                                                      <td style="text-align: right;">
+                                                         <t t-esc="record.balance_realise_current" /> 
+                                                    </td>
+                                                     <td style="text-align: right;">
+                                                         <t t-esc="record.balance_realise_future" /> 
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <tr class="total-row-payment">
+                                                <td style="text-align:center !important;"><strong t-esc="state.total_realization_summary.order" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.outstanding" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.current_month_pdc" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.future_month_pdc" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.collection_current" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.collection_pdc" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.total_collection" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.total_realised" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.balance_realise_current" /></td>
+                                                <td><strong t-esc="state.total_realization_summary.balance_realise_future" /></td>
+                                               
+                                            </tr>
+    
+                                        </t>
+                                        <t t-else="">
+                                            <tr>
+                                              <td colspan="10" style="text-align: center;">
+                                                <h3>No Activity Available</h3>
+                                              </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                  
+                    </div>
+                </div>
+               </t> -->
+
+                <div class="second-view-box-two"  id="forecast-page" >
+                         <div class="graph-view-box">
+                        <div class="forcast-graph-view-box">
+                            <div class="header-filter flex">
+                                <h1>Forecast</h1>
+
+                                <div class="month-filter flex">
+                                   <select class="form-select month-selector-forecast filter-select" t-on-change='onchange_forecast_month'  aria-label="Default select example">
+                                    <option value='0' selected="true">month</option>
+                                    <t t-foreach="state.forecastmonth_list" t-as="month" t-key="month.id">
+                                        <option t-att-value='month.id' t-esc="month.name" />
+                                    </t>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="forcast-graph-view-area flex">
+                                 <div class="left-graph-area min-graph-area">
+                                    <div class="chart-type">
+                                        <t t-if="state.comp_id">
+                                         <h1>Employee Wise</h1>
+                                        </t>
+                                        <t t-else="">
+                                                 <h1>Company Wise</h1>
+                                        </t>
+
+                                    </div>
+                                    <div  class="separate">
+                                         <t t-if="state.get_forecast_graph_company.tag_name.length > 0" >
+                                        <canvas t-ref="chartforecastCompany" t-on-click="Onclick_get_forecast_company_graph" class="custom-graph-crm  crm-graph-1 onclick-box" id="chartforecastCompany"> </canvas>
+                                         </t>
+                                        <t t-else="">
+                                           <div class="no-data-chart"> </div>
+                                        </t>
+                                        <div id="legend3"></div>
+                                    </div>
+                                </div>
+                                <div class="right-graph-area min-graph-area"  >
+                                    <div class="chart-type">
+                                         <h1>Product Wise</h1>
+
+                                    </div>
+                                    <div class="separate">
+                                        <t t-if="(state.comp_id || state.product_id) and state.get_forecast_graph_product.product.length > 0" >
+                                            <canvas t-ref="chartforecastProduct"  t-on-click="Onclick_get_forecast_product_graph" style="width:250px;height:250px;" class="custom-graph-crm crm-graph-1 onclick-box" id="chartforecastProduct"></canvas>
+                                        </t>
+                                        <t t-else="">
+                                           <div class="no-data-chart"> </div>
+                                        </t>
+                                        <div id="legend4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <div class="activity-table-list"  id="mail-activity-page">
+                    <div class="table-data-right">
+                        <div class="top-table-box-two">
+                            <div class="header-filter flex">
+                                <h1>All Activity List</h1>
+                            </div>
+                            <div class="table-view-box" >
+                                <table class="table dashboard-table onclick-box">
+                                    <thead>
+                                        <tr>    
+                                            <th scope="col">S.No</th>
+                                            <th scope="col">From</th>
+                                            <th scope="col">Customer Name</th>
+                                            <th scope="col">Activity Type</th>
+                                            <th scope="col">Assigned to</th>
+                                            <th scope="col">Due Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="counter" t-value="0" />
+                                        <t t-if="state.get_mail_activity_lists &amp;&amp; state.get_mail_activity_lists.formatted_activities &amp;&amp; state.get_mail_activity_lists.formatted_activities.length > 0">
+                                        <t t-foreach="state.get_mail_activity_lists.formatted_activities" t-as="activity" t-key="activity.id">
+                                            <t t-set="counter" t-value="counter + 1" />
+                                       
+                                                <tr  t-on-click="()=>Onclick_get_activity_view(activity.res_id)" >
+                                                    <td>
+                                                         <t t-esc="counter" /> 
+                                                    </td>
+                                                    <td>
+                                                         <t t-esc="activity.from" /> 
+                                                    </td>
+                                                    <td>
+                                                         <t t-esc="activity.res_name" /> 
+                                                    </td>
+                            
+                                                    <td>
+                                                        <t t-esc="activity.activity_type" /> 
+                                                    </td>
+                                                     <td>
+                                                         <t t-esc="activity.user_name" /> 
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="activity.remaining_days" />
+                                                    </td>
+                                                </tr>
+                                            </t>
+    
+                                        </t>
+                                        <t t-else="">
+                                            <tr>
+                                              <td colspan="10" style="text-align: center;">
+                                                <h3>No Activity Available</h3>
+                                              </td>
+                                           </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+
+    <record id="view_upload_bulk_soa_form" model="ir.ui.view">
+    <field name="name">upload.bulk.soa.wizard.form</field>
+    <field name="model">upload.bulk.soa.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Upload Bulk SOA Files">
+            <sheet>
+                <group>
+                    <field name="sales_person" required="1" />
+                    <field name="tag_id" required="1" />
+                    <field name="number_of_records" readonly="1" />
+                    <field name="upload_file_ids" widget="many2many_binary" options="{'multiple': True}" required="1"/>
+                </group>
+                <footer>
+                    <button name="action_upload_soas" string="Upload" type="object" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+
+    <record id="action_upload_bulk_soa" model="ir.actions.act_window">
+    <field name="name">Upload Bulk SOA Files</field>
+    <field name="res_model">upload.bulk.soa.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="context">{'default_collection_id': active_id}</field>
+</record>
+
+    
+    <record id="view_form_employee_payment_collection" model="ir.ui.view">
+    <field name="name">employee.payment.collection.form</field>
+    <field name="model">employee.payment.collection</field>
+    <field name="arch" type="xml">
+        <form>
+            <sheet>
+                <group>
+                    <group>
+                        <field name="month_name"/>
+                    </group>
+                    <group>
+                        <field name="excel_file" filename="excel_filename"/>
+                        <button name="action_import_excel" type="object" string="Import Excel" class="btn-primary"/>
+                    </group>
+                    <group>
+                        <button name="generate_soa_details" string="Upload SOA" type="object" class="btn-primary"/> 
+                        <button name="%(action_upload_bulk_soa)d" type="action" string="Upload Bulk SOA Files" class="btn-primary" context="{'active_id': id}"/>
+                    </group>
+
+                </group>
+                <field name="line_ids">
+                    <list editable="bottom">
+                        <field name="sl_no"/>
+                        <field name="employee_name"/>
+                        <field name="division"/>
+                        <field name="customer_code"/>
+                        <field name="customer_name"/>
+                        <field name="due_type"/>
+                        <field name="due_amount" sum='total'/>
+                        <field name="collected_amount" sum='total'/>
+                    </list>
+                </field>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="view_list_employee_payment_collection" model="ir.ui.view">
+    <field name="name">employee.payment.collection.list</field>
+    <field name="model">employee.payment.collection</field>
+    <field name="arch" type="xml">
+        <list  editable="bottom">
+            <field name="month_name"/> 
+            <field name="line_ids">
+                <list editable="bottom">
+                    <field name="sl_no"/>
+                    <field name="employee_name"/>
+                    <field name="division"/>
+                    <field name="customer_code"/>
+                    <field name="customer_name"/>
+                    <field name="due_type"/>
+                    <field name="due_amount"/>
+                    <field name="collected_amount"/>
+                </list>
+            </field>
+            <field name="lock_month"/> 
+            <button name="action_open_form_view" string="View" type="object"/>
+        </list>
+    </field>
+</record>
+
+<!-- Action to open the tree and form view -->
+<record id="action_employee_payment_collection" model="ir.actions.act_window">
+    <field name="name">Employee Payment Collections</field>
+    <field name="res_model">employee.payment.collection</field>
+    <field name="view_mode">list,form</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            Create your first employee payment collection.
+        </p>
+    </field>
+</record>
+
+
+
+      <record id="view_form_employee_payment_collection_line" model="ir.ui.view">
+     <field name="name">employee.payment.collection.line.form</field>
+     <field name="model">employee.payment.collection.line</field>
+     <field name="arch" type="xml">
+         <form string="Payment Collection Line">
+             <sheet>
+                 <group>
+                     <group>
+                         <group>
+                             <field name="sl_no" readonly="1"/>
+                             <field name="month_name" readonly="1"/>
+                         </group>
+                         <group>
+                             <field name="employee_name" readonly="1"/>
+                             <field name="division" readonly="1"/>
+                         </group>
+                         <group>
+                             <field name="customer_code" readonly="1"/>
+                             <field name="customer_name" readonly="1"/>
+                         </group>
+                         <group>
+                             <field name="due_type" readonly="1"/>
+                             <field name="due_amount" readonly="1"/>
+                         </group>
+                         <group>
+                             <field name="collected_amount"/>
+                             <field name="verified"/>
+                         </group>
+                         <group>
+                             <field name="activity_count" readonly="1"/>
+                             <field name="activity_ids" widget="list_activity"/>
+                         </group>
+                         <group>
+                             <button name="208" type="action" string="Email" icon="fa-envelope"/>
+                         </group>
+                     </group>
+                 </group>
+             </sheet>
+               <chatter reload_on_post="True"/>
+         </form>
+     </field>
+ </record>
+
+
+<record id="view_list_employee_payment_collection_line" model="ir.ui.view">
+    <field name="name">employee.payment.collection.list.line</field>
+    <field name="model">employee.payment.collection.line</field>
+    <field name="arch" type="xml">
+        
+        <list editable="bottom" decoration-success="verified">
+            <field name="sl_no" readonly="1"/>
+            <field name="month_name" readonly="1"/>
+            <field name="employee_name" readonly="1"/>
+            <field name="division" readonly="1"/>
+            <field name="customer_code" readonly="1"/>
+            <field name="customer_name" readonly="1"/>
+            <field name="due_type" readonly="1"/>
+            <field name="due_amount" readonly="1" sum='total'/>
+            <field name="collected_amount" sum='total'/>
+           <field name="activity_ids" optional="show" widget="list_activity"/>
+           <field name="activity_count"/>
+           <field name="verified" readonly="is_boolean_field"/> 
+            <button name="208" type="action" string="Email" icon="fa-envelope"/>
+             <button name="action_open_form_view" string="View" type="object"/>
+
+        </list>
+   
+
+    </field>
+</record>
+
+<record id="action_send_bulk_payment_reminders" model="ir.actions.server">
+    <field name="name">Send Payment Reminder Email</field>
+    <field name="model_id" ref="payment_collection.model_employee_payment_collection_line"/>
+    <field name="binding_model_id" ref="payment_collection.model_employee_payment_collection_line"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="code">action = records.action_bulk_send_reminder()</field>
+</record>
+
+
+
+<record id="action_employee_payment_collection_line" model="ir.actions.act_window">
+    <field name="name">Employee Payment Collections Entry</field>
+    <field name="res_model">employee.payment.collection.line</field>
+    <field name="view_mode">list,form</field>
+     <field name="domain">[('collection_id.lock_month', '=', False)]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+            Create your first employee payment collection.
+        </p>
+    </field>
+</record>
+
+    <record id="view_employee_payment_soa_detail_tree" model="ir.ui.view">
+        <field name="name">employee.payment.soa.detail.tree</field>
+        <field name="model">employee.payment.soa.detail</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" string="SOA Details">
+<!--                 <field name="collection_id" modifiers="{'invisible': True}"/> -->
+                <field name="employee_id" />
+                <field name="division_id" /> 
+                <field name="customer_id"/>
+                <field name="outstanding_amount"/>
+                <field name="soa_file" filename="SOA Document"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_employee_payment_soa_detail_form" model="ir.ui.view">
+        <field name="name">employee.payment.soa.detail.form</field>
+        <field name="model">employee.payment.soa.detail</field>
+        <field name="arch" type="xml">
+            <form string="SOA Detail">
+                <sheet>
+                <group>
+                    <field name="collection_id" invisible="1"/>
+                    <field name="employee_id"/>
+                    <field name="division_id"/>
+                    <field name="customer_id"/>
+                    <field name="outstanding_amount"/>
+                    <field name="soa_file" filename="SOA Document"/>
+                </group>
+                </sheet>
+                  <chatter reload_on_post="True"/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_employee_payment_soa_detail" model="ir.actions.act_window">
+        <field name="name">SOA Details</field>
+        <field name="res_model">employee.payment.soa.detail</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first SOA detail record
+            </p>
+        </field>
+    </record>
+
+
+
+<menuitem id="menu_crm_payment_root" parent="crm.crm_menu_root" name="Payments" sequence="101"/>
+
+
+<menuitem id="menu_employee_payment_soa_detail"
+              name="SOA Details"
+              parent="menu_crm_payment_root"
+              action="action_employee_payment_soa_detail"
+              groups="group_employee_payment_manager,base.group_system"
+              sequence="20"/>
+
+<!-- Manager Menu -->
+<menuitem 
+    id="menu_employee_payment_collection"
+    name="Employee Payment Collection"
+    parent="menu_crm_payment_root"
+    action="action_employee_payment_collection"
+    groups="group_employee_payment_manager,base.group_system"
+    sequence="105"
+/>
+
+<!-- Employee Menu -->
+<menuitem 
+    id="menu_employee_payment_collection_line"
+    name="Employee Payment Collection Entry"
+    parent="menu_crm_payment_root"
+    action="action_employee_payment_collection_line"
+    groups="group_employee_payment_employee,base.group_system"
+    sequence="106"
+/>
+
+
+
+</odoo>

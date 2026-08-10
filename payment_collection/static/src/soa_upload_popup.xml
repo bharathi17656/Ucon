@@ -1,0 +1,39 @@
+<templates xml:space="preserve">
+    <t t-name="payment_collection.SOAUploadPopup">
+        <div class="modal o_modal_fullscreen d-flex flex-column p-4">
+            <div class="d-flex justify-content-between mb-3">
+                <select class="form-control w-25" t-on-change="onChangeEmployee">
+                    <option>Select Employee</option>
+                    <option>John Doe</option>
+                    <option>Jane Smith</option>
+                </select>
+                <select class="form-control w-25" t-on-change="onChangeDivision">
+                    <option>Select Division</option>
+                    <option>Sales</option>
+                    <option>Tech</option>
+                </select>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Outstanding Amount</th>
+                        <th>Upload SOA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="state.customers" t-as="customer">
+                        <tr>
+                            <td><t t-esc="customer.name"/></td>
+                            <td><t t-esc="customer.amount"/></td>
+                            <td><input type="file" t-on-change="(ev) => onUploadFile(ev, customer)"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+            <div class="text-right mt-3">
+                <button class="btn btn-secondary" t-on-click="close">Close</button>
+            </div>
+        </div>
+    </t>
+</templates>

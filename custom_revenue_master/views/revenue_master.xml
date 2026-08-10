@@ -1,0 +1,88 @@
+<odoo>
+    <record id="view_monthly_crm_revenue_form" model="ir.ui.view">
+        <field name="name">monthly.crm.revenue.form</field>
+        <field name="model">monthly.crm.revenue</field>
+        <field name="arch" type="xml">
+            <form string="Monthly CRM Revenue">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <field name="revenue_line_ids">
+                        <list editable="bottom">
+                            <field name="tag_id" class="o_list_char_width_40"/>
+                            <field name="revenue_target" class="o_list_number_width_20"/>
+                            <field name="revenue_achieved" class="o_list_number_width_20"/>
+                            <field name="achieved_percentage" readonly="1" class="o_list_number_width_20"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_monthly_crm_revenue_tree" model="ir.ui.view">
+        <field name="name">monthly.crm.revenue.tree</field>
+        <field name="model">monthly.crm.revenue</field>
+        <field name="arch" type="xml">
+            <list string="Monthly CRM Revenue">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_monthly_crm_revenue" model="ir.actions.act_window">
+        <field name="name">Monthly CRM Revenue</field>
+        <field name="res_model">monthly.crm.revenue</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <record id="view_monthly_crm_revenue_line_form" model="ir.ui.view">
+        <field name="name">monthly.crm.revenue.line.form</field>
+        <field name="model">monthly.crm.revenue.line</field>
+        <field name="arch" type="xml">
+            <form string="Monthly CRM Revenue Line">
+                <sheet>
+                    <group>
+                        <field name="revenue_id" options="{'no_create': True}" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="tag_id"/>
+                        <field name="revenue_target"/>
+                    </group>
+                    <group>
+                        <field name="revenue_achieved"/>
+                        <field name="achieved_percentage" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_monthly_crm_revenue_line_tree" model="ir.ui.view">
+        <field name="name">monthly.crm.revenue.line.tree</field>
+        <field name="model">monthly.crm.revenue.line</field>
+        <field name="arch" type="xml">
+            <list string="Monthly CRM Revenue Lines">
+                <field name="revenue_id"/>
+                <field name="tag_id"/>
+                <field name="revenue_target"/>
+                <field name="revenue_achieved"/>
+                <field name="achieved_percentage"/>
+            </list>
+        </field>
+    </record>
+
+
+     <record id="action_monthly_crm_revenue_line" model="ir.actions.act_window">
+        <field name="name">Monthly CRM Revenue Line</field>
+        <field name="res_model">monthly.crm.revenue.line</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_crm_revenue_root" parent="crm.crm_menu_root" name="Targets" sequence="101"/>
+
+    <menuitem id="menu_monthly_crm_revenue" name="Revenue"
+              parent="menu_crm_revenue_root" action="action_monthly_crm_revenue"/>
+</odoo>

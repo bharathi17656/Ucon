@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="email_compose_message_wizard_inherit_form">
+        <field name="name">mail.compose.message.form.inherit</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_ids']/.." position="after">
+                <!-- Use a regular text field for CC -->
+                <field name="partner_cc_ids" placeholder="Enter emails for CC, separated by commas" />
+                <!-- Use a regular text field for BCC -->
+                <!-- <field name="partner_bcc_ids" placeholder="Enter emails for BCC, separated by commas" /> -->
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- <record model="ir.ui.view" id="custom_view_mail_form_inherit">
+        <field name="name">custom.view.mail.form.inherit</field>
+        <field name="model">mail.mail</field>
+        <field name="inherit_id" ref="mail.view_mail_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email_cc']" position="after">
+              
+                <field name="email_bcc" />
+            </xpath>
+        </field>
+    </record> -->
+</odoo>

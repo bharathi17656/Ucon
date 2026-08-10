@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_crm_lead_kanban_custom" model="ir.ui.view">
+        <field name="name">crm.lead.kanban.unread</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_kanban_content']" position="inside">
+                <div class="oe_kanban_bottom_left">
+                    <span class="badge badge-info o_badge"
+                          invisible="not message_unread">
+                        <i class="fa fa-envelope"></i>
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

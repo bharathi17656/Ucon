@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_employee_payment_form" model="ir.ui.view">
+        <field name="name">hr.employee.payment.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Payment Collection">
+                    <field name="payment_ids" nolabel="1">
+                        <list editable="bottom">
+                             <field name="sl_no"/>
+                            <field name="division" />
+                            <field name="customer_code"/>
+                            <field name="customer_name"/>
+                            <field name="over_due_amount" sum="Total"/>
+                            <field name="over_due_collected" sum="Total"/>
+                            <field name="due_amount" sum="Total"/>
+                            <field name="due_collected" sum="Total"/>
+                            <field name="non_due_amount" sum="Total"/>
+                            <field name="non_due_collected" sum="Total" />
+                            <field name="total_outstanding" sum="Total"/>
+                            <field name="total_collected" sum="Total" />
+                        </list>
+
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+
+    <record id="view_eta_delivery_form" model="ir.ui.view">
+        <field name="name">hr.eta.delivery.form.inherit</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='opportunity_partner']//field[@name='partner_id']" position="after">
+                    <field name="date_deadline" string="Forecast Date"/>
+            </xpath>
+            
+            <xpath expr="//notebook" position="inside">
+                <page string="Delivery-ETA">
+                   <group>
+                        <group>
+                            <field name="eta_po_ref"/>
+                            <field name="eta_supplier_name"/>
+                        </group>
+                        <group>
+                            <field name="material_from"/>
+                        </group>
+                    </group>
+                    <field name="eta_date_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="eta_date"/>
+                            <field name="eta_description"/>
+                        </list>
+
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+
+</odoo>

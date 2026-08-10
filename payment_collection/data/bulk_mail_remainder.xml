@@ -1,0 +1,19 @@
+<odoo>
+  <record id="email_template_payment_overdue" model="mail.template">
+    <field name="name">Payment Overdue Notification</field>
+    <field name="model_id" ref="payment_collection.model_employee_payment_collection_line"/>
+    <field name="subject">Payment Overdue: ${object.customer_name} - ${object.division}</field>
+    <field name="email_to">${object.customer_id.email}</field>
+    <field name="body_html"><![CDATA[
+        <p>Dear Sir,</p>
+        <p>This is a final reminder regarding the outstanding payment. Details as attached on the SOA.</p>
+        <p>Despite our previous follow-ups, we have yet to receive the payment.</p>
+        <p>This continued non-payment is concerning and reflects poorly on the professional terms of our business relationship.</p>
+        <p>We kindly request that you arrange for immediate settlement of the outstanding amount to avoid any further action or disruption in services.</p>
+        <p>Please treat this matter with urgency. If the payment has already been processed, kindly share the transaction details at your earliest convenience.</p>
+        <p>We appreciate your prompt attention to this issue.</p>
+        <p>With Regards,<br/>
+    ]]></field>
+    <field name="auto_delete" eval="False"/>
+</record>
+</odoo>

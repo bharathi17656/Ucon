@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_done_activity,access.done.activity,model_crm_done_activitys,,1,1,1,1
+access_hr_employee_dashboard_lead,access.hr.employee.dashboard.lead,hr.model_hr_employee,crm_dashboard.dashboard_team_leader,1,0,0,0
+access_hr_employee_dashboard_user,access.hr.employee.dashboard.user,hr.model_hr_employee,payment_collection.group_employee_payment_employee,1,0,0,0
+
+

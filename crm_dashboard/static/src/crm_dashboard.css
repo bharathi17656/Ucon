@@ -1,0 +1,1806 @@
+.o_list_custom_width_40 { width: 40% !important; min-width: 200px; }
+.o_list_custom_width_20 { width: 20% !important; min-width: 100px; }
+
+.total-row-payment{
+   position: sticky;
+    bottom: 0;
+    background: #f5f5f5;
+    font-weight: bold;
+    z-index: 1;
+    border-top: 2px solid #000;
+}
+
+.total-row-payment td{
+   text-align: right;
+}
+
+.custom_overflow {
+  overflow-y: scroll !important;
+  min-width:486px;
+}
+
+
+.filter-navbar{
+  display:none;
+  margin: 5px 11px;
+  flex-direction: column;
+  gap: 8px;
+
+}
+.filter-toggle {
+  display: flex;
+  background: none;
+  align-items: center;
+  color: #a48497;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 51px;
+  width: auto;
+  justify-content: flex-end;
+}
+
+.filter-toggle i {
+  margin-right: 8px;
+}
+
+.filter-dropdown {
+  display: flex;
+  gap: 12px;
+  width: auto;
+  background: #a48497e3;
+  padding: 10px;
+  margin: 5px 14px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  transform: translateY(-13%);
+  transition: ease-in-out, transform 0.3s ease-in-out;
+}
+
+.filter-dropdown .show {
+  opacity: 1;
+  transform: translateY(-13%);
+}
+
+.d-none1 {
+  display: none !important;
+}
+
+
+ .filter-dropdown button{
+    padding:8px;
+  }
+
+.dashboard-parent {
+  background: #faf8f9;
+  min-width: 320px;
+  overflow-x: auto; /* Ensures no content is cut off */
+}
+
+.dashboard-main {
+  max-width: 87rem;
+}
+
+.filter-tap {
+  padding: 5px 12px;
+}
+.top-grid-box {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  padding: 11px;
+  gap: 10px;
+}
+
+.top-grid-left {
+  background: white;
+  padding: 4px 18px 22px 17px;
+  border-radius: 9px;
+/*   max-width: 52rem; */
+}
+.booking {
+  padding: 11px;
+  background: #ffffff;
+}
+
+.booking h1 {
+  font-size: 22px;
+  font-weight: 500;
+  padding: 15px 10px 20px 10px;
+}
+
+.booking-value {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 16px 22px;
+  font-size: 16px;
+  background: #eef2e4;
+  border-radius: 6px;
+}
+
+.booking-value .b1 {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  gap: 20px;
+}
+.booking-value .b2 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.booking-value .b3 {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  gap: 10px;
+}
+
+.booking-value .b2 .first {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.booking-value .b2 .second {
+  font-size: 18px;
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.booking-value .b3 {
+  display: flex;
+  flex-direction: column;
+  font-size: 20px;
+  justify-content: flex-end;
+}
+
+.booking-value .order-book-person{
+   justify-content: center;
+}
+
+.booking-value .b3 p {
+  color: #9b798e;
+  font-weight: bold;
+}
+
+.filter-select,.filter-select-revenue  {
+  background-color: white;
+}
+
+.quote-bg {
+  background-color: #e4ebf3;
+}
+
+.top-grid-right {
+  background: white;
+  padding: 4px 18px 22px 17px;
+  border-radius: 9px;
+  min-width: 32rem;
+}
+.qu-submit {
+  padding: 11px;
+  background: #ffffff;
+}
+
+.header-filter {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-filter h1 {
+  font-size: 22px;
+  font-weight: 500;
+  padding: 15px 10px 20px 10px;
+}
+.month-filter-revenue {
+  padding: 0px;
+  border-radius: 5px;
+  height: 32px;
+  margin-top: -5px;
+  font-size: 15px;
+  display: flex;
+  gap: 2px;
+  background: #f7f8f3;
+}
+.month-filter {
+  padding: 0px;
+  border-radius: 5px;
+  height: 32px;
+  margin-top: 13px;
+  font-size: 15px;
+  display: flex;
+  gap: 2px;
+  background: #f7f8f3;
+}
+
+.month-filter .month {
+  /* background: #a48497;
+  padding: 5px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #f7f8f3; */
+
+  background: #a48497;
+  padding: 6px 14px 6px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #f7f8f3;
+  transition: all 0.2s ease; /* Smooth transition */
+  cursor: pointer;
+}
+
+.month1 {
+  background: #a48497;
+  padding: 6px 7px 6px 5px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #f7f8f3;
+  transition: all 0.2s ease; /* Smooth transition */
+  cursor: pointer;
+}
+.month-filter .year {
+  /* padding: 6px 7px 6px 0px;
+  color: #a48497;
+  font-weight: bold; */
+  padding: 6px 6px 6px 7px;
+  color: #a48497;
+  font-weight: bold;
+  transition: all 0.2s ease; /* Smooth transition */
+  cursor: pointer;
+}
+
+.quote-submit-value {
+  display: flex;
+  gap: 15px;
+  justify-content: space-around;
+  padding-top: 0px;
+}
+
+.quote-value {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  justify-content: space-evenly;
+  padding: 7px 37px;
+  border-radius: 10px;
+  background: #f2e4f3;
+}
+
+.quote-value p {
+  font-size: 15px;
+  color: black;
+  font-weight: 600;
+  padding: 11px 34px 11px 0px;
+}
+
+.quote-value h1 {
+  font-size: 19px;
+  font-weight: 700;
+  padding: 10px 0px;
+}
+
+.quote-count-bg {
+  background-color: #f2e4e4;
+}
+
+.second-box-bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  padding: 0px 11px;
+  gap: 10px;
+}
+
+.quote-graph-view-box,
+.forcast-graph-view-box {
+  background: white;
+  padding: 4px 11px 4px 2px;
+  border-radius: 9px;
+/*   max-width: 52rem; */
+}
+.quote-graph-view-box{
+  height:708px;
+}
+.forcast-graph-view-box{
+    max-width: 86rem;
+    margin-top: 10px;
+  
+
+}
+
+.top-table-box-two{
+  
+  margin-top: 10px;
+  max-width: 86rem;
+  background: white;
+    padding: 11px 29px 34px 29px;
+    border-radius: 9px;
+    min-width: 32rem;
+
+}
+
+.top-table-box-two .table-view-box{
+  
+    max-height: 26rem;
+    overflow: auto;
+}
+
+.top-table-box-two .table-view-box-height{
+  
+    max-height: 36rem;
+   
+}
+
+
+.top-table-box-two .table-view-box table thead {
+    position: sticky;
+    top: 0;
+    background: white; /* Keep header visible */
+    z-index: 100; /* Ensure header stays above the content */
+}
+
+
+.graph-view-box,
+.table-data-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.min-graph-area {
+  min-height: 197px;
+}
+.top-table-box,
+.bottom-table-box {
+  background: white;
+  padding: 11px 29px 34px 29px;
+  border-radius: 9px;
+  min-width: 32rem;
+}
+
+.activity-value {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+ padding: 21px 29px;
+    width: 219px;
+  border-radius: 10px;
+  background: #f2e4f3;
+  align-items: center;
+  background: #e6f2e4;
+}
+
+.activity-bg {
+  background-color: #f2f0e4;
+}
+.activity-value p {
+  font-size: 15px;
+  color: black;
+  font-weight: 600;
+}
+.activity-value h1 {
+  font-size: 19px;
+  font-weight: 700;
+  padding: 10px 12px;
+}
+
+.activity-value h1 .span2 {
+  color: #f38d3d;
+}
+
+.dashboard-table {
+  margin-top: 28px;
+}
+
+.dashboard-table tbody tr:nth-child(even),
+.dashboard-table thead tr {
+  background-color: #f6f4f5; /* Light gray background */
+}
+
+.dashboard-table tbody tr,
+.dashboard-table thead tr {
+  border-color: #f6f4f5;
+}
+
+.dashboard-table thead tr td {
+  font-weight: 500;
+}
+
+.booking-value .b1,
+.dashboard-table thead tr td,
+.dashboard-table tbody tr td,
+.quote-value p,
+.activity-value p {
+  color: #616161;
+  font-weight: 600;
+}
+
+.booking-value .b2 .first,
+.booking-value .b2 .second {
+  font-weight: 700;
+  color: #212529;
+}
+
+.dashboard-table thead tr td:nth-child(2),
+.dashboard-table thead tr td:nth-child(3) {
+  text-align: center !important;
+}
+
+.forcast-graph-view-box .header-filter,
+.quote-graph-view-box .header-filter {
+  padding: 6px 15px;
+}
+
+.custom-graph-crm {
+  display: block !important;
+  box-sizing: border-box !important;
+  height: 150px !important;
+  width: 150px !important;
+}
+
+
+.crm-graph-1{
+   height: 267px !important;
+  width: 540px !important;
+}
+
+.min-graph-area h1 {
+  font-size: 18px;
+  font-weight: 500;
+/*   margin-bottom: 15px; */
+  text-decoration: underline;
+}
+
+.quote-graph-view-area,
+.forcast-graph-view-area {
+  justify-content: space-evenly;
+  padding: 10px;
+}
+.quote-graph-view-area
+{
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.custom-legend {
+  list-style: none;
+  padding: 0;
+  display: flex
+;
+  flex-direction: column;
+  gap: 2px;
+ 
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  height: 128px;
+}
+
+.custom-legend li {
+  display: flex;
+  align-items: center;
+}
+
+.legendValue {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  border-radius: 3px;
+}
+
+.legendValue p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.legendValue span {
+  width: 21px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.min-graph-area .separate {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.min-graph-area .chart-type{
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.min-graph-area .chart-type select{
+      width: 12%;
+}
+
+.no-data-chart{
+  width: 543px;
+    height: 266px;
+   background-image: url(../description/no_data_chart1.png);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    opacity:0.4;
+  }
+
+.reset-btn-dashboard{
+  background: #a48497 !important;
+    color: white !important;
+}
+
+.onclick-box{
+  cursor:pointer
+}
+
+
+.others-div{
+
+  height: 144px;
+}
+
+
+
+.justify-div{
+  justify-content: center;
+}
+.others-persontage{
+  padding-bottom: 22px;
+}
+
+
+.second-view-box-two,.top-table-box-two{
+  margin-left:7px;
+}
+
+.onclick-box{
+  cursor:pointer
+}
+
+.below-pipeline-box{  
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.payment-showbox{
+  height:454px;
+}
+.payment-showbox header-filter {
+  width:80%;
+}
+
+
+
+@media (min-width: 320px) and (max-width: 480px) {
+  .dashboard-parent{
+    padding:10px !important;
+  }
+
+  .filter-navbar{
+    display:flex;
+    width: 67%;
+    display:flex !important;
+  }
+  .filter-navbar .filter-toggle{
+    justify-content: flex-end;
+    padding: 9px 2px;
+    width:110%;
+  }
+   .filter-navbar .filter-toggle i{
+     font-size:35px;
+   }
+  
+  .filter-dropdown{
+        flex-direction: column;
+        margin: 10px 2px 10px 6px;
+        padding: 7px;
+        box-shadow: none;
+        background: none;
+        justify-content: center;
+}
+
+
+  
+  .dashboard-main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .filter-tap {
+  
+    display: none !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: unset !important;
+  }
+
+  .month-filter {
+        font-size: 12px;
+    height: 29px;
+}
+ 
+  .top-grid-box {
+      width: 294px;
+    padding: 10px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .top-grid-left {
+    width: 294px;
+    padding: 10px;
+  }
+
+  .booking {
+    padding: 5px;
+  }
+  .booking h1 {
+    font-size: 15px;
+  }
+  .booking-value {
+    gap: 8px;
+    justify-content: space-between;
+    padding: 10px 15px;
+  }
+  .booking-value .b1 {
+    gap: 16px;
+    font-size: 14px;
+  }
+  .booking-value .b2 .first {
+    font-size: 11px;
+  }
+  .booking-value .b2 .second {
+    font-size: 14px;
+  }
+
+  .booking-value .b3 {
+    font-size: 13px;
+  }
+
+ 
+  .top-grid-right {
+    display: flex !important;
+      width: 294px;
+    padding: 10px;
+    flex-direction: column;
+    min-width:0px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qu-submit {
+    display: flex;
+    flex-direction: column;
+    width: 17rem;
+    padding:0px;
+   
+        align-items: center;
+  }
+
+
+
+  .qu-submit .header-filter h1 {
+    font-size: 16px;
+    padding: 3px;
+    margin-top: 15px;
+    font-weight: 500;
+  }
+
+  .quote-submit-value {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    margin-top: 16px;
+  }
+  .quote-submit-value .quote-value {
+   
+        width: 266px;
+  }
+ .quote-submit-value .quote-value p{
+      font-size: 14px;
+    padding: 5px;
+}
+
+   .quote-submit-value .quote-value h1{
+      font-size: 14px;
+    padding: 5px;
+}
+
+
+  .second-box-bottom {
+    display: flex;
+    flex-direction: column;
+  width: 294px;
+    padding: 10px 5px;
+    justify-content: center;
+    align-items: center;
+
+  }
+
+
+  .quote-graph-view-box{
+    padding: 15px;
+  }
+ .graph-view-box{
+   width:294px;
+ }
+
+  .quote-graph-view-box .header-filter{
+    padding: 0px;
+  }
+ .quote-graph-view-box .header-filter h1{
+  font-size: 15px;
+    margin-top: 6px;
+  }
+
+  
+  .quote-graph-view-area {
+    flex-direction: column;
+    
+    gap: 30px;
+    margin-top: 14px;
+  }
+  
+
+  .separate{
+    flex-direction: column;
+  }
+
+.custom-legend{
+    height: 165px;
+  }
+
+.quote-graph-view-box .header-filter , .forcast-graph-view-box .header-filter{
+  padding:0px;
+}
+
+.quote-graph-view-box .header-filter h1 {
+   font-size: 17px;
+    margin-top: 17px;
+    padding: 0px;
+}
+
+.forcast-graph-view-box .header-filter h1{
+    font-size: 17px;
+    margin-top: 5px;
+  }
+
+.left-graph-area,.right-graph-area{
+      display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.left-graph-area h1,.right-graph-area h1{
+  font-size: 15px;
+}
+
+.forcast-graph-view-area {
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 14px;
+  }
+.top-table-box{
+    min-width: 0px;
+  padding: 10px;
+    width: 293px;
+}
+.top-table-box .header-filter h1{
+      font-size: 17px;
+}
+.top-table-box .header-filter {
+  justify-content: space-between;
+  padding: 8px;
+}
+.table-view-box{
+ overflow-x: scroll;
+}
+
+ .bottom-table-box {
+     min-width: 0px;
+     padding: 10px 5px 14px 5px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+ .bottom-table-box .header-filter h1{
+  font-size: 17px;
+    margin-right: 184px;
+}
+
+.bottom-table-box .quote-submit-value{
+    width: 259px;
+    justify-content: center;
+    align-items: center;
+}
+
+.bottom-table-box .quote-submit-value .activity-value{
+    padding: 10px;
+    width: 259px;
+}
+
+.bottom-table-box .quote-submit-value .activity-value p,.bottom-table-box .quote-submit-value .activity-value h1{
+  font-size:15px;
+}
+
+
+  .dashboard-table thead{
+    font-size: 13px;
+  }
+  .dashboard-table tbody{
+    font-size: 12px;
+  }
+
+
+.top-grid-right .qu-submit .header-filter{
+      width: 268px;
+}
+
+.top-table-box-two{
+  min-width: 0px;
+  padding: 10px;
+  width: 293px;
+}
+.crm-graph-1 {
+    height: 168px !important;
+    width: 274px !important;
+}
+  .no-data-chart {
+    width: 258px;
+    height: 135px;
+  }
+
+
+  .reset-btn-dashboard{
+    padding:6px;
+  }
+}
+
+
+
+
+
+
+/* Small Devices (Mobile Phones) */
+@media (min-width: 481px) and  (max-width: 600px) {
+  .dashboard-parent{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .dashboard-main{
+    display: flex
+    ;
+        flex-direction: column;
+        width: 462px;
+        justify-content: center;
+        align-items: center;
+  }
+.filter-navbar{
+  
+  width:90%;
+  display:flex !important;
+}
+  .reset-btn-dashboard{
+    padding:6px;
+  }
+
+  .filter-toggle{
+    width:110%;
+  }
+  .filter-dropdown{
+    flex-direction: column;
+    width: 95%;
+  }
+
+    .filter-navbar .filter-toggle i{
+    
+     font-size: 35px;
+
+  }
+
+  .filter-tap{
+    display: none !important;
+
+    justify-content: center;
+    align-items: center;
+  }
+  .top-grid-box{
+    display: flex
+;
+    flex-direction: column;
+    width: 462px;
+  }
+
+  .booking .booking-value{
+    justify-content: space-evenly;
+  }
+
+
+  .top-grid-right{
+    min-width: 0px ;
+    border-radius: 8px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  .top-grid-right .qu-submit{
+    width: 407px;
+  }
+
+  .quote-submit-value .quote-value{
+    padding: 7px 16px;
+    font-size: 10px;
+    width: 198px;
+  }
+
+  .second-box-bottom{
+    display: flex
+;
+    flex-direction: column;
+    width: 462px;
+  }
+
+  .quote-graph-view-box{
+    width: 438px;
+  }
+
+  .quote-graph-view-box .header-filter{
+    padding: 5px;
+  }
+
+  .quote-graph-view-area{
+    align-items: center;
+    overflow-x: auto;
+    gap: 29px;
+  }
+
+  .left-graph-area{
+    display: flex
+    ;
+        flex-direction: column;
+        align-items: center;
+  }
+
+  .separate{
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .custom-legend{
+        height: 210px;
+  }
+
+  .table-data-right{
+    align-items: center;
+}
+
+  .top-table-box{
+    min-width: 440px;
+    justify-content: center;
+    display: flex;
+    padding:20px;
+    flex-direction: column;
+    align-items: center;
+}
+  .top-table-box .header-filter{
+    width: 363px;
+
+  }
+
+  .top-table-box .header-filter h1{
+    padding: 5px;
+    margin-top: 11px;
+  }
+
+  .table-view-box{
+    width: 400px;
+  }
+
+
+
+  .bottom-table-box{
+    min-width: 379px !important;
+    padding: 17px;
+    display: flex
+;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 438px;
+  }
+
+
+  .bottom-table-box .header-filter{
+    justify-content: unset;
+    margin-right: 259px;
+  }
+
+  .bottom-table-box .header-filter h1{
+    padding: 7px 7px 21px 7px;
+  }
+
+  .bottom-table-box .quote-submit-value{
+    width: 384px;
+    height: 103px;
+    justify-content: space-evenly;
+  }
+
+  .bottom-table-box .quote-submit-value .activity-value{
+    padding: 5px;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+  .crm-graph-1 {
+    height: 251px !important;
+    width: 408px !important;
+}
+
+  .no-data-chart {
+    width: 371px;
+    height: 197px;
+    }
+  .forcast-graph-view-area {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .top-table-box-two{
+    min-width:0px;
+}
+  
+.top-table-box-two .table-view-box {
+  width: 400px;
+}
+
+
+  .min-graph-area .chart-type{
+    justify-content: center;
+  }
+
+  .payment-showbox .header-filter{
+    gap: 143px;
+    align-items: baseline;
+    margin-right: 0px;
+    justify-content: space-evenly;
+  }
+}
+
+@media (min-width: 601px) and  (max-width: 690px) {
+
+
+  .filter-navbar{
+    display:flex !important;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .reset-btn-dashboard{
+    padding:6px;
+  }
+
+  .filter-navbar .filter-dropdown{
+    flex-direction: column;
+    box-shadow: none;
+    background: none;
+
+  }
+
+   .filter-navbar .filter-toggle i{
+    
+     font-size: 36px;
+
+  }
+
+  .filter-tap{
+        display: none !important;
+  }
+
+  
+  .top-grid-box{
+       grid-template-columns: 57% 40%;
+  }
+  .top-grid-left{
+    grid-template-columns: 2fr !important;
+
+  }
+  .top-grid-left .booking .booking-value{
+    justify-content: space-evenly;
+    gap:0px;
+  }
+  
+  .top-grid-right{
+    min-width: 0px;
+  }
+  .top-grid-right .qu-submit{
+    display: flex
+;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+  }
+
+  .top-grid-right .qu-submit .header-filter{
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+  }
+  .top-grid-right .qu-submit .header-filter h1{
+    padding: 5px;
+    
+  }
+
+  .top-grid-right .qu-submit .header-filter .month-filter{
+    margin-left: 67px;
+  
+  }
+
+
+  .top-grid-right .qu-submit .quote-submit-value {
+   
+      display: flex
+  ;
+      flex-direction: column;
+      gap: 38px;
+      width: 220px;
+      justify-content: center;
+     padding: 10px;
+
+  
+  
+  }
+
+  .second-box-bottom{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .second-box-bottom .graph-view-box{
+    display: flex;
+  }
+
+  .graph-view-box .quote-graph-view-box, .graph-view-box .forcast-graph-view-box{
+    max-width: 60rem;
+  }
+
+
+  .table-data-right{
+    display: flex;
+    flex-direction: column;
+   
+    width: 100%;
+  }
+
+  .top-table-box{
+   
+    padding: 13px;
+    flex: 57%;
+    min-width: auto;
+    padding: 25px;
+
+}
+
+  
+
+  .bottom-table-box{
+    padding: 10px;
+    min-width: auto;
+    width: auto;
+   
+    display: flex;
+     flex: 40%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+
+  .bottom-table-box .quote-submit-value{
+    display: flex
+;
+    flex-direction: column;
+    justify-content: center;
+    gap: 45px;
+  }
+.forcast-graph-view-area{
+  flex-direction: column;
+    gap: 19px;
+    justify-content: center;
+    align-items: center;
+}
+
+  .crm-graph-1 {
+    height: 276px !important;
+    width: 465px !important;
+  }
+  .no-data-chart {
+    width: 461px;
+    height: 266px;
+  }
+  .below-pipeline-box{
+    flex-direction: row;
+    gap: 11px;
+    
+  }
+  .below-pipeline-box .bottom-table-box {
+    justify-content: space-between;
+
+  }
+    .below-pipeline-box .bottom-table-box .quote-submit-value .activity-value{
+      width: 141px;
+    }
+
+  .bottom-table-box .quote-submit-value {
+    gap: 61px;
+    padding: 16px 6px;
+  }
+
+ 
+  .table-view-box .dashboard-table {
+    
+    margin-top: 0px;
+
+    
+  }
+
+  .payment-showbox {
+    height: 408px;
+}
+
+  .second-view-box-two, .top-table-box-two{
+    margin-right:8px;
+  }
+
+  .payment-showbox .header-filter{
+    width: 90%;
+  }
+
+  
+}
+
+
+
+@media (min-width: 691px) and  (max-width: 815px) {
+
+
+  .filter-navbar{
+    display:flex !important;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .reset-btn-dashboard{
+    padding:6px;
+  }
+
+  .filter-navbar .filter-dropdown{
+    flex-direction: column;
+    box-shadow: none;
+    background: none;
+
+  }
+
+   .filter-navbar .filter-toggle i{
+    
+     font-size: 36px;
+
+  }
+
+  .filter-tap{
+        display: none !important;
+  }
+
+  
+  .top-grid-box{
+       grid-template-columns: 57% 40%;
+  }
+  .top-grid-left{
+    grid-template-columns: 2fr !important;
+
+  }
+  .top-grid-left .booking .booking-value{
+    justify-content: space-evenly;
+    gap:0px;
+  }
+  
+  .top-grid-right{
+    min-width: 0px;
+  }
+  .top-grid-right .qu-submit{
+    display: flex
+;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+  }
+
+  .top-grid-right .qu-submit .header-filter{
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+  }
+  .top-grid-right .qu-submit .header-filter h1{
+    padding: 5px;
+    
+  }
+
+  .top-grid-right .qu-submit .header-filter .month-filter{
+    margin-left: 103px;
+  
+  }
+
+
+  .top-grid-right .qu-submit .quote-submit-value {
+   
+      display: flex
+  ;
+      flex-direction: column;
+      gap: 38px;
+      width: 220px;
+      justify-content: center;
+  
+  
+  }
+
+  .second-box-bottom{
+    display: flex
+;
+    flex-direction: column;
+  }
+
+  .second-box-bottom .graph-view-box{
+    display: flex
+;
+  }
+
+  .graph-view-box .quote-graph-view-box, .graph-view-box .forcast-graph-view-box{
+    max-width: 60rem;
+  }
+
+
+  .table-data-right{
+    display: flex
+;
+   
+    flex-direction: column;
+
+   
+    width: 100%;
+  }
+
+  .top-table-box{
+   
+    padding: 13px;
+    flex: 57%;
+    min-width: auto;
+}
+
+  
+
+  .bottom-table-box{
+    padding: 10px;
+    min-width: auto;
+    width: auto;
+   
+    display: flex;
+     flex: 38%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .payment-showbox{
+     flex: 60%;
+  }
+
+
+  .bottom-table-box .quote-submit-value{
+    display: flex
+;
+    flex-direction: column;
+    justify-content: center;
+    gap: 45px;
+  }
+.forcast-graph-view-area{
+  flex-direction: column;
+    gap: 19px;
+    justify-content: center;
+    align-items: center;
+}
+    .below-pipeline-box{
+    flex-direction: row;
+    gap: 11px;
+    
+  }
+  .below-pipeline-box .bottom-table-box {
+    justify-content: inherit;
+
+  }
+    .below-pipeline-box .bottom-table-box .quote-submit-value .activity-value{
+        width: 196px;
+    }
+
+  .bottom-table-box .quote-submit-value {
+    gap: 61px;
+    padding: 16px 6px;
+  }
+
+ 
+  .table-view-box .dashboard-table {
+    
+    margin-top: 0px;
+
+    
+  }
+ .second-view-box-two, .top-table-box-two {
+        margin-right: 9px;
+  }
+
+}
+
+
+
+@media (min-width: 816px) and  (max-width: 1219px) {
+
+
+.filter-navbar {
+  display:flex;
+  width: 99%;
+    justify-content: center;
+    align-items: center;
+}
+  .filter-navbar .filter-toggle{
+    
+        width: 102%;
+
+  }
+
+   .filter-navbar .filter-toggle i{
+    
+     font-size: 36px;
+
+  }
+
+  .filter-navbar .filter-dropdown{
+       width: 97%;
+    margin: 0px;
+    box-shadow: none;
+    padding: 3px;
+    background: none
+    
+  }
+
+
+   .filter-tap {
+  
+    display: none !important;
+   }
+  
+  
+  .top-grid-box{
+    grid-template-columns: 2fr 1fr;
+  }
+  .top-grid-left{
+    grid-template-columns: 2fr !important;
+
+  }
+  .top-grid-left .booking .booking-value{
+    justify-content: space-evenly;
+  }
+  
+  .top-grid-right{
+    min-width: 0px;
+  }
+  .top-grid-right .qu-submit{
+    display: flex
+;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+  }
+
+  .top-grid-right .qu-submit .header-filter{
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+  }
+  .top-grid-right .qu-submit .header-filter h1{
+    padding: 5px;
+    
+  }
+
+  .top-grid-right .qu-submit .header-filter .month-filter{
+    margin-left: 103px;
+  
+  }
+
+
+  .top-grid-right .qu-submit .quote-submit-value {
+   
+      display: flex
+  ;
+      flex-direction: column;
+      gap: 38px;
+      width: 220px;
+      justify-content: center;
+  
+  
+  }
+
+  .second-box-bottom{
+    display: flex
+;
+    flex-direction: column;
+  }
+
+  .second-box-bottom .graph-view-box{
+    display: flex
+;
+  }
+
+
+
+  .graph-view-box .quote-graph-view-box, .graph-view-box .forcast-graph-view-box{
+    max-width: none;
+  }
+
+
+  .table-data-right{
+    display: flex
+;
+    flex-direction: column;
+    flex: 1 1 359px;
+  }
+
+  .top-table-box{
+    min-width: 394px;
+        padding: 16px;
+    flex-grow: 1;
+
+  }
+
+  .bottom-table-box{
+    padding: 10px;
+    min-width: 10px;
+    width: 272px;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+
+  .bottom-table-box .quote-submit-value{
+    display: flex
+;
+    flex-direction: column;
+    justify-content: center;
+    gap: 26px;
+  }
+
+
+  .second-box-bottom  .graph-view-box .forcast-graph-view-box .forcast-graph-view-area{
+    flex-direction: column;
+    align-items: center;
+    gap:5px;
+  }
+  
+
+      .below-pipeline-box{
+    flex-direction: row;
+    gap: 11px;
+    
+  }
+  .below-pipeline-box .bottom-table-box {
+    justify-content: space-around;
+
+  }
+    .below-pipeline-box .bottom-table-box .quote-submit-value .activity-value{
+      width:242px;
+    }
+
+  .bottom-table-box .quote-submit-value {
+    gap: 61px;
+    padding: 16px 6px;
+  }
+
+ 
+  .table-view-box .dashboard-table {
+    
+    margin-top: 0px;
+
+    
+  }
+ .second-view-box-two, .top-table-box-two {
+        margin-right: 9px;
+  }
+  .second-view-box-two .graph-view-box .forcast-graph-view-box .forcast-graph-view-area{
+        flex-direction: column;
+    align-items: center;
+  }
+
+  .below-pipeline-box .bottom-table-box{
+    width:40%;
+  }
+
+
+   .below-pipeline-box .payment-showbox{
+      width:60%;
+  }
+   .below-pipeline-box .payment-showbox .header-filter,.below-pipeline-box .payment-showbox .table-view-box{
+     
+    width: 94%;
+   }
+  .filter-dropdown button{
+    padding:8px;
+  }
+ 
+}
+
+
+/* @media (min-width: 1025px) and  (max-width: 1110px) {
+
+  
+  .top-grid-box{
+        grid-template-columns: 59% 39%;
+  }
+
+    .top-grid-box .top-grid-right{
+       min-width:unset;
+  }
+
+    .second-box-bottom{
+      grid-template-columns: 59% 39%;
+    }
+
+   .top-grid-box .top-grid-right, .table-data-right .top-table-box,  .table-data-right .bottom-table-box{
+      min-width:unset;
+  }
+
+
+   .table-data-right .bottom-table-box{
+     padding: 14px 29px 31px 29px;
+  }
+  .quote-graph-view-box{
+    height: 771px;
+  }
+  
+  
+}
+
+
+@media (min-width: 1111px) and  (max-width: 1219px) {
+      .top-grid-box{
+        grid-template-columns: 59% 39%;
+  }
+
+    .top-grid-box .top-grid-right{
+       min-width:unset;
+  }
+
+    .second-box-bottom{
+      grid-template-columns: 59% 39%;
+    }
+
+   .top-grid-box .top-grid-right, .table-data-right .top-table-box,  .table-data-right .bottom-table-box{
+      min-width:unset;
+  }
+
+
+   .table-data-right .bottom-table-box{
+     padding: 14px 29px 31px 29px;
+  }
+  .quote-graph-view-box{
+    height: 751px;
+  }
+
+  
+  .forcast-graph-view-area{
+    flex-direction: column;
+    align-items: center;
+}
+   .forcast-graph-view-area .left-graph-area, .forcast-graph-view-area .right-graph-area{
+     width: 80%;
+  }
+
+  .forcast-graph-view-area .left-graph-area .separate, .forcast-graph-view-area .right-graph-area .separate{ 
+    flex-direction: column;
+  }
+
+  .booking .booking-value{   
+    padding: 16px 14px;
+  }
+  .booking-value .b2{
+    gap:22px;
+  }
+  .order-book-person{
+    font-size:18px;
+  }
+  .booking-value .justify-div{
+    padding-left: 3px;
+  }
+  
+}
+ */
+
+@media (min-width: 1220px) and  (max-width: 1325px) {
+    .top-grid-box{
+        grid-template-columns: 59% 39%;
+  }
+
+    .top-grid-box .top-grid-right{
+       min-width:unset;
+  }
+
+    .second-box-bottom{
+      grid-template-columns: 59% 39%;
+    }
+
+   .top-grid-box .top-grid-right, .table-data-right .top-table-box,  .table-data-right .bottom-table-box{
+      min-width:unset;
+  }
+
+
+   .table-data-right .bottom-table-box{
+     padding: 14px 29px 31px 29px;
+  }
+  .quote-graph-view-box{
+    height: 710px;
+  }
+  
+}
+
+
+/* @media (min-width: 1025px) and  (max-width: 1325px) {
+
+  .top-grid-box{
+        grid-template-columns: 59% 39%;
+  }
+
+    .top-grid-box .top-grid-right{
+       min-width:unset;
+  }
+
+    .second-box-bottom{
+      grid-template-columns: 59% 39%;
+    }
+
+   .top-grid-box .top-grid-right, .table-data-right .top-table-box,  .table-data-right .bottom-table-box{
+      min-width:unset;
+  }
+
+
+   .table-data-right .bottom-table-box{
+     padding: 14px 29px 31px 29px;
+  }
+  
+  
+  
+}
+ */

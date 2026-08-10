@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+
+        <record id="alert_email_no_active_enquiry_template_sales_person" model="mail.template">
+            <field name="name">No Enquiry</field>
+            <field name="model_id" ref="sale_crm.model_crm_team"/>
+            <field name="subject">No new enquiry for you, {{ object.user_id.name }}</field>
+            <field name="email_from">notifications@uconqator.com</field>
+            <field name="email_to">{{ object.user_id.email }}</field>
+            <field name="body_html" type="html">
+                <p style="margin:0px 0 16px 0;box-sizing:border-box;">Dear <t t-if="object.user_id.name"><t t-out="object.user_id.name"></t>,</t></p>
+                
+                <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                    You have not created any new enquiries in the last 48 hours.
+                </p>
+
+                <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                    To ensure a smooth sales process, please review and update the status accordingly. If there are any issues preventing the transition, kindly inform your team lead.
+                </p>
+
+                <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                    Best regards,<br/><br/>
+                    Administrator<br/>
+                    <t t-esc="'Jersey CRM'"></t>
+                </p>
+            </field>
+        </record>
+
+
+ 
+  
+        <record id="alert_email_completed_lead_overdue_template_sales_person" model="mail.template">
+            <field name="name">Sales:-Stage Completed Delay</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="subject">Urgent: Enquiry/Quotation Pending Submission for Over 24 Hours, Ref : {{object.name}}</field>
+            <field name="email_from">notifications@jerseygroup.com</field>
+            <field name="email_to">{{ object.user_id.email }}</field>
+             <!-- <field name="email_cc">{{ object.team_id.user_id.email }}</field> -->
+            <field name="body_html" type="html">
+                <p style="margin:0px 0 16px 0;box-sizing:border-box;">Dear <t t-if="object.user_id.name"><t t-out="object.user_id.name">,</t></t></p>
+                           <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                            The Enquiry/Quotation has remained in the <span style="background-color: #f8d7da; font-weight: bold;">Quote Completed</span> stage for more than 24 hours without being moved to the 
+                           <span style="background-color: #d4edda; font-weight: bold;">Quote Submitted</span> stage.  </p>
+
+                        <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                             To ensure a smooth sales process, please review and update the status accordingly. If there are any issues preventing the transition, kindly inform your team lead.<br/>
+ 
+                        </p>
+                        <ul style="padding:0 0 0 32px;margin:0px 0 16px 0;box-sizing:border-box;list-style-type:disc;">
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Enquiry Name:</strong> <t t-if="object.name"><t t-out="object.name"></t></t></li>
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Customer:</strong> <t t-if="object.partner_id.name"><t t-out="object.partner_id.name"></t></t></li>
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Current Stage</strong> Quote Completed</li>
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Last Stage Update:</strong> <t t-if="object.date_last_stage_update"><t t-esc="object.date_last_stage_update.strftime('%d-%m-%Y %H:%M')">
+                            </t></t></li>
+
+                        </ul>
+   
+                        <p style="margin:0px 0 16px 0;box-sizing:border-box;">    Best regards,<br/><br/>    Administrator<br/>    <t t-esc="'Jersey CRM'"></t></p>
+
+               
+              
+            
+            </field>
+        </record>
+
+
+
+
+
+         <record id="alert_email_no_activity_lead_template_sales_person" model="mail.template">
+            <field name="name">Sales: Activity Not Added for 48 Hours</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="subject">Urgent: No Activity Created for 48 Hours, Ref : {{object.name}}</field>
+            <field name="email_from">notifications@jerseygroup.com</field>
+            <field name="email_to">{{ object.user_id.email }}</field>
+             <!-- <field name="email_cc">{{ object.team_id.user_id.email }}</field> -->
+            <field name="body_html" type="html">
+                <p style="margin:0px 0 16px 0;box-sizing:border-box;">Dear <t t-if="object.user_id.name"><t t-out="object.user_id.name">,</t></t></p>
+                           <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                           We would like to inform you that the opportunity has been in same stage for the past 48 hours. However, there has been no activity recorded during this time. Details as given below:</p>
+
+                        <ul style="padding:0 0 0 32px;margin:0px 0 16px 0;box-sizing:border-box;list-style-type:disc;">
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Enquiry Name:</strong> <t t-if="object.name"><t t-out="object.name"></t></t></li>
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Customer:</strong> <t t-if="object.partner_id.name"><t t-out="object.partner_id.name"></t></t></li>
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Current Stage:</strong> <t t-if="object.stage_id.name"><t t-out="object.stage_id.name"></t></t></li>
+                            <li><strong style="box-sizing:border-box;font-weight:bolder;">Current Stage</strong> Quote Completed</li>
+                            
+
+                        </ul>
+
+                      <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                             To ensure smooth progress and timely follow-ups, please review and take the necessary action on this opportunity as soon as possible.<br/>
+ 
+                        </p>
+                      <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                             If there is any additional support or clarification required, feel free to reach out.<br/>
+ 
+                        </p>
+                      <p style="margin:0px 0 16px 0;box-sizing:border-box;">
+                             Thank you for your attention to this matter.<br/>
+ 
+                        </p>
+   
+                        <p style="margin:0px 0 16px 0;box-sizing:border-box;">    Best regards,<br/><br/>    Administrator<br/>    <t t-esc="'Jersey CRM'"></t></p>
+
+     
+            
+            </field>
+        </record>
+
+    </data>
+</odoo>
+
