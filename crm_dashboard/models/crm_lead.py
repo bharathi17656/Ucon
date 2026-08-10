@@ -473,23 +473,25 @@ class CrmLead(models.Model):
 
     @api.model
     def get_product_list(self, divition=None):
-        domain = []
-        if divition:  # divition is crm.tag id
+        """Fetch products from product.template or product.product safely."""
+        products = self.env['product.template']
+        if divition:
             try:
                 div_id = int(divition)
-                domain.append(('tag_ids', 'in', [div_id]))
-            except (ValueError, TypeError):
-                pass
-    
-        products = self.env['product.template'].search(domain)
-        if not products and divition:
-            try:
-                div_id = int(divition)
-                products = self.env['product.template'].search([('x_studio_division', 'in', [div_id])])
-            except Exception:
-                pass
+                if 'tag_ids' in self.env['product.template']._fields:
+                    products = self.env['product.template'].sudo().search([('tag_ids', 'in', [div_id])])
+                if not products and 'x_studio_division' in self.env['product.template']._fields:
+                    products = self.env['product.template'].sudo().search([('x_studio_division', 'in', [div_id])])
+            except Exception as e:
+                _logger.warning("Error filtering products by division: %s", e)
 
-        return products.read(['id', 'name'])
+        if not products:
+            products = self.env['product.template'].sudo().search([])
+
+        if not products:
+            products = self.env['product.product'].sudo().search([])
+
+        return [{'id': p.id, 'name': p.display_name or p.name} for p in products]
 
  
     def get_divition_list(self):

@@ -155,12 +155,13 @@ export class CrmDashboard extends Component {
                  await this.getTeamLeadAccess();
             }
             await this.get_employee_list()
-           await this.get_team_list()
-           await this.get_divition_list();
-             if (!this.state.isAdmin){
-                this.state.user_id=this.state.userId
-                this.get_employee_changes()
-            }
+            await this.get_team_list()
+            await this.get_divition_list()
+            await this.get_product_list()
+              if (!this.state.isAdmin){
+                 this.state.user_id=this.state.userId
+                 this.get_employee_changes()
+             }
 
            
          
