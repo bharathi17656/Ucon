@@ -33,7 +33,7 @@ export class CrmDashboard extends Component {
 
 
         this.state=useState({
-
+            currency_name: 'QR',
             selected_company_id:0,
             selected_product_id:0,
             selected_job_id:0,
@@ -137,6 +137,10 @@ export class CrmDashboard extends Component {
         })
         onWillStart(async () => {
             this.state.userId=user.userId
+            const company = await this.orm.read("res.company", [user.companyId], ["currency_id"]);
+            if (company && company.length > 0 && company[0].currency_id) {
+                this.state.currency_name = company[0].currency_id[1] || 'QR';
+            }
             this.state.isAdmin = await user.hasGroup("base.group_system");
             this.state.account_admin = await user.hasGroup("base.group_system");
             this.state.isTeamLead = await user.hasGroup("crm_dashboard.dashboard_team_leader");
