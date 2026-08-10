@@ -45,8 +45,8 @@ class SaleOrder(models.Model):
                         if current_stage != mapping.crm_lead_stage:
                             order.opportunity_id.write({'stage_id': mapping.crm_lead_stage.id})
 
-    def _sync_opportunity_products(self):
-        """Automatically populate linked CRM Opportunity product_ids from the latest quotation's order lines."""
+    def _sync_opportunity_products_and_revenue(self):
+        """Automatically populate linked CRM Opportunity product_ids and expected_revenue from the latest quotation."""
         for order in self:
             if order.opportunity_id:
                 latest_quote = self.env['sale.order'].search([
@@ -56,20 +56,21 @@ class SaleOrder(models.Model):
                 if latest_quote:
                     products = latest_quote.order_line.mapped('product_template_id')
                     order.opportunity_id.write({
-                        'product_ids': [(6, 0, products.ids)]
+                        'product_ids': [(6, 0, products.ids)],
+                        'expected_revenue': latest_quote.amount_total,
                     })
 
     @api.model_create_multi
     def create(self, vals_list):
         orders = super(SaleOrder, self).create(vals_list)
-        orders._sync_opportunity_products()
+        orders._sync_opportunity_products_and_revenue()
         orders._sync_opportunity_stage()
         return orders
 
     def write(self, vals):
         res = super(SaleOrder, self).write(vals)
-        if 'order_line' in vals or 'opportunity_id' in vals:
-            self._sync_opportunity_products()
+        if any(field in vals for field in ['order_line', 'opportunity_id', 'amount_total', 'amount_untaxed']):
+            self._sync_opportunity_products_and_revenue()
         if 'state' in vals or 'opportunity_id' in vals:
             self._sync_opportunity_stage()
         return res
@@ -302,18 +303,19 @@ class SaleOrderLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         lines = super(SaleOrderLine, self).create(vals_list)
-        lines.mapped('order_id')._sync_opportunity_products()
+        lines.mapped('order_id')._sync_opportunity_products_and_revenue()
         return lines
 
     def write(self, vals):
         res = super(SaleOrderLine, self).write(vals)
-        if any(field in vals for field in ['product_id', 'product_template_id', 'order_id']):
-            self.mapped('order_id')._sync_opportunity_products()
+        lines_to_sync = self.filtered(lambda l: any(f in vals for f in ['product_id', 'product_template_id', 'order_id', 'price_unit', 'product_uom_qty', 'price_subtotal']))
+        if lines_to_sync:
+            lines_to_sync.mapped('order_id')._sync_opportunity_products_and_revenue()
         return res
 
     def unlink(self):
         orders = self.mapped('order_id')
         res = super(SaleOrderLine, self).unlink()
-        orders._sync_opportunity_products()
+        orders._sync_opportunity_products_and_revenue()
         return res
 
