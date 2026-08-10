@@ -6,7 +6,7 @@ from datetime import date,datetime, timedelta
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    show_amount_fields = fields.Boolean(string="Show Amount Fields", default=False)
+    show_amount_fields = fields.Boolean(string="Partial Released", default=False)
 
 
 

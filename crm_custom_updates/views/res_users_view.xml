@@ -4,19 +4,19 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='order_details']//field[@name='validity_date']" position="after">
+            <xpath expr="//field[@name='validity_date']" position="before">
+                <field name="show_amount_fields" string="Partial Released" invisible="state == 'draft'"/>
+            </xpath>
+            <xpath expr="//field[@name='validity_date']" position="after">
                 <field name="due_days"/>
             </xpath>
-            <xpath expr="//group[@name='order_details']//field[@name='validity_date']" position="before">
-                <field name="show_amount_fields"/>
-            </xpath>
-            <xpath expr="//page[@name='order_lines']//list/field[@name='price_subtotal']" position="attributes">
+            <xpath expr="//field[@name='order_line']//list/field[@name='price_subtotal']" position="attributes">
                 <attribute name="column_invisible">True</attribute>
             </xpath>
-            <xpath expr="//page[@name='order_lines']//list/field[@name='price_total']" position="before">
+            <xpath expr="//field[@name='order_line']//list/field[@name='price_total']" position="before">
                 <field name="cus_price_subtotal"/>
             </xpath>
-            <xpath expr="//page[@name='order_lines']//list/field[@name='cus_price_subtotal']" position="after">
+            <xpath expr="//field[@name='order_line']//list/field[@name='cus_price_subtotal']" position="after">
                 <field name="cus_bal_amount" column_invisible="not parent.show_amount_fields"/>
                 <field name="cus_po_amount" column_invisible="not parent.show_amount_fields"/>
             </xpath>
