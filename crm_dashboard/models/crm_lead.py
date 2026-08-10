@@ -1818,8 +1818,8 @@ class CrmLead(models.Model):
                     SUM(crm.expected_revenue) AS revenue,
                     COUNT(crm.id) AS total_leads
                 FROM crm_lead AS crm
-                JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
-                JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
+                LEFT JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
+                LEFT JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
                 {where_clause}
                 GROUP BY tag.id, tag.name
                 ORDER BY revenue DESC;
@@ -1831,7 +1831,7 @@ class CrmLead(models.Model):
         if comp_id:
             formatted_result = {
                 "tag_id": [res["user_id"] for res in results],
-                "tag_name": [res["user_name"] for res in results],
+                "tag_name": [res["user_name"] or "No Salesperson" for res in results],
                 "revenue": [res["revenue"] for res in results],
                 "total_leads": [res["total_leads"] for res in results],
                 "domain1": query,
@@ -1840,7 +1840,7 @@ class CrmLead(models.Model):
         else:
             formatted_result = {
                 "tag_id": [res["tag_id"] for res in results],
-                "tag_name": [res["tag_name"].get("en_US", "") if isinstance(res["tag_name"], dict) else res["tag_name"] for res in results],
+                "tag_name": [res["tag_name"].get("en_US") if isinstance(res["tag_name"], dict) else res["tag_name"] or "No Tag" for res in results],
                 "revenue": [res["revenue"] for res in results],
                 "total_leads": [res["total_leads"] for res in results],
                 "domain1": query,
@@ -2056,10 +2056,10 @@ class CrmLead(models.Model):
                 SUM(crm.expected_revenue) AS revenue,
                 COUNT(crm.id) AS total_leads
             FROM crm_lead AS crm
-            JOIN x_crm_lead_product_template_rel AS pt_rel ON pt_rel.crm_lead_id = crm.id
-            JOIN product_template AS pt ON pt.id = pt_rel.product_template_id
-            JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
-            JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
+            LEFT JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
+            LEFT JOIN product_template AS pt ON pt.id = pt_rel.product_id
+            LEFT JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
+            LEFT JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
             {where_clause}
             GROUP BY pt.id, pt.name
             ORDER BY revenue DESC;
@@ -2071,7 +2071,7 @@ class CrmLead(models.Model):
         print("this is my result query", results)
     
         formatted_result = {
-            "product": [res["product"].get("en_US", "")  for res in results],
+            "product": [res["product"].get("en_US") if isinstance(res.get("product"), dict) else res.get("product") or "No Product" for res in results],
             "revenue": [res["revenue"] for res in results],
             "total_leads": [res["total_leads"] for res in results],
             "domain1": query,
@@ -2185,7 +2185,7 @@ class CrmLead(models.Model):
         if comp_id:
             group_by_field = "month,crm.user_id,res.name"
             select_field = "res.name AS salesperson"
-            join_user = "JOIN res_users AS usr ON usr.id = crm.user_id JOIN res_partner AS res ON res.id = usr.partner_id"
+            join_user = "LEFT JOIN res_users AS usr ON usr.id = crm.user_id LEFT JOIN res_partner AS res ON res.id = usr.partner_id"
         else:
             group_by_field = "month,tag.id, tag.name"
             select_field = "tag.name AS tag_name"
@@ -2198,10 +2198,10 @@ class CrmLead(models.Model):
                 SUM(crm.expected_revenue) AS revenue,
                 COUNT(crm.id) AS total_leads
             FROM crm_lead AS crm
-            JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
-            JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
-            JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
-            JOIN product_template AS pt ON pt.id = pt_rel.product_id
+            LEFT JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
+            LEFT JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
+            LEFT JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
+            LEFT JOIN product_template AS pt ON pt.id = pt_rel.product_id
             {join_user}
             {where_clause}
             GROUP BY {group_by_field}
@@ -2215,10 +2215,10 @@ class CrmLead(models.Model):
                 SUM(crm.expected_revenue) AS revenue,
                 COUNT(crm.id) AS total_leads
             FROM crm_lead AS crm
-            JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
-            JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
-            JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
-            JOIN product_template AS pt ON pt.id = pt_rel.product_id
+            LEFT JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
+            LEFT JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
+            LEFT JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
+            LEFT JOIN product_template AS pt ON pt.id = pt_rel.product_id
             {join_user}
             {where_clause_year}
             GROUP BY {group_by_field}
@@ -2233,19 +2233,18 @@ class CrmLead(models.Model):
         self.env.cr.execute(year_query)
         results_year = self.env.cr.dictfetchall()
         
-        # available_months = sorted(set(
-        #         fields.Date.from_string(res['first_deadline']).strftime('%m')
-        #         for res in results_year
-        #         if res.get('first_deadline')
-        #     ))
-
-        available_months = sorted(set(row['month'] for row in results_year))
+        available_months = sorted(set(row['month'] for row in results_year if row.get('month')))
+        
+        def _get_name(val):
+            if isinstance(val, dict):
+                return val.get('en_US') or next(iter(val.values()), '')
+            return str(val) if val else 'No Tag'
         
         print("this is my result query", results)
     
         return {
             "group_by": "salesperson" if comp_id else "tag_name",
-            "tag_name": [res["salesperson"] if comp_id else res["tag_name"].get("en_US") for res in results],
+            "tag_name": [res["salesperson"] if comp_id else _get_name(res.get("tag_name")) for res in results],
             "revenue": [res["revenue"] for res in results],
             "total_leads": [res["total_leads"] for res in results],
             "domain": onclick_domain,
@@ -2255,10 +2254,10 @@ class CrmLead(models.Model):
             'results':results,
             'results_year':results_year,
             "available_months":available_months,
-            "year_start_date":year_start_date,
-            "year_end_date":year_end_date,
-            "start_date":start_date,
-            "end_date":end_date
+            "year_start_date":str(year_start_date),
+            "year_end_date":str(year_end_date),
+            "start_date":str(start_date),
+            "end_date":str(end_date)
         }
 
 
@@ -2347,33 +2346,33 @@ class CrmLead(models.Model):
                 SUM(crm.expected_revenue) AS revenue,
                 COUNT(crm.id) AS total_leads
             FROM crm_lead AS crm
-            JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
-            JOIN product_template AS pt ON pt.id = pt_rel.product_id
-            JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
-            JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
+            LEFT JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
+            LEFT JOIN product_template AS pt ON pt.id = pt_rel.product_id
+            LEFT JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
+            LEFT JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
             {where_clause}
             GROUP BY pt.id, pt.name
             ORDER BY revenue DESC;
         """
     
-        print("this is my query", query)
         self.env.cr.execute(query)
         results = self.env.cr.dictfetchall()
         available_months = sorted(set(
-                fields.Date.from_string(res['first_deadline']).strftime('%m')
-                for res in results
-                if res.get('first_deadline')
-            ))
-        print("this is my result query", results)
+            row['month'] for row in results if row.get('month')
+        ))
     
+        def _get_name(val):
+            if isinstance(val, dict):
+                return val.get('en_US') or next(iter(val.values()), '')
+            return str(val) if val else 'No Product'
+
         formatted_result = {
-            "product": [res["product"].get("en_US", "")  for res in results],
+            "product": [_get_name(res.get("product")) for res in results],
             "revenue": [res["revenue"] for res in results],
             "total_leads": [res["total_leads"] for res in results],
             "domain":onclick_domain,
             "domain1":query,
             "available_months":available_months
-            
         }
     
         return formatted_result if results else { "product": [],
