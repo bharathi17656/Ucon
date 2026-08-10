@@ -1,4 +1,4 @@
-from odoo import models, fields, api,exceptions
+from odoo import models, fields, api, exceptions
 from odoo.exceptions import ValidationError
 
 class CrmLead(models.Model):
@@ -17,11 +17,9 @@ class CrmLead(models.Model):
 
     @api.onchange("partner_id")
     def _onchange_partner_id_set_user(self):
-            """When the partner_id is selected, fetch the related Salesperson (user_id) from res.partner"""
-            if self.partner_id and self.partner_id.user_id:
-                self.user_id = self.partner_id.user_id.id  # Set the salesperson from the selected customer
-
-
+        """When the partner_id is selected, fetch the related Salesperson (user_id) from res.partner"""
+        if self.partner_id and self.partner_id.user_id:
+            self.user_id = self.partner_id.user_id.id  # Set the salesperson from the selected customer
 
 
     def create(self, vals):
@@ -33,11 +31,7 @@ class CrmLead(models.Model):
         return super(CrmLead, self).create(vals)
     
 
-
-
-    
     def write(self, vals):
-        # Define the fields to check
         required_fields = [
             "partner_id",
             "email_from",
@@ -47,20 +41,17 @@ class CrmLead(models.Model):
             "user_id",
         ]
 
-        # Check if any of these fields are in vals (i.e., being updated)
         fields_being_updated = any(field in vals for field in required_fields)
 
-        if fields_being_updated:
+        if fields_being_updated and "stage_id" not in vals:
             for lead in self:
-                # Ensure all required fields have values
-                all_fields_filled = all(
-                    bool(vals.get(field, lead[field])) for field in required_fields
-                )
-
-                # If all fields are filled, move to "Discovery" stage
-                if all_fields_filled:
-                    discovery_stage = self.env["crm.stage"].search([("name", "=", "Discovery")], limit=1)
-                    if discovery_stage:
-                        vals["stage_id"] = discovery_stage.id  # Move to Discovery stage
+                if lead.stage_id.name == "New":
+                    all_fields_filled = all(
+                        bool(vals.get(field, getattr(lead, field, False))) for field in required_fields
+                    )
+                    if all_fields_filled:
+                        discovery_stage = self.env["crm.stage"].search([("name", "=", "Discovery")], limit=1)
+                        if discovery_stage:
+                            vals["stage_id"] = discovery_stage.id
 
         return super(CrmLead, self).write(vals)
