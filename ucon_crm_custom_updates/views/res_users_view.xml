@@ -1,95 +1,21 @@
 <odoo>
     <data>
-       
-
-
         <record id="ucon_crm_lead_form_view_inherit" model="ir.ui.view">
             <field name="name">ucon.crm.lead.form.inherit</field>
             <field name="model">crm.lead</field>
             <field name="inherit_id" ref="crm.crm_lead_view_form"/>
             <field name="arch" type="xml">
-              
-                
-                
-
-                <field name="email_from" position="attributes">
-                    <attribute name="required">1</attribute>
-                     <attribute name="groups">ucon_crm_custom_updates.group_ucon_administrative</attribute>
-                </field>
-                <xpath expr="//field[@name='email_from']" position="after">
-                        
-                        <field name="email_from" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
-                 </xpath>
-                
-                <field name="phone" position="attributes">
-                    <attribute name="required">1</attribute>
-                     <attribute name="groups">ucon_crm_custom_updates.group_ucon_administrative</attribute>
-                </field>
-
-                <xpath expr="//field[@name='phone']" position="after">
-                        
-                        <field name="phone" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
-                    </xpath>
-
-              
-                <field name="user_id" position="attributes">
-                    <attribute name="required">1</attribute>
-                    <attribute name="groups">ucon_crm_custom_updates.group_ucon_administrative</attribute>
-                </field>
-
-                  <xpath expr="//field[@name='user_id']" position="after">
-                        
-                        <field name="user_id" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
-                    </xpath>
-
                 <field name="partner_id" position="attributes">
                     <attribute name="required">1</attribute>
-                   
                 </field>
 
-<!--                   <xpath expr="//field[@name='partner_id']" position="after">
-                        
-                        <field name="partner_id" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
-                    </xpath>
- -->
-               
+                <xpath expr="//field[@name='user_id']" position="after">
+                    <field name="is_ucon_admin" invisible="1"/>
+                    <field name="job_type" required="type == 'opportunity'" readonly="not is_ucon_admin"/>
+                    <field name="product_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="rfq_number" required="type == 'opportunity'" readonly="not is_ucon_admin"/>
+                </xpath>
             </field>
         </record>
-
-
-
-      
-
-
-          <record id="ucon_crm_lead_fields_inherit_group" model="ir.ui.view">
-                <field name="name">ucon.crm.lead.fields.inherit.group</field>
-                <field name="model">crm.lead</field>
-                <field name="inherit_id" ref="crm.crm_lead_view_form"/>
-                <field name="arch" type="xml">
-
-                    <xpath expr="//field[@name='tag_ids']" position="after">
-                        <!-- Original Field for Admin Users (Editable) -->
-                        <field name="job_type" required="type == 'opportunity'" groups="ucon_crm_custom_updates.group_ucon_administrative"/>
-                        <!-- Read-Only Duplicate for Others -->
-                        <field name="job_type" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
-
-                        <field name="product_ids" widget="many2many_tags" readonly="1"/>
-
-                        <field name="rfq_number" required="type == 'opportunity'" groups="ucon_crm_custom_updates.group_ucon_administrative"/>
-                        <field name="rfq_number" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
-                    </xpath>
-
-                </field>
-         </record>
-
-
-
-
-
-
-
-
-
-
     </data>
 </odoo>

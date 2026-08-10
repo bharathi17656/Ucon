@@ -13,6 +13,12 @@ class CrmLead(models.Model):
         ('TENDER', 'TENDER')
     ], string="Job Type")
     product_ids = fields.Many2many('product.template', 'crm_lead_product_template_rel', 'lead_id', 'product_id', string="Products")
+    is_ucon_admin = fields.Boolean(compute='_compute_is_ucon_admin')
+
+    def _compute_is_ucon_admin(self):
+        has_group = self.env.user.has_group('ucon_crm_custom_updates.group_ucon_administrative')
+        for lead in self:
+            lead.is_ucon_admin = has_group
 
 
     @api.onchange("partner_id")
