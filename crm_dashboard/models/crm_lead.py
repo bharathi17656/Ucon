@@ -1853,7 +1853,7 @@ class CrmLead(models.Model):
 
 
 
-    def get_won_stage_graph_company(self, comp_id=None, team_id=None, user_id=None, job_id=None, filter_by='month'):
+    def get_won_stage_graph_company(self, comp_id=None, team_id=None, user_id=None, job_id=None, filter_by='month', selected_year=None):
         domain = []
         onclick_domain = []
     
@@ -1883,13 +1883,19 @@ class CrmLead(models.Model):
         stage_ids_str = ', '.join(str(sid) for sid in stage_list)
     
         today = fields.Date.today()
-        start_date = today.replace(day=1) if filter_by == 'month' else today.replace(month=1, day=1)
-        end_date = today
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
+        if filter_by == 'month':
+            start_date = date(target_year, today.month, 1)
+            last_day = calendar.monthrange(target_year, today.month)[1]
+            end_date = date(target_year, today.month, last_day)
+        else:
+            start_date = date(target_year, 1, 1)
+            end_date = date(target_year, 12, 31)
     
         domain += [
             f"crm.stage_id in ({stage_ids_str})",
-            f"crm.date_open >= '{start_date}'",
-            f"crm.date_open <= '{end_date}'"
+            f"COALESCE(crm.date_open, crm.create_date) >= '{start_date}'",
+            f"COALESCE(crm.date_open, crm.create_date) <= '{end_date}'"
         ]
         onclick_domain += [
             ('date_open', '>=', start_date),
@@ -1971,7 +1977,7 @@ class CrmLead(models.Model):
     
         
 
-    def get_quote_submitted_graph_product(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, filter_by='month'):
+    def get_quote_submitted_graph_product(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, filter_by='month', selected_year=None):
         domain = []
         onclick_domain=[]
     
@@ -1997,14 +2003,16 @@ class CrmLead(models.Model):
         
     
         today = fields.Date.today()
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
     
         # Set the date range based on the filter (month or year)
         if filter_by == 'month':
-            start_date = today.replace(day=1)  # First day of the current month
-            end_date = today  # Today's date
+            start_date = date(target_year, today.month, 1)
+            last_day = calendar.monthrange(target_year, today.month)[1]
+            end_date = date(target_year, today.month, last_day)
         else:  # Default to year filter
-            start_date = today.replace(month=1, day=1)  # First day of the current year
-            end_date = today  # Today's date
+            start_date = date(target_year, 1, 1)
+            end_date = date(target_year, 12, 31)
     
         # Stages to filter
         stages = [
@@ -2020,8 +2028,8 @@ class CrmLead(models.Model):
             domain.append(f"crm.stage_id IN ({', '.join(map(str, stage_list))})")
             onclick_domain.append(('stage_id','in',stage_list))
     
-        domain.append(f"crm.date_open >= '{start_date}'")
-        domain.append(f"crm.date_open <= '{end_date}'")
+        domain.append(f"COALESCE(crm.date_open, crm.create_date) >= '{start_date}'")
+        domain.append(f"COALESCE(crm.date_open, crm.create_date) <= '{end_date}'")
         onclick_domain.append(('date_open','>=',start_date))
         onclick_domain.append(('date_open','<=',end_date))
     
@@ -2078,7 +2086,7 @@ class CrmLead(models.Model):
 
         
  
-    def get_forecast_submitted_graph_company(self, comp_id=None, team_id=None, user_id=None, job_id=None, filter_by='year',month_name=None):
+    def get_forecast_submitted_graph_company(self, comp_id=None, team_id=None, user_id=None, job_id=None, filter_by='year', month_name=None, selected_year=None):
         domain = []
         domain_year=[]
         params = []
@@ -2115,6 +2123,7 @@ class CrmLead(models.Model):
         quote_submitted_stage = self.env['crm.stage'].search([('name', 'in', stages)])
         stage_list = [stage.id for stage in quote_submitted_stage]
         today = fields.Date.today()
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
         
         start_date=''
         end_date=''
@@ -2122,19 +2131,14 @@ class CrmLead(models.Model):
         year_end_date=''
         
         if month_name:
-                year =  datetime.today().year
                 month = int(month_name)
-            
-                start_date = datetime(year, month, 1).date()
-                # Get last day of the month
-                last_day = calendar.monthrange(year, month)[1]
-                end_date = datetime(year, month, last_day).date()
+                start_date = date(target_year, month, 1)
+                last_day = calendar.monthrange(target_year, month)[1]
+                end_date = date(target_year, month, last_day)
 
-       
-        
         if filter_by == 'year':
-            year_start_date = today.replace(month=1, day=1)
-            year_end_date = today.replace(month=12, day=31)
+            year_start_date = date(target_year, 1, 1)
+            year_end_date = date(target_year, 12, 31)
             
     
         domain.append(f"crm.date_deadline >= '{start_date}'")
@@ -2261,7 +2265,7 @@ class CrmLead(models.Model):
 
 
 
-    def get_forecast_submitted_graph_product(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, filter_by='month',month_name=None):
+    def get_forecast_submitted_graph_product(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, filter_by='month', month_name=None, selected_year=None):
         domain = []
         onclick_domain=[]
 
@@ -2285,29 +2289,22 @@ class CrmLead(models.Model):
             onclick_domain.append(('user_id','=',int(user_id)))
     
         user = self.env.user
-        is_admin = user.has_group('base.group_system')  # Admin check
+        is_admin = user.has_group('base.group_system')
         is_team_lead = user.has_group('crm_dashboard.dashboard_team_leader')
         
-    
-        # Stages to exclude
-        excluded_stages = ['Regret', 'Won', 'Lost']
-        stage_ids = self.env['crm.stage'].search([('name', 'in', excluded_stages)])
-        stage_list = [stage['id'] for stage in stage_ids.read(['id'])]  
-        excluded_stage_ids = [
-            stage.id for stage in self.env['crm.stage'].search([('name', 'in', excluded_stages)])
-        ]
+        stages = ['Regret', 'Won', 'Lost']
+        quote_submitted_stage = self.env['crm.stage'].search([('name', 'in', stages)])
+        stage_list = [stage['id'] for stage in stage_ids.read(['id'])] if 'stage_ids' in locals() else [s.id for s in quote_submitted_stage]
+        excluded_stage_ids = [s.id for s in quote_submitted_stage]
     
         today = fields.Date.today()
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
     
-        # Set the date range based on the filter (month or year)
         if month_name:
-                year =  datetime.today().year
                 month = int(month_name)
-            
-                start_date = datetime(year, month, 1).date()
-                # Get last day of the month
-                last_day = calendar.monthrange(year, month)[1]
-                end_date = datetime(year, month, last_day).date()
+                start_date = date(target_year, month, 1)
+                last_day = calendar.monthrange(target_year, month)[1]
+                end_date = date(target_year, month, last_day)
     
         domain.append(f"crm.date_deadline >= '{start_date}'")
         domain.append(f"crm.date_deadline <= '{end_date}'")
