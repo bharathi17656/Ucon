@@ -73,8 +73,7 @@
                         <!-- Read-Only Duplicate for Others -->
                         <field name="x_studio_job_type" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
 
-                        <field name="x_studio_products" widget="many2many_tags" required="type == 'opportunity'" groups="ucon_crm_custom_updates.group_ucon_administrative"/>
-                        <field name="x_studio_products" widget="many2many_tags" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>
+                        <field name="x_studio_products" widget="many2many_tags" readonly="1"/>
 
                         <field name="rfq_number" required="type == 'opportunity'" groups="ucon_crm_custom_updates.group_ucon_administrative"/>
                         <field name="rfq_number" readonly="1" groups="base.group_user,!ucon_crm_custom_updates.group_ucon_administrative"/>

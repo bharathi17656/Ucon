@@ -45,7 +45,6 @@ class CrmLead(models.Model):
             "phone",
             "rfq_number",
             "user_id",
-            "x_studio_products",
         ]
 
         # Check if any of these fields are in vals (i.e., being updated)

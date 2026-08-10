@@ -16,6 +16,32 @@ class SaleOrder(models.Model):
                 if mapping:
                     # Update the stage of the related opportunity (CRM lead)
                     record.opportunity_id.stage_id = mapping.crm_lead_stage
+
+    def _sync_opportunity_products(self):
+        """Automatically populate linked CRM Opportunity x_studio_products from the latest quotation's order lines."""
+        for order in self:
+            if order.opportunity_id:
+                latest_quote = self.env['sale.order'].search([
+                    ('opportunity_id', '=', order.opportunity_id.id)
+                ], order="create_date desc, id desc", limit=1)
+                
+                if latest_quote:
+                    products = latest_quote.order_line.mapped('product_template_id')
+                    order.opportunity_id.write({
+                        'x_studio_products': [(6, 0, products.ids)]
+                    })
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        orders = super(SaleOrder, self).create(vals_list)
+        orders._sync_opportunity_products()
+        return orders
+
+    def write(self, vals):
+        res = super(SaleOrder, self).write(vals)
+        if 'order_line' in vals or 'opportunity_id' in vals:
+            self._sync_opportunity_products()
+        return res
                  
     
     # @api.model
@@ -232,4 +258,26 @@ class Employee(models.Model):
         inverse_name='employee_id',
         string="Targets"
     )
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        lines = super(SaleOrderLine, self).create(vals_list)
+        lines.mapped('order_id')._sync_opportunity_products()
+        return lines
+
+    def write(self, vals):
+        res = super(SaleOrderLine, self).write(vals)
+        if any(field in vals for field in ['product_id', 'product_template_id', 'order_id']):
+            self.mapped('order_id')._sync_opportunity_products()
+        return res
+
+    def unlink(self):
+        orders = self.mapped('order_id')
+        res = super(SaleOrderLine, self).unlink()
+        orders._sync_opportunity_products()
+        return res
 
