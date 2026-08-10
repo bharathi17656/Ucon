@@ -471,10 +471,14 @@ class CrmLead(models.Model):
             return company.currency_id.name or company.currency_id.symbol or ''
         return ''
 
+    @api.model
     def get_product_list(self, divition=None):
         domain = []
         if divition:  # Only add filter if divition is provided
-            domain.append(('x_studio_division', '=', int(divition)))
+            try:
+                domain.append(('x_studio_division', '=', int(divition)))
+            except (ValueError, TypeError):
+                pass
     
         products = self.env['product.template'].search(domain)
         return products.read(['id', 'name'])

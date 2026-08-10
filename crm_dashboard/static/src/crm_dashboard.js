@@ -913,34 +913,30 @@ export class CrmDashboard extends Component {
         }
     }
 
-    get_product_list =async ()=>{
-        try{
-            const result = await rpc('/web/dataset/call_kw', {
-                model: 'crm.lead',
-                method: 'get_product_list',
-                args: [[]], 
-                kwargs: {
-                    divition:this.state.comp_id
-                },
+    get_product_list = async () => {
+        try {
+            const result = await this.orm.call('crm.lead', 'get_product_list', [], {
+                divition: this.state.comp_id || false,
             });
             
-            console.log("get_product_list",result)
-            result.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-            this.state.get_product_list=result
+            console.log("get_product_list", result);
+            if (result && Array.isArray(result)) {
+                result.sort((a, b) => (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase()));
+                this.state.get_product_list = result;
+            } else {
+                this.state.get_product_list = [];
+            }
 
-             if (this.state.product_id){
-                let product=this.state.get_product_list.some((pro)=>{
-                    return pro.id == this.state.product_id
-                })
-                if (!product){
-                    this.state.product_id=null
+            if (this.state.product_id) {
+                let product = this.state.get_product_list.some((pro) => {
+                    return pro.id == this.state.product_id;
+                });
+                if (!product) {
+                    this.state.product_id = null;
                 }
             }
-           
-        }
-        catch{
-    
-          console.error("the error in get_product_list")
+        } catch (err) {
+            console.error("the error in get_product_list", err);
         }
     }
 
