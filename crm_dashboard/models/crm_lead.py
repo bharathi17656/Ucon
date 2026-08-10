@@ -2229,7 +2229,7 @@ class CrmLead(models.Model):
             JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
             JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
             JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
-            JOIN product_template AS pt ON pt.id = pt_rel.product_template_id
+            JOIN product_template AS pt ON pt.id = pt_rel.product_id
             {join_user}
             {where_clause}
             GROUP BY {group_by_field}
@@ -2246,7 +2246,7 @@ class CrmLead(models.Model):
             JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
             JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
             JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
-            JOIN product_template AS pt ON pt.id = pt_rel.product_template_id
+            JOIN product_template AS pt ON pt.id = pt_rel.product_id
             {join_user}
             {where_clause_year}
             GROUP BY {group_by_field}
@@ -2383,7 +2383,7 @@ class CrmLead(models.Model):
                 COUNT(crm.id) AS total_leads
             FROM crm_lead AS crm
             JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
-            JOIN product_template AS pt ON pt.id = pt_rel.product_template_id
+            JOIN product_template AS pt ON pt.id = pt_rel.product_id
             JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
             JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
             {where_clause}

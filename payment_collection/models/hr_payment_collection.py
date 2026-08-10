@@ -35,6 +35,12 @@ class EmployeePaymentCollection(models.Model):
                     ('11', 'November'),
                     ('12', 'December'),
                 ], string="Month Name")
+    year = fields.Selection(
+        [(str(y), str(y)) for y in range(2025, 2036)],
+        string="Year",
+        required=True,
+        default=lambda self: str(fields.Date.today().year)
+    )
     
     soa_detail_ids = fields.One2many('employee.payment.soa.detail','collection_id',string='SOA Details')
     lock_month = fields.Boolean(string="Lock")

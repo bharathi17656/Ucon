@@ -92,6 +92,20 @@ export class CrmDashboard extends Component {
                 { id: "11", name: "November" },
                 { id: "12", name: "December" },
             ],
+            year_list: [
+                { id: "2025", name: "2025" },
+                { id: "2026", name: "2026" },
+                { id: "2027", name: "2027" },
+                { id: "2028", name: "2028" },
+                { id: "2029", name: "2029" },
+                { id: "2030", name: "2030" },
+                { id: "2031", name: "2031" },
+                { id: "2032", name: "2032" },
+                { id: "2033", name: "2033" },
+                { id: "2034", name: "2034" },
+                { id: "2035", name: "2035" },
+            ],
+            selected_year: String(new Date().getFullYear()),
             available_month:[],
             forecast_load:true,
             forecastmonth_list :[],
@@ -540,6 +554,13 @@ export class CrmDashboard extends Component {
 
 
 
+
+    onchange_year = (event) => {
+        if (event && event.target) {
+            this.state.selected_year = event.target.value;
+            this.get_company_changes();
+        }
+    };
 
     onchange_company = (event) => {
         console.log("Event object:", event);

@@ -56,6 +56,12 @@
                 </div>
 
                 <div class="filter-tap flex gap-4 ml-auto justify-end">
+                    <select class="form-select year-selector filter-select w-48" t-on-change='onchange_year' t-att-value="state.selected_year" aria-label="Year select">
+                        <option value="0">Year</option>
+                        <t t-foreach="state.year_list" t-as="yr" t-key="yr.id">
+                            <option t-att-value='yr.id' t-esc="yr.name" />
+                        </t>
+                    </select>
                     <select class="form-select vz company-selector filter-select w-64" t-on-change='onchange_company' t-att-value="state.selected_company_id"  aria-label="Default select example">
                         
                         <option value="0" selected="true" >Category</option>

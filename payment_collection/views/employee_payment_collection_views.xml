@@ -43,6 +43,7 @@
                 <group>
                     <group>
                         <field name="month_name"/>
+                        <field name="year"/>
                     </group>
                     <group>
                         <field name="excel_file" filename="excel_filename"/>
@@ -75,8 +76,9 @@
     <field name="name">employee.payment.collection.list</field>
     <field name="model">employee.payment.collection</field>
     <field name="arch" type="xml">
-        <list  editable="bottom">
+        <list editable="bottom">
             <field name="month_name"/> 
+            <field name="year"/> 
             <field name="line_ids">
                 <list editable="bottom">
                     <field name="sl_no"/>
