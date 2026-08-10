@@ -14,11 +14,11 @@
                 <attribute name="column_invisible">True</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']//list/field[@name='price_total']" position="before">
-                <field name="cus_price_subtotal"/>
+                <field name="cus_price_subtotal" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']//list/field[@name='cus_price_subtotal']" position="after">
-                <field name="cus_bal_amount" column_invisible="not parent.show_amount_fields"/>
-                <field name="cus_po_amount" column_invisible="not parent.show_amount_fields"/>
+                <field name="cus_bal_amount" column_invisible="not parent.show_amount_fields" readonly="1"/>
+                <field name="cus_po_amount" column_invisible="not parent.show_amount_fields" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/control" position="inside">
                 <button name="action_open_po_entry_wizard" string="Partial PO Entry" type="object" class="btn btn-secondary"/>
