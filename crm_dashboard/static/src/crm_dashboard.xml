@@ -262,7 +262,7 @@
 
                                     </div>
                                     <div  class="separate">
-                                      <t t-if="(state.comp_id || state.product_id) and state.get_quote_graph_product.product.length > 0">
+                                      <t t-if="state.get_quote_graph_product.product.length > 0">
                                         <canvas t-ref="chartQuoteProduct" class="custom-graph-crm crm-graph-1"  t-on-click="Onclick_get_quote_submitted_product_graph" id="chartQuoteProduct"></canvas>
                                         </t>
                                         <t t-else="">
@@ -767,7 +767,7 @@
 
                                     </div>
                                     <div class="separate">
-                                        <t t-if="(state.comp_id || state.product_id) and state.get_forecast_graph_product.product.length > 0" >
+                                        <t t-if="state.get_forecast_graph_product.product.length > 0" >
                                             <canvas t-ref="chartforecastProduct"  t-on-click="Onclick_get_forecast_product_graph" style="width:250px;height:250px;" class="custom-graph-crm crm-graph-1 onclick-box" id="chartforecastProduct"></canvas>
                                         </t>
                                         <t t-else="">
