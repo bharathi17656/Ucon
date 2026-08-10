@@ -282,6 +282,20 @@ class SaleOrderLine(models.Model):
     
     is_invisible = fields.Boolean(string='Is invisible',default=False)
 
+    def action_open_po_entry_wizard(self):
+        """Open PO Amount Entry editable list view popup from sale order line control button."""
+        order = self.order_id
+        if not order:
+            active_id = self.env.context.get('active_id') or self.env.context.get('default_order_id')
+            if active_id:
+                order = self.env['sale.order'].browse(active_id)
+        if not order and self:
+            order = self[0].order_id
+
+        if order:
+            return order.action_open_po_entry_wizard()
+        return True
+
 
     cus_po_amount = fields.Float(string='Po Amount', default=0.0, store=True)
     cus_bal_amount = fields.Float(string='Balance Amount', compute='_compute_cus_bal_amount', store=True)
