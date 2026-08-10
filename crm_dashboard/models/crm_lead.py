@@ -1279,8 +1279,11 @@ class CrmLead(models.Model):
         else:  # Default to 'year'
             start_date = today.replace(month=1, day=1)  # First day of the year
         
-        domain.append(('date_open', '>=', start_date))
-        domain.append(('date_open', '<=', today))
+        domain.extend([
+            '|',
+            '&', ('date_open', '>=', start_date), ('date_open', '<=', today),
+            '&', ('create_date', '>=', start_date), ('create_date', '<=', today)
+        ])
     
         # Search leads
         leads_in_stage = self.env['crm.lead'].search(domain)
@@ -2222,7 +2225,7 @@ class CrmLead(models.Model):
             FROM crm_lead AS crm
             JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
             JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
-            JOIN x_crm_lead_product_template_rel AS pt_rel ON pt_rel.crm_lead_id = crm.id
+            JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
             JOIN product_template AS pt ON pt.id = pt_rel.product_template_id
             {join_user}
             {where_clause}
@@ -2239,7 +2242,7 @@ class CrmLead(models.Model):
             FROM crm_lead AS crm
             JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
             JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
-            JOIN x_crm_lead_product_template_rel AS pt_rel ON pt_rel.crm_lead_id = crm.id
+            JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
             JOIN product_template AS pt ON pt.id = pt_rel.product_template_id
             {join_user}
             {where_clause_year}
@@ -2376,7 +2379,7 @@ class CrmLead(models.Model):
                 SUM(crm.expected_revenue) AS revenue,
                 COUNT(crm.id) AS total_leads
             FROM crm_lead AS crm
-            JOIN x_crm_lead_product_template_rel AS pt_rel ON pt_rel.crm_lead_id = crm.id
+            JOIN crm_lead_product_template_rel AS pt_rel ON pt_rel.lead_id = crm.id
             JOIN product_template AS pt ON pt.id = pt_rel.product_template_id
             JOIN crm_tag_rel AS tag_rel ON tag_rel.lead_id = crm.id
             JOIN crm_tag AS tag ON tag.id = tag_rel.tag_id
