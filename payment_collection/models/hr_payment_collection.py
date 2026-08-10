@@ -664,47 +664,38 @@ class MailActivity(models.Model):
     customer_name = fields.Char(string='Customer Name')
     
 
-    @api.model
-    def create(self, vals):
-        # Check if it's related to crm.lead
-        if vals.get('res_model') == 'crm.lead' and vals.get('res_id'):
-            lead = self.env['crm.lead'].browse(vals['res_id'])
-            if lead:
-                # Assign lead's job_type to project_name
-                vals['project_name'] = lead.job_type or ''
-                vals['customer_name']=lead.partner_id.name
-                
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('res_model') == 'crm.lead' and vals.get('res_id'):
+                lead = self.env['crm.lead'].browse(vals['res_id'])
+                if lead:
+                    vals['project_name'] = lead.job_type or ''
+                    vals['customer_name'] = lead.partner_id.name or ''
+                else:
+                    vals['project_name'] = ''
+                    vals['customer_name'] = ''
+            elif vals.get('res_model') == 'res.partner' and vals.get('res_id'):
+                partner = self.env['res.partner'].browse(vals['res_id'])
+                if partner:
+                    vals['project_name'] = ''
+                    vals['customer_name'] = partner.name or ''
+                else:
+                    vals['project_name'] = ''
+                    vals['customer_name'] = ''
+            elif vals.get('res_model') == 'employee.payment.collection.line' and vals.get('res_id'):
+                collection = self.env['employee.payment.collection.line'].browse(vals['res_id'])
+                if collection:
+                    vals['project_name'] = ''
+                    vals['customer_name'] = collection.customer_name or ''
+                else:
+                    vals['project_name'] = ''
+                    vals['customer_name'] = ''
             else:
                 vals['project_name'] = ''
-                vals['customer_name']= ''
-                
-        elif vals.get('res_model') == 'res.partner' and vals.get('res_id'):
-            partner = self.env['res.partner'].browse(vals['res_id'])
-            if partner:
-                # Assign lead's job_type to x_project_name
-                vals['project_name'] =  ''
-                vals['customer_name']=partner.name
-                
-            else:
-                vals['project_name'] = ''
-                vals['customer_name']= ''
+                vals['customer_name'] = ''
 
-        elif vals.get('res_model') == 'employee.payment.collection.line' and vals.get('res_id'):
-            collection = self.env['employee.payment.collection.line'].browse(vals['res_id'])
-            if collection:
-                # Assign lead's job_type to x_project_name
-                vals['project_name'] =  ''
-                vals['customer_name']=collection.customer_name
-                
-            else:
-                vals['project_name'] = ''
-                vals['customer_name']= ''
-            
-        else:
-            vals['project_name'] = '' 
-            vals['customer_name']= ''
-
-        return super(MailActivity, self).create(vals)
+        return super(MailActivity, self).create(vals_list)
 
 
 

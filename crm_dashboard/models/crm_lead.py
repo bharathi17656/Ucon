@@ -83,11 +83,12 @@ class MailActivity(models.Model):
             store=True
         )
 
-    @api.model
-    def create(self, vals):
-        if 'res_model' in vals:
-            vals['activity_from'] = vals['res_model'] if vals['res_model'] in ['res.partner', 'employee.payment.collection.line', 'crm.lead'] else 'others'
-        return super().create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if 'res_model' in vals:
+                vals['activity_from'] = vals['res_model'] if vals['res_model'] in ['res.partner', 'employee.payment.collection.line', 'crm.lead'] else 'others'
+        return super().create(vals_list)
     
     def write(self, vals):
         if 'res_model' in vals:
