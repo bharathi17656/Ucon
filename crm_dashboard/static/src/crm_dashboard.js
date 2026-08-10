@@ -2590,7 +2590,7 @@ getwoncompanywisegraph = ()=>{
     
 
               let context = {
-                'group_by': ["x_studio_division_1"] // Group by user_id
+                'group_by': ["employee_id"] // Group by employee_id
                 };
            
             await this.redirectToListView('hr.employee.target', 'Order Booking Targets', domain,context,current_view);
