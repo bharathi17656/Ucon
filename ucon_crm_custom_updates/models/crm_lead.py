@@ -4,7 +4,7 @@ from odoo.exceptions import ValidationError
 class CrmLead(models.Model):
     _inherit = 'crm.lead'
 
-    x_studio_job_type = fields.Selection([
+    job_type = fields.Selection([
         ('LEAD', 'LEAD'),
         ('JIH-TRADING', 'JIH-TRADING'),
         ('JIH-FITOUT', 'JIH-FITOUT'),
@@ -12,7 +12,7 @@ class CrmLead(models.Model):
         ('JIH-MAINTENANCE', 'JIH-MAINTENANCE'),
         ('TENDER', 'TENDER')
     ], string="Job Type")
-    x_studio_products = fields.Many2many('product.template', 'crm_lead_product_template_rel', 'lead_id', 'product_id', string="Products")
+    product_ids = fields.Many2many('product.template', 'crm_lead_product_template_rel', 'lead_id', 'product_id', string="Products")
 
 
     @api.onchange("partner_id")
@@ -35,7 +35,7 @@ class CrmLead(models.Model):
         required_fields = [
             "partner_id",
             "email_from",
-            "x_studio_job_type",
+            "job_type",
             "phone",
             "rfq_number",
             "user_id",

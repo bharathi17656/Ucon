@@ -1223,9 +1223,9 @@ class CrmLead(models.Model):
                 domain.append(('tag_ids', '=', int(comp_id)))
 
         if job_id:
-            domain.append(('x_studio_job_type', '=', job_id))
+            domain.append(('job_type', '=', job_id))
         if product_id:
-            domain.append(('x_studio_products','=',int(product_id)))
+            domain.append(('product_ids','=',int(product_id)))
         if is_admin:
            
             if team_id:
@@ -1290,9 +1290,9 @@ class CrmLead(models.Model):
         if comp_id:
             domain.append(['tag_ids','=',int(comp_id)])
         if job_id:
-            domain.append(('x_studio_job_type', '=', job_id))
+            domain.append(('job_type', '=', job_id))
         if product_id:
-            domain.append(('x_studio_products','=',int(product_id)))
+            domain.append(('product_ids','=',int(product_id)))
         if team_id:
             domain.append(['team_id','=',int(team_id)])
         if user_id:
@@ -1462,9 +1462,9 @@ class CrmLead(models.Model):
         # if comp_id:
         #         domain.append(('tag_ids', '=', int(comp_id)))
         # if job_id:
-        #     domain.append(('x_studio_job_type', '=', job_id))
+        #     domain.append(('job_type', '=', job_id))
         # if product_id:
-        #     domain.append(('x_studio_products','=',int(product_id)))
+        #     domain.append(('product_ids','=',int(product_id)))
      
         # Get leads based on the domain
         # leads = self.env['crm.lead'].search(domain)
@@ -1744,8 +1744,8 @@ class CrmLead(models.Model):
             domain.append(f"crm.user_id = {int(user_id)}")
             onclick_domain.append(('user_id', '=', int(user_id)))
         if job_id:
-            domain.append(f'crm."x_studio_job_type" = \'{job_id}\'')
-            onclick_domain.append(('x_studio_job_type', '=', job_id))
+            domain.append(f'crm."job_type" = \'{job_id}\'')
+            onclick_domain.append(('job_type', '=', job_id))
     
         user = self.env.user
         is_admin = user.has_group('base.group_system')
@@ -1865,8 +1865,8 @@ class CrmLead(models.Model):
             domain.append(f"crm.user_id = {int(user_id)}")
             onclick_domain.append(('user_id', '=', int(user_id)))
         if job_id:
-            domain.append(f"crm.\"x_studio_job_type\" = '{job_id}'")
-            onclick_domain.append(('x_studio_job_type', '=', job_id))
+            domain.append(f"crm.\"job_type\" = '{job_id}'")
+            onclick_domain.append(('job_type', '=', job_id))
     
         user = self.env.user
         is_admin = user.has_group('base.group_system')
@@ -1974,11 +1974,11 @@ class CrmLead(models.Model):
         onclick_domain=[]
     
         if job_id:
-            domain.append(f'crm."x_studio_job_type" = \'{job_id}\'')
-            onclick_domain.append(('x_studio_job_type','=',job_id))
+            domain.append(f'crm."job_type" = \'{job_id}\'')
+            onclick_domain.append(('job_type','=',job_id))
         if product_id:
             domain.append(f"pt.id = {int(product_id)}")  # Ensure only the selected product is shown
-            onclick_domain.append(('x_studio_products','=',int(product_id)))
+            onclick_domain.append(('product_ids','=',int(product_id)))
         if comp_id:
             domain.append(f"tag.id = {int(comp_id)}")
             onclick_domain.append(('tag_ids','=',int(comp_id)))
@@ -2086,9 +2086,9 @@ class CrmLead(models.Model):
             month_name = fields.Date.today().strftime('%m')
     
         if job_id:
-            domain.append(f"crm.\"x_studio_job_type\" = '{job_id}'")
-            domain_year.append(f"crm.\"x_studio_job_type\" = '{job_id}'")
-            onclick_domain.append(('x_studio_job_type', '=', job_id))
+            domain.append(f"crm.\"job_type\" = '{job_id}'")
+            domain_year.append(f"crm.\"job_type\" = '{job_id}'")
+            onclick_domain.append(('job_type', '=', job_id))
     
         if comp_id:
             domain.append(f"tag.id = {int(comp_id)}")
@@ -2267,11 +2267,11 @@ class CrmLead(models.Model):
             month_name = fields.Date.today().strftime('%m')
     
         if job_id:
-            domain.append(f'crm."x_studio_job_type" = \'{job_id}\'')
-            onclick_domain.append(('x_studio_job_type','=',job_id))
+            domain.append(f'crm."job_type" = \'{job_id}\'')
+            onclick_domain.append(('job_type','=',job_id))
         if product_id:
             domain.append(f"pt.id = {int(product_id)}")  # Filter by product_id
-            onclick_domain.append(('x_studio_products','=',int(product_id)))
+            onclick_domain.append(('product_ids','=',int(product_id)))
         if comp_id:
             domain.append(f"tag.id = {int(comp_id)}")
             onclick_domain.append(('tag_ids','=',int(comp_id)))

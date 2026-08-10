@@ -664,8 +664,8 @@ class MailActivity(models.Model):
         if vals.get('res_model') == 'crm.lead' and vals.get('res_id'):
             lead = self.env['crm.lead'].browse(vals['res_id'])
             if lead:
-                # Assign lead's x_studio_job_type to x_project_name
-                vals['project_name'] = lead.x_studio_job_type or ''
+                # Assign lead's job_type to project_name
+                vals['project_name'] = lead.job_type or ''
                 vals['customer_name']=lead.partner_id.name
                 
             else:
@@ -675,7 +675,7 @@ class MailActivity(models.Model):
         elif vals.get('res_model') == 'res.partner' and vals.get('res_id'):
             partner = self.env['res.partner'].browse(vals['res_id'])
             if partner:
-                # Assign lead's x_studio_job_type to x_project_name
+                # Assign lead's job_type to x_project_name
                 vals['project_name'] =  ''
                 vals['customer_name']=partner.name
                 
@@ -686,7 +686,7 @@ class MailActivity(models.Model):
         elif vals.get('res_model') == 'employee.payment.collection.line' and vals.get('res_id'):
             collection = self.env['employee.payment.collection.line'].browse(vals['res_id'])
             if collection:
-                # Assign lead's x_studio_job_type to x_project_name
+                # Assign lead's job_type to x_project_name
                 vals['project_name'] =  ''
                 vals['customer_name']=collection.customer_name
                 
@@ -708,7 +708,7 @@ class MailActivity(models.Model):
             if activity.res_model == 'crm.lead' and activity.res_id:
                 lead = self.env['crm.lead'].browse(activity.res_id)
                 if lead:
-                    activity.project_name = lead.x_studio_job_type or ''
+                    activity.project_name = lead.job_type or ''
                     activity.customer_name = lead.partner_id.name or ''
                 else:
                     activity.project_name = ''

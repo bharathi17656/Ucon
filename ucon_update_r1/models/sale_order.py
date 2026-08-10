@@ -18,7 +18,7 @@ class SaleOrder(models.Model):
                     record.opportunity_id.stage_id = mapping.crm_lead_stage
 
     def _sync_opportunity_products(self):
-        """Automatically populate linked CRM Opportunity x_studio_products from the latest quotation's order lines."""
+        """Automatically populate linked CRM Opportunity product_ids from the latest quotation's order lines."""
         for order in self:
             if order.opportunity_id:
                 latest_quote = self.env['sale.order'].search([
@@ -28,7 +28,7 @@ class SaleOrder(models.Model):
                 if latest_quote:
                     products = latest_quote.order_line.mapped('product_template_id')
                     order.opportunity_id.write({
-                        'x_studio_products': [(6, 0, products.ids)]
+                        'product_ids': [(6, 0, products.ids)]
                     })
 
     @api.model_create_multi
