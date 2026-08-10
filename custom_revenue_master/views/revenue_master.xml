@@ -7,6 +7,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="year"/>
                     </group>
                     <field name="revenue_line_ids">
                         <list editable="bottom">
@@ -27,6 +28,7 @@
         <field name="arch" type="xml">
             <list string="Monthly CRM Revenue">
                 <field name="name"/>
+                <field name="year"/>
             </list>
         </field>
     </record>

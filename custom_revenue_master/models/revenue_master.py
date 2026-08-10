@@ -21,6 +21,12 @@ class MonthlyCRMRevenue(models.Model):
         string="Month",
         required=True
     )
+    year = fields.Selection(
+        [(str(y), str(y)) for y in range(2020, 2035)],
+        string="Year",
+        required=True,
+        default=lambda self: str(fields.Date.today().year)
+    )
     revenue_line_ids = fields.One2many('monthly.crm.revenue.line', 'revenue_id', string="Revenue Lines")
 
     @api.model

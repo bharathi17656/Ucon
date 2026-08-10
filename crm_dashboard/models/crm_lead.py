@@ -1167,9 +1167,12 @@ class CrmLead(models.Model):
             target_domain.append(('tag_id', '=', int(comp_id)))
 
         if month_name:
-             revenue_id =self.env['monthly.crm.revenue'].search([('name','=',month_name)])
-             if revenue_id:
-                 target_domain.append(('revenue_id', '=', revenue_id.id))
+             current_year = str(fields.Date.today().year)
+             revenue_rec = self.env['monthly.crm.revenue'].search([('name', '=', month_name), ('year', '=', current_year)], limit=1)
+             if not revenue_rec:
+                 revenue_rec = self.env['monthly.crm.revenue'].search([('name', '=', month_name)], limit=1)
+             if revenue_rec:
+                 target_domain.append(('revenue_id', '=', revenue_rec.id))
              else:
                  target_domain.append(('revenue_id', '=', 0))
             
