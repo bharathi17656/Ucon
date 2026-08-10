@@ -32,6 +32,11 @@
             <field name="sequence">50</field>
         </record>
 
+        <record id="crm_stage_partial_order_released" model="crm.stage">
+            <field name="name">Partial Order Released</field>
+            <field name="sequence">55</field>
+        </record>
+
         <record id="crm_stage_won" model="crm.stage">
             <field name="name">Won</field>
             <field name="sequence">60</field>
@@ -50,11 +55,6 @@
             <field name="fold">True</field>
         </record>
 
-        <record id="crm_stage_partial_order_released" model="crm.stage">
-            <field name="name">Partial Order Released</field>
-            <field name="sequence">90</field>
-        </record>
-
         <!-- Initial Quotation Stage Mappings -->
         <record id="mapping_quotation_draft" model="quotation.stage.mapping">
             <field name="sale_order_state">draft</field>
@@ -66,14 +66,14 @@
             <field name="crm_lead_stage" ref="crm_stage_quote_submitted"/>
         </record>
 
-        <record id="mapping_quotation_sale" model="quotation.stage.mapping">
-            <field name="sale_order_state">sale</field>
-            <field name="crm_lead_stage" ref="crm_stage_won"/>
-        </record>
-
         <record id="mapping_quotation_partial" model="quotation.stage.mapping">
             <field name="sale_order_state">partial</field>
             <field name="crm_lead_stage" ref="crm_stage_partial_order_released"/>
+        </record>
+
+        <record id="mapping_quotation_sale" model="quotation.stage.mapping">
+            <field name="sale_order_state">sale</field>
+            <field name="crm_lead_stage" ref="crm_stage_won"/>
         </record>
     </data>
 </odoo>
