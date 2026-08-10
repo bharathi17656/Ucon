@@ -30,22 +30,24 @@ class SaleOrder(models.Model):
     def action_open_po_entry_wizard(self):
         """Open PO Amount Entry editable list view popup."""
         self.ensure_one()
-        wizard = self.env['sale.po.entry.wizard'].search([('order_id', '=', self.id)], limit=1)
-        if not wizard:
-            wizard_lines = []
-            for line in self.order_line:
-                po_ref_val = getattr(self, 'po_ref', False) or (self.opportunity_id and getattr(self.opportunity_id, 'po_ref', False)) or self.name
-                sor_num = f"{po_ref_val} - {line.cus_po_amount or line.cus_price_subtotal:,.2f}"
-                wizard_lines.append((0, 0, {
-                    'sor_po_number': sor_num,
-                    'order_line_id': line.id,
-                    'product_id': line.product_id.id,
-                    'cus_po_amount': line.cus_po_amount,
-                }))
-            wizard = self.env['sale.po.entry.wizard'].create({
-                'order_id': self.id,
-                'line_ids': wizard_lines,
-            })
+        existing_wizards = self.env['sale.po.entry.wizard'].search([('order_id', '=', self.id)])
+        if existing_wizards:
+            existing_wizards.unlink()
+
+        wizard_lines = []
+        for line in self.order_line:
+            po_ref_val = getattr(self, 'po_ref', False) or (self.opportunity_id and getattr(self.opportunity_id, 'po_ref', False)) or self.name
+            sor_num = f"{po_ref_val} - {(line.cus_price_subtotal or line.price_subtotal):,.2f}"
+            wizard_lines.append((0, 0, {
+                'sor_po_number': sor_num,
+                'order_line_id': line.id,
+                'product_id': line.product_id.id,
+                'cus_po_amount': line.cus_po_amount,
+            }))
+        wizard = self.env['sale.po.entry.wizard'].create({
+            'order_id': self.id,
+            'line_ids': wizard_lines,
+        })
 
         view_id = self.env.ref('crm_custom_updates.view_sale_po_entry_wizard_line_tree').id
         return {
@@ -85,15 +87,19 @@ class SalePoEntryWizardLine(models.TransientModel):
     @api.constrains('cus_po_amount', 'product_id', 'order_line_id')
     def _check_wizard_po_amount(self):
         for rec in self:
-            target_line = rec.order_line_id
-            if not target_line and rec.wizard_id and rec.wizard_id.order_id and rec.product_id:
-                target_line = rec.wizard_id.order_id.order_line.filtered(lambda l: l.product_id == rec.product_id)[:1]
-            if target_line:
-                max_allowed = target_line.cus_price_subtotal or target_line.price_subtotal
-                if max_allowed and rec.cus_po_amount > max_allowed:
-                    raise ValidationError(
-                        f"The PO Amount ({rec.cus_po_amount:.2f}) for product '{rec.product_id.name}' cannot exceed the Total Amount ({max_allowed:.2f})."
+            if rec.wizard_id and rec.wizard_id.order_id and rec.product_id:
+                order = rec.wizard_id.order_id
+                target_line = rec.order_line_id or order.order_line.filtered(lambda l: l.product_id == rec.product_id)[:1]
+                if target_line:
+                    matching_wiz_lines = rec.wizard_id.line_ids.filtered(
+                        lambda w: (w.order_line_id and w.order_line_id == target_line) or (w.product_id and w.product_id == rec.product_id)
                     )
+                    total_wiz_po = sum(matching_wiz_lines.mapped('cus_po_amount'))
+                    max_allowed = target_line.cus_price_subtotal or target_line.price_subtotal
+                    if max_allowed and total_wiz_po > max_allowed:
+                        raise ValidationError(
+                            f"The total PO Amount ({total_wiz_po:.2f}) for product '{rec.product_id.name}' exceeds its Total Amount ({max_allowed:.2f})."
+                        )
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
@@ -129,13 +135,14 @@ class SalePoEntryWizardLine(models.TransientModel):
             if rec.wizard_id and rec.wizard_id.order_id:
                 order = rec.wizard_id.order_id
                 order.write({'show_amount_fields': True})
-                target_line = rec.order_line_id
-                if not target_line and rec.product_id:
-                    target_line = order.order_line.filtered(lambda l: l.product_id == rec.product_id)[:1]
-                if target_line:
-                    target_line.write({'cus_po_amount': rec.cus_po_amount})
-                    if hasattr(target_line, '_onchange_cus_po_amount'):
-                        target_line._onchange_cus_po_amount()
+                for line in order.order_line:
+                    matching_wiz_lines = rec.wizard_id.line_ids.filtered(
+                        lambda w: (w.order_line_id and w.order_line_id == line) or (w.product_id and w.product_id == line.product_id)
+                    )
+                    total_po = sum(matching_wiz_lines.mapped('cus_po_amount'))
+                    line.write({'cus_po_amount': total_po})
+                    if hasattr(line, '_onchange_cus_po_amount'):
+                        line._onchange_cus_po_amount()
                 if hasattr(order, '_sync_opportunity_products_and_revenue'):
                     order._sync_opportunity_products_and_revenue()
                 if hasattr(order, '_sync_opportunity_stage'):
@@ -145,6 +152,14 @@ class SalePoEntryWizardLine(models.TransientModel):
         for rec in self:
             if rec.wizard_id and rec.wizard_id.order_id:
                 order = rec.wizard_id.order_id
+                for line in order.order_line:
+                    matching_wiz_lines = rec.wizard_id.line_ids.filtered(
+                        lambda w: (w.order_line_id and w.order_line_id == line) or (w.product_id and w.product_id == line.product_id)
+                    )
+                    total_po = sum(matching_wiz_lines.mapped('cus_po_amount'))
+                    line.write({'cus_po_amount': total_po})
+                    if hasattr(line, '_onchange_cus_po_amount'):
+                        line._onchange_cus_po_amount()
                 if hasattr(order, '_sync_opportunity_products_and_revenue'):
                     order._sync_opportunity_products_and_revenue()
                 if hasattr(order, '_sync_opportunity_stage'):
