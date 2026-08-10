@@ -408,23 +408,9 @@
                             </div>
                         </div>
 
-                         <div class="bottom-table-box payment-showbox qu-submit" id="fourth-page">
-                            <div class="header-filter flex">
-                                <h1>Payments</h1> 
-                                <t t-if="state.isAdmin">
-                                    <div class="month-filter flex">
-                                       <select class="form-select month-selector filter-select" t-on-change='onchange_payment_month' aria-label="Default select example">
-                                        <option value='0' selected="true">month</option>
-                                        <t t-foreach="state.month_list" t-as="month" t-key="month.id">
-                                            <option t-att-value='month.id' t-esc="month.name" />
-                                        </t>
-                                       </select>
-                                    </div>
-                                </t>
-                            </div>
-                            
-                            <div class="quote-submit-value flex align-items-center justify-content-center" style="min-height: 140px; text-align: center; display: flex; align-items: center; justify-content: center; background: #f8fafc; border-radius: 12px; margin-top: 10px; border: 1px dashed #cbd5e1;">
-                                <div style="padding: 20px;">
+                         <div class="bottom-table-box payment-showbox qu-submit" id="fourth-page" style="background: #ffffff;">
+                            <div class="quote-submit-value flex align-items-center justify-content-center" style="min-height: 140px; text-align: center; display: flex; align-items: center; justify-content: center; background: #ffffff; border-radius: 12px;">
+                                <div style="padding: 30px 20px;">
                                     <i class="fa fa-spinner fa-spin me-2" style="font-size: 20px; color: #a48497;"></i>
                                     <h2 style="font-size: 18px; font-weight: 600; color: #64748b; margin: 0; display: inline-block;">New Feature Loading...</h2>
                                 </div>
