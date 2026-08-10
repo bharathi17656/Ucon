@@ -20,35 +20,21 @@
                 <field name="cus_bal_amount" column_invisible="not parent.show_amount_fields"/>
                 <field name="cus_po_amount" column_invisible="not parent.show_amount_fields"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']" position="after">
-                <div class="mt-2 mb-2">
-                    <button name="action_open_po_entry_wizard" string="Partial PO Entry" type="object" class="btn btn-outline-secondary" invisible="state == 'draft'"/>
-                </div>
+            <xpath expr="//field[@name='order_line']/list/control" position="inside">
+                <button name="action_open_po_entry_wizard" string="Partial PO Entry" type="object" class="btn btn-secondary"/>
             </xpath>
         </field>
     </record>
 
-    <record id="view_sale_po_entry_wizard_form" model="ir.ui.view">
-        <field name="name">sale.po.entry.wizard.form</field>
-        <field name="model">sale.po.entry.wizard</field>
+    <record id="view_sale_po_entry_wizard_line_tree" model="ir.ui.view">
+        <field name="name">sale.po.entry.wizard.line.tree</field>
+        <field name="model">sale.po.entry.wizard.line</field>
         <field name="arch" type="xml">
-            <form string="PO Amount Entry">
-                <sheet>
-                    <field name="order_id" invisible="1"/>
-                    <field name="order_product_ids" invisible="1"/>
-                    <field name="line_ids">
-                        <list editable="bottom">
-                            <field name="sor_po_number" string="SOR PO Number"/>
-                            <field name="product_id" string="Product" domain="[('id', 'in', parent.order_product_ids)]"/>
-                            <field name="cus_po_amount" string="Po Amount"/>
-                        </list>
-                    </field>
-                </sheet>
-                <footer>
-                    <button name="action_confirm_po_entry" string="Save &amp; Apply" type="object" class="btn-primary"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
-                </footer>
-            </form>
+            <list editable="bottom" string="PO Amount Entry">
+                <field name="sor_po_number" string="SOR PO Number"/>
+                <field name="product_id" string="Product" domain="[('id', 'in', context.get('allowed_product_ids', []))]"/>
+                <field name="cus_po_amount" string="Po Amount"/>
+            </list>
         </field>
     </record>
 </odoo>

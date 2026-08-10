@@ -28,30 +28,38 @@ class SaleOrder(models.Model):
             else:
                 order.due_days = 0
     def action_open_po_entry_wizard(self):
-        """Open Partial PO Entry Wizard where users can manually add products and set PO amounts."""
+        """Open PO Amount Entry editable list view popup."""
         self.ensure_one()
-        wizard_lines = []
-        for line in self.order_line:
-            sor_num = f"{self.po_ref or self.name} - {line.cus_po_amount or line.cus_price_subtotal:,.2f}"
-            wizard_lines.append((0, 0, {
-                'sor_po_number': sor_num,
-                'order_line_id': line.id,
-                'product_id': line.product_id.id,
-                'cus_po_amount': line.cus_po_amount,
-            }))
+        wizard = self.env['sale.po.entry.wizard'].search([('order_id', '=', self.id)], limit=1)
+        if not wizard:
+            wizard_lines = []
+            for line in self.order_line:
+                sor_num = f"{self.po_ref or self.name} - {line.cus_po_amount or line.cus_price_subtotal:,.2f}"
+                wizard_lines.append((0, 0, {
+                    'sor_po_number': sor_num,
+                    'order_line_id': line.id,
+                    'product_id': line.product_id.id,
+                    'cus_po_amount': line.cus_po_amount,
+                }))
+            wizard = self.env['sale.po.entry.wizard'].create({
+                'order_id': self.id,
+                'line_ids': wizard_lines,
+            })
 
-        wizard = self.env['sale.po.entry.wizard'].create({
-            'order_id': self.id,
-            'line_ids': wizard_lines,
-        })
-
+        view_id = self.env.ref('crm_custom_updates.view_sale_po_entry_wizard_line_tree').id
         return {
             'name': 'PO Amount Entry',
             'type': 'ir.actions.act_window',
-            'res_model': 'sale.po.entry.wizard',
-            'res_id': wizard.id,
-            'view_mode': 'form',
+            'res_model': 'sale.po.entry.wizard.line',
+            'view_mode': 'list',
+            'views': [(view_id, 'list')],
+            'domain': [('wizard_id', '=', wizard.id)],
             'target': 'new',
+            'context': {
+                'default_wizard_id': wizard.id,
+                'allowed_product_ids': self.order_line.mapped('product_id').ids,
+                'opportunity_id': self.opportunity_id.id if self.opportunity_id else False,
+            }
         }
 
 
@@ -61,36 +69,6 @@ class SalePoEntryWizard(models.TransientModel):
 
     order_id = fields.Many2one('sale.order', string="Quotation", required=True, readonly=True)
     line_ids = fields.One2many('sale.po.entry.wizard.line', 'wizard_id', string="PO Entry Lines")
-    order_product_ids = fields.Many2many('product.product', compute='_compute_order_product_ids')
-
-    @api.depends('order_id')
-    def _compute_order_product_ids(self):
-        for wizard in self:
-            wizard.order_product_ids = wizard.order_id.order_line.mapped('product_id')
-
-    def action_confirm_po_entry(self):
-        """Apply entered PO Amounts to Sale Order Lines."""
-        self.ensure_one()
-        self.order_id.write({'show_amount_fields': True})
-
-        for line in self.line_ids:
-            target_order_line = line.order_line_id
-            if not target_order_line and line.product_id:
-                target_order_line = self.order_id.order_line.filtered(lambda l: l.product_id == line.product_id)[:1]
-
-            if target_order_line:
-                target_order_line.write({
-                    'cus_po_amount': line.cus_po_amount,
-                })
-                if hasattr(target_order_line, '_onchange_cus_po_amount'):
-                    target_order_line._onchange_cus_po_amount()
-
-        if hasattr(self.order_id, '_sync_opportunity_products_and_revenue'):
-            self.order_id._sync_opportunity_products_and_revenue()
-        if hasattr(self.order_id, '_sync_opportunity_stage'):
-            self.order_id._sync_opportunity_stage()
-
-        return {'type': 'ir.actions.act_window_close'}
 
 
 class SalePoEntryWizardLine(models.TransientModel):
@@ -111,6 +89,50 @@ class SalePoEntryWizardLine(models.TransientModel):
                 self.order_line_id = matching_line.id
                 self.cus_po_amount = matching_line.cus_po_amount
                 self.sor_po_number = f"{self.wizard_id.order_id.po_ref or self.wizard_id.order_id.name} - {matching_line.cus_price_subtotal:,.2f}"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._apply_po_amount()
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        self._apply_po_amount()
+        return res
+
+    def unlink(self):
+        wizards = self.mapped('wizard_id')
+        res = super().unlink()
+        for wizard in wizards:
+            wizard._sync_po_amounts()
+        return res
+
+    def _apply_po_amount(self):
+        for rec in self:
+            if rec.wizard_id and rec.wizard_id.order_id:
+                order = rec.wizard_id.order_id
+                order.write({'show_amount_fields': True})
+                target_line = rec.order_line_id
+                if not target_line and rec.product_id:
+                    target_line = order.order_line.filtered(lambda l: l.product_id == rec.product_id)[:1]
+                if target_line:
+                    target_line.write({'cus_po_amount': rec.cus_po_amount})
+                    if hasattr(target_line, '_onchange_cus_po_amount'):
+                        target_line._onchange_cus_po_amount()
+                if hasattr(order, '_sync_opportunity_products_and_revenue'):
+                    order._sync_opportunity_products_and_revenue()
+                if hasattr(order, '_sync_opportunity_stage'):
+                    order._sync_opportunity_stage()
+
+    def _sync_po_amounts(self):
+        for rec in self:
+            if rec.wizard_id and rec.wizard_id.order_id:
+                order = rec.wizard_id.order_id
+                if hasattr(order, '_sync_opportunity_products_and_revenue'):
+                    order._sync_opportunity_products_and_revenue()
+                if hasattr(order, '_sync_opportunity_stage'):
+                    order._sync_opportunity_stage()
 
    
 
