@@ -82,6 +82,19 @@ class SalePoEntryWizardLine(models.TransientModel):
     product_id = fields.Many2one('product.product', string="Product", required=True)
     cus_po_amount = fields.Float(string="Po Amount")
 
+    @api.constrains('cus_po_amount', 'product_id', 'order_line_id')
+    def _check_wizard_po_amount(self):
+        for rec in self:
+            target_line = rec.order_line_id
+            if not target_line and rec.wizard_id and rec.wizard_id.order_id and rec.product_id:
+                target_line = rec.wizard_id.order_id.order_line.filtered(lambda l: l.product_id == rec.product_id)[:1]
+            if target_line:
+                max_allowed = target_line.cus_price_subtotal or target_line.price_subtotal
+                if max_allowed and rec.cus_po_amount > max_allowed:
+                    raise ValidationError(
+                        f"The PO Amount ({rec.cus_po_amount:.2f}) for product '{rec.product_id.name}' cannot exceed the Total Amount ({max_allowed:.2f})."
+                    )
+
     @api.onchange('product_id')
     def _onchange_product_id(self):
         if self.product_id and self.wizard_id.order_id:
@@ -323,23 +336,23 @@ class SaleOrderLine(models.Model):
         for line in self:
             line.cus_bal_amount = line.cus_price_subtotal - line.cus_po_amount 
 
-    @api.constrains('price_subtotal', 'cus_po_amount')
+    @api.constrains('price_subtotal', 'cus_price_subtotal', 'cus_po_amount')
     def _check_po_amount(self):
         """
-        Ensure that price_subtotal is less than or equal to cus_total_amount.
+        Ensure that PO Amount cannot exceed Total Amount.
         """
         for line in self:
-            if line.cus_po_amount > line.cus_price_subtotal:
+            max_allowed = line.cus_price_subtotal or line.price_subtotal
+            if max_allowed and line.cus_po_amount > max_allowed:
                 raise ValidationError(
-                    f"The PO Amount {line.cus_po_amount} cannot exceed the Total Amount {line.cus_price_subtotal}."
+                    f"The PO Amount ({line.cus_po_amount:.2f}) cannot exceed the Total Amount ({max_allowed:.2f})."
                 )
 
-
-    
     @api.onchange('cus_po_amount')
     def _onchange_cus_po_amount(self):
         for record in self:
-            if record.cus_price_subtotal and record.cus_po_amount > record.cus_price_subtotal:
+            max_allowed = record.cus_price_subtotal or record.price_subtotal
+            if max_allowed and record.cus_po_amount > max_allowed:
                 raise ValidationError(
-                    f"The PO Amount {record.cus_po_amount} cannot exceed the Total Amount {record.cus_price_subtotal}."
+                    f"The PO Amount ({record.cus_po_amount:.2f}) cannot exceed the Total Amount ({max_allowed:.2f})."
                 )
