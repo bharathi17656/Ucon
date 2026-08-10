@@ -27,7 +27,32 @@ class SaleOrder(models.Model):
                 order.opportunity_id.due_days= order.due_days
             else:
                 order.due_days = 0
-                order.opportunity_id.due_days= order.due_days
+    def action_open_po_entry_wizard(self):
+        """Open PO Entry Wizard pre-filled with quotation order lines."""
+        self.ensure_one()
+        wizard_lines = []
+        for line in self.order_line:
+            total_amt = line.cus_price_subtotal or line.price_subtotal
+            wizard_lines.append((0, 0, {
+                'order_line_id': line.id,
+                'product_id': line.product_id.id,
+                'total_amount': total_amt,
+                'cus_po_amount': line.cus_po_amount,
+            }))
+
+        wizard = self.env['sale.po.entry.wizard'].create({
+            'order_id': self.id,
+            'line_ids': wizard_lines,
+        })
+
+        return {
+            'name': 'PO Entry',
+            'type': 'ir.actions.act_window',
+            'res_model': 'sale.po.entry.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
 
    
 
@@ -236,35 +261,6 @@ class SaleOrderLine(models.Model):
                         record.price_subtotal=record.cus_po_amount
                         record.price_unit=record.cus_po_amount
                         print('record custom po value',record.price_subtotal,record.price_unit)
-               
-
-
-    def action_open_po_entry_wizard(self):
-        """Open PO Entry Wizard pre-filled with quotation order lines."""
-        self.ensure_one()
-        wizard_lines = []
-        for line in self.order_line:
-            total_amt = line.cus_price_subtotal or line.price_subtotal
-            wizard_lines.append((0, 0, {
-                'order_line_id': line.id,
-                'product_id': line.product_id.id,
-                'total_amount': total_amt,
-                'cus_po_amount': line.cus_po_amount,
-            }))
-
-        wizard = self.env['sale.po.entry.wizard'].create({
-            'order_id': self.id,
-            'line_ids': wizard_lines,
-        })
-
-        return {
-            'name': 'PO Entry',
-            'type': 'ir.actions.act_window',
-            'res_model': 'sale.po.entry.wizard',
-            'res_id': wizard.id,
-            'view_mode': 'form',
-            'target': 'new',
-        }
 
 
 class SalePoEntryWizard(models.TransientModel):
