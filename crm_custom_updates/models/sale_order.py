@@ -336,29 +336,10 @@ class SaleOrderLine(models.Model):
 
 
     
-    @api.onchange('cus_price_subtotal')
-    def _onchange_cus_price_amount(self):
-        for record in self:
-            print('record field value',record.order_id.show_amount_fields)
-            if record.cus_price_subtotal >= 0:
-                    record.price_subtotal=record.cus_price_subtotal
-                    record.price_unit=record.cus_price_subtotal
-
-
     @api.onchange('cus_po_amount')
     def _onchange_cus_po_amount(self):
         for record in self:
-            print('check the line amount', record.cus_po_amount,record.cus_price_subtotal)
-            if record.cus_po_amount > record.cus_price_subtotal:
-                    raise ValidationError(
-                        f"The PO Amount {record.cus_po_amount} cannot exceed the Total Amount {record.cus_price_subtotal}."
-                    )
-            else:
-                print('record field value',record.order_id.show_amount_fields)
-                if record.order_id.show_amount_fields == True:
-                    print('hello po change')
-                    if record.cus_po_amount >= 0:
-                        print('record custom po value',record.cus_po_amount)
-                        record.price_subtotal=record.cus_po_amount
-                        record.price_unit=record.cus_po_amount
-                        print('record custom po value',record.price_subtotal,record.price_unit)
+            if record.cus_price_subtotal and record.cus_po_amount > record.cus_price_subtotal:
+                raise ValidationError(
+                    f"The PO Amount {record.cus_po_amount} cannot exceed the Total Amount {record.cus_price_subtotal}."
+                )
