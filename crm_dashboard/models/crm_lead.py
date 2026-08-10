@@ -474,13 +474,21 @@ class CrmLead(models.Model):
     @api.model
     def get_product_list(self, divition=None):
         domain = []
-        if divition:  # Only add filter if divition is provided
+        if divition:  # divition is crm.tag id
             try:
-                domain.append(('x_studio_division', '=', int(divition)))
+                div_id = int(divition)
+                domain.append(('tag_ids', 'in', [div_id]))
             except (ValueError, TypeError):
                 pass
     
         products = self.env['product.template'].search(domain)
+        if not products and divition:
+            try:
+                div_id = int(divition)
+                products = self.env['product.template'].search([('x_studio_division', 'in', [div_id])])
+            except Exception:
+                pass
+
         return products.read(['id', 'name'])
 
  
