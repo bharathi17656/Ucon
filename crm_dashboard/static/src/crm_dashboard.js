@@ -502,6 +502,7 @@ export class CrmDashboard extends Component {
                  this.state.selected_employee_id=0
                  this.state.select_month_revenue=0
                  this.state.select_month_forecast=this.state.forecastmonth_list.length > 0 ? this.state.current_month : 0 
+                 this.state.selected_year=String(new Date().getFullYear())
                  this.state.forecast_load=true
                  this.state.get_product_list=[]
              
@@ -555,10 +556,13 @@ export class CrmDashboard extends Component {
 
 
 
-    onchange_year = (event) => {
+    onchange_year = async (event) => {
         if (event && event.target) {
             this.state.selected_year = event.target.value;
-            this.get_company_changes();
+            this.state.forecast_load = true;
+            await this.get_company_changes();
+            await this.calling_methods();
+            await this.render_dashboard_methods();
         }
     };
 
