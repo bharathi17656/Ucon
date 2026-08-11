@@ -61,7 +61,59 @@ class MonthlyCRMRevenueLine(models.Model):
     revenue_target = fields.Float(string="Revenue Target", required=True, tracking=True)
     revenue_achieved = fields.Float(string="Revenue Achieved", compute="_compute_revenue_achieved", store=True, tracking=True)
     achieved_percentage = fields.Float(string="Achieved %", compute="_compute_achieved_percentage", store=True)
+    sale_order_ids = fields.Many2many('sale.order', compute='_compute_sales_orders', string="Sales Orders")
     invoice_ids = fields.Many2many('account.move', compute='_compute_achieved_invoices', string="Achieved Customer Invoices")
+
+    @api.depends('revenue_id.name', 'revenue_id.year', 'tag_id')
+    def _compute_sales_orders(self):
+        month_map_nums = {
+            'january': 1, 'february': 2, 'march': 3, 'april': 4,
+            'may': 5, 'june': 6, 'july': 7, 'august': 8,
+            'september': 9, 'october': 10, 'november': 11, 'december': 12,
+            '01': 1, '02': 2, '03': 3, '04': 4, '05': 5, '06': 6,
+            '07': 7, '08': 8, '09': 9, '10': 10, '11': 11, '12': 12,
+        }
+        for line in self:
+            if not line.revenue_id or not line.revenue_id.year or not line.revenue_id.name or not line.tag_id:
+                line.sale_order_ids = False
+                continue
+
+            try:
+                target_year = int(line.revenue_id.year)
+            except ValueError:
+                target_year = fields.Date.today().year
+
+            m_num = month_map_nums.get(str(line.revenue_id.name).lower())
+            if not m_num or not (1 <= m_num <= 12):
+                line.sale_order_ids = False
+                continue
+
+            start_date = date(target_year, m_num, 1)
+            last_day = calendar.monthrange(target_year, m_num)[1]
+            end_date = date(target_year, m_num, last_day)
+
+            so_domain = [
+                ('state', 'in', ['sale', 'done']),
+                ('date_order', '>=', start_date),
+                ('date_order', '<=', end_date),
+            ]
+
+            tag_domain = [('opportunity_id.tag_ids', 'in', [line.tag_id.id])]
+            if 'tag_ids' in self.env['sale.order']._fields:
+                tag_domain = ['|', ('tag_ids', 'in', [line.tag_id.id]), ('opportunity_id.tag_ids', 'in', [line.tag_id.id])]
+            if 'x_studio_division' in self.env['crm.team']._fields:
+                try:
+                    teams_with_tag = self.env['crm.team'].search([('x_studio_division', 'in', [line.tag_id.id])])
+                    if teams_with_tag:
+                        tag_domain = ['|'] + tag_domain + [('team_id', 'in', teams_with_tag.ids)]
+                except Exception:
+                    pass
+
+            orders = self.env['sale.order'].search(so_domain + tag_domain)
+            if not orders:
+                orders = self.env['sale.order'].search(so_domain)
+
+            line.sale_order_ids = orders
 
     @api.depends('revenue_id.name', 'revenue_id.year', 'tag_id')
     def _compute_achieved_invoices(self):
@@ -73,7 +125,7 @@ class MonthlyCRMRevenueLine(models.Model):
             '07': 7, '08': 8, '09': 9, '10': 10, '11': 11, '12': 12,
         }
         for line in self:
-            if not line.revenue_id or not line.revenue_id.year or not line.revenue_id.name:
+            if not line.revenue_id or not line.revenue_id.year or not line.revenue_id.name or not line.tag_id:
                 line.invoice_ids = False
                 continue
 
@@ -98,15 +150,25 @@ class MonthlyCRMRevenueLine(models.Model):
                 ('invoice_date', '<=', end_date),
             ]
 
+            tag_domain = []
+            if 'opportunity_id' in self.env['account.move']._fields:
+                tag_domain.append(('opportunity_id.tag_ids', 'in', [line.tag_id.id]))
+            
             if 'x_studio_division' in self.env['crm.team']._fields:
                 try:
                     teams_with_tag = self.env['crm.team'].search([('x_studio_division', 'in', [line.tag_id.id])])
                     if teams_with_tag:
-                        inv_domain.append(('team_id', 'in', teams_with_tag.ids))
+                        if tag_domain:
+                            tag_domain = ['|'] + tag_domain + [('team_id', 'in', teams_with_tag.ids)]
+                        else:
+                            tag_domain = [('team_id', 'in', teams_with_tag.ids)]
                 except Exception:
                     pass
 
-            invoices = self.env['account.move'].search(inv_domain)
+            invoices = self.env['account.move'].search(inv_domain + tag_domain)
+            if not invoices:
+                invoices = self.env['account.move'].search(inv_domain)
+
             line.invoice_ids = invoices
 
     @api.depends('invoice_ids', 'invoice_ids.state', 'invoice_ids.amount_untaxed_signed', 'invoice_ids.amount_untaxed')

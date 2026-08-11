@@ -75,6 +75,20 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="Sales Orders">
+                            <field name="sale_order_ids" readonly="1">
+                                <list string="Confirmed Sales Orders">
+                                    <field name="name" string="Order Number"/>
+                                    <field name="partner_id" string="Customer"/>
+                                    <field name="date_order"/>
+                                    <field name="user_id"/>
+                                    <field name="team_id"/>
+                                    <field name="amount_untaxed" string="Untaxed Amount"/>
+                                    <field name="amount_total" string="Total Amount"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
                 <chatter/>
