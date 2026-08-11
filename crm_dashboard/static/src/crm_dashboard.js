@@ -205,7 +205,10 @@ export class CrmDashboard extends Component {
             if (savedFilters) {
                 this.state.filters = JSON.parse(savedFilters);
                 console.log("this is my filter selection ", this.state.filters)
-                if (this.state.filters){
+                 if (this.state.filters){
+                     if (this.state.filters.selected_year){
+                         this.state.selected_year=this.state.filters.selected_year
+                        }
                      if (this.state.filters.team_id){
                          this.state.team_id=this.state.filters.team_id
                         }
@@ -223,6 +226,9 @@ export class CrmDashboard extends Component {
                         }
                     if (this.state.filters.select_month){
                          this.state.select_month=this.state.filters.select_month
+                        }
+                    if (this.state.filters.select_month_revenue){
+                         this.state.select_month_revenue=this.state.filters.select_month_revenue
                         }
                     if (this.state.filters.filterLists){
                          this.state.filterLists=this.state.filters.filterLists
@@ -358,15 +364,11 @@ export class CrmDashboard extends Component {
 
     setDropdownSelections = () =>{
             const dropdowns = [
-              
+                this.state.selected_year ? { selector: ".year-selector", value: this.state.selected_year } : null,
                 this.state.select_month ? { selector: ".month-selector", value: this.state.select_month } : null,
                 this.state.select_month_revenue ? { selector: ".month-selector-revenue", value: this.state.select_month_revenue } : null,
                 this.state.new_select_month ? { selector: ".new-month-selector", value: this.state.new_select_month } : null,
                 this.state.select_month_forecast ? { selector: ".month-selector-forecast", value: this.state.select_month_forecast } : null,
-
-                
-                
-              
             ].filter(Boolean); // Removes `false`, `null`, `undefined`, `0`, `""`, `NaN`
 
             dropdowns.forEach(({ selector, value }) => {
@@ -560,6 +562,17 @@ export class CrmDashboard extends Component {
         if (event && event.target) {
             this.state.selected_year = event.target.value;
             this.state.forecast_load = true;
+            sessionStorage.setItem("crm_filters", JSON.stringify({
+                selected_year:this.state.selected_year,
+                team_id:this.state.team_id,
+                comp_id:this.state.comp_id,
+                user_id:this.state.user_id,
+                product_id:this.state.product_id,
+                job_id:this.state.job_id,
+                select_month:this.state.select_month,
+                select_month_revenue:this.state.select_month_revenue,
+                filterLists:this.state.filterLists,
+            }));
             await this.get_company_changes();
             await this.calling_methods();
             await this.render_dashboard_methods();
@@ -2542,14 +2555,15 @@ getwoncompanywisegraph = ()=>{
         if (!model_name) return;
            // Save current filters before navigating away
         sessionStorage.setItem("crm_filters", JSON.stringify({
+            selected_year:this.state.selected_year,
             team_id:this.state.team_id,
             comp_id:this.state.comp_id,
             user_id:this.state.user_id,
             product_id:this.state.product_id,
             job_id:this.state.job_id,
             select_month:this.state.select_month,
+            select_month_revenue:this.state.select_month_revenue,
             filterLists:this.state.filterLists,
-          
         }));
         sessionStorage.setItem('current_view', current_view);  
 
