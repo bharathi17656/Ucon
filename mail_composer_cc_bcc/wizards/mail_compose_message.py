@@ -448,7 +448,13 @@ class MailMail(models.Model):
                     #     )
                     # else:
                     SendIrMailServer = IrMailServer.with_context(send_validated_to=email_to_normalized)
-                    msg = SendIrMailServer.build_email(
+                    build_email_fn = (
+                        getattr(SendIrMailServer, '_build_email', None)
+                        or getattr(SendIrMailServer, 'build_email', None)
+                        or getattr(IrMailServer, '_build_email', None)
+                        or getattr(IrMailServer, 'build_email', None)
+                    )
+                    msg = build_email_fn(
                         email_from=email_from,
                         email_to=email['email_to'],
                         subject=email['subject'],
@@ -499,7 +505,10 @@ class MailMail(models.Model):
                         )
                     # /!\ can't use mail.state here, as mail.refresh() will cause an error
                     # see revid:odo@openerp.com-20120622152536-42b2s28lvdv3odyr in 6.1
-                mail._postprocess_sent_message(success_pids=success_pids, failure_type=failure_type)
+                try:
+                    mail._postprocess_sent_message(success_pids=success_pids, failure_type=failure_type, success_emails=None)
+                except TypeError:
+                    mail._postprocess_sent_message(success_pids=success_pids, failure_type=failure_type)
             except MemoryError:
                 # prevent catching transient MemoryErrors, bubble up to notify user or abort cron job
                 # instead of marking the mail as failed
@@ -542,10 +551,17 @@ class MailMail(models.Model):
                     "failure_type": failure_type,
                     "state": "exception",
                 })
-                mail._postprocess_sent_message(
-                    success_pids=success_pids,
-                    failure_reason=failure_reason, failure_type=failure_type
-                )
+                try:
+                    mail._postprocess_sent_message(
+                        success_pids=success_pids,
+                        failure_reason=failure_reason, failure_type=failure_type,
+                        success_emails=None
+                    )
+                except TypeError:
+                    mail._postprocess_sent_message(
+                        success_pids=success_pids,
+                        failure_reason=failure_reason, failure_type=failure_type
+                    )
                 if raise_exception:
                     if isinstance(e, (AssertionError, UnicodeEncodeError)):
                         if isinstance(e, UnicodeEncodeError):
