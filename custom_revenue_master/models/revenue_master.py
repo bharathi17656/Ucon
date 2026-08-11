@@ -60,7 +60,7 @@ class MonthlyCRMRevenueLine(models.Model):
     tag_id = fields.Many2one('crm.tag', string="CRM Tag", required=True, tracking=True)
     revenue_target = fields.Float(string="Revenue Target", required=True, tracking=True)
     revenue_achieved = fields.Float(string="Revenue Achieved", compute="_compute_revenue_achieved", readonly=True, tracking=True)
-    achieved_percentage = fields.Float(string="Achieved %", compute="_compute_achieved_percentage", store=True)
+    achieved_percentage = fields.Float(string="Achieved %", compute="_compute_achieved_percentage", readonly=True)
     sale_order_ids = fields.Many2many('sale.order', compute='_compute_sales_orders', string="Sales Orders")
     invoice_ids = fields.Many2many('account.move', compute='_compute_achieved_invoices', string="Achieved Customer Invoices")
 
@@ -184,10 +184,10 @@ class MonthlyCRMRevenueLine(models.Model):
                         calc += abs(amount)
             line.revenue_achieved = round(calc, 2)
 
-    @api.depends('revenue_target', 'revenue_achieved')
+    @api.depends('revenue_target', 'revenue_achieved', 'invoice_ids', 'invoice_ids.state', 'invoice_ids.amount_untaxed_signed')
     def _compute_achieved_percentage(self):
         for line in self:
             if line.revenue_target:
-                line.achieved_percentage = (line.revenue_achieved / line.revenue_target) * 100
+                line.achieved_percentage = round((line.revenue_achieved / line.revenue_target) * 100, 2)
             else:
                 line.achieved_percentage = 0.0
