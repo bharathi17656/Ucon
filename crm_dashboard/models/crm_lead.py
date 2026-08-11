@@ -976,8 +976,9 @@ class CrmLead(models.Model):
         
             achieved_domain_base = [
                 ('stage_id.name', 'in', ['Won', 'Partial Order Released']),
-                ('date_open', '>=', start_date),
-                ('date_open', '<=', end_date)
+                '|',
+                '&', ('date_last_stage_update', '>=', start_date), ('date_last_stage_update', '<=', end_date),
+                '&', ('create_date', '>=', start_date), ('create_date', '<=', end_date)
             ]
         
         
@@ -1315,7 +1316,7 @@ class CrmLead(models.Model):
         
         domain.extend([
             '|',
-            '&', ('date_open', '>=', start_date), ('date_open', '<=', end_date),
+            '&', ('date_last_stage_update', '>=', start_date), ('date_last_stage_update', '<=', end_date),
             '&', ('create_date', '>=', start_date), ('create_date', '<=', end_date)
         ])
     
@@ -1385,10 +1386,10 @@ class CrmLead(models.Model):
             start_date = date(target_year, 1, 1)
             end_date = date(target_year, 12, 31)
 
-        # Filter by date range (using date_open or create_date fallback)
+        # Filter by date range (using date_last_stage_update or create_date fallback)
         domain += [
             '|',
-            '&', ('date_open', '>=', start_date), ('date_open', '<=', end_date),
+            '&', ('date_last_stage_update', '>=', start_date), ('date_last_stage_update', '<=', end_date),
             '&', ('create_date', '>=', start_date), ('create_date', '<=', end_date)
         ]
         print("this is probability domain",domain)
@@ -1490,36 +1491,20 @@ class CrmLead(models.Model):
     
 
     @api.model
-    def get_activity(self, comp_id=None, team_id=None, user_id=None,product_id=None,job_id=None):
-        """Returns planned and done activity counts for today and this month.
-        
-        - Admin: Gets all users' data but allows filtering.
-        - Non-Admin: Can see only their own data without filters.
-        """
+    def get_activity(self, comp_id=None, team_id=None, user_id=None, product_id=None, job_id=None, selected_year=None):
+        """Returns planned and done activity counts for today and this month/year."""
 
         domain = []
         user = self.env.user
         is_admin = user.has_group('base.group_system')
         is_team_lead = user.has_group('crm_dashboard.dashboard_team_leader')
-        
-
-        # Apply filters only if the user is an admin
-        # if comp_id:
-        #         domain.append(('tag_ids', '=', int(comp_id)))
-        # if job_id:
-        #     domain.append(('job_type', '=', job_id))
-        # if product_id:
-        #     domain.append(('product_ids','=',int(product_id)))
-     
-        # Get leads based on the domain
-        # leads = self.env['crm.lead'].search(domain)
-        # lead_list = leads.ids if leads else []
 
         today = fields.Date.today()
-        first_day_of_month = today.replace(day=1)
-        last_day_of_month = today.replace(day=calendar.monthrange(today.year, today.month)[1])
+        target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
+        first_day_of_month = date(target_year, today.month, 1)
+        last_day_of_month = date(target_year, today.month, calendar.monthrange(target_year, today.month)[1])
         
-        # Define base domains for activities
+        # Define base domains for activities (using date_deadline for planned, date_done for done)
         domain_planning_today = [('date_deadline', '=', today)]
         domain_done_today = [('date_done', '=', today)]
         
@@ -2428,7 +2413,7 @@ class CrmLead(models.Model):
 
 
         
-    def get_mail_activity_lists(self, user_id=None,comp_id=None,team_id=None,filter_by='year'):
+    def get_mail_activity_lists(self, user_id=None, comp_id=None, team_id=None, filter_by='year', selected_year=None):
             domain = []
             user = self.env.user
             is_admin = user.has_group('base.group_system')  # Admin check
@@ -2438,7 +2423,6 @@ class CrmLead(models.Model):
                  team_members = self.env['crm.team.member'].search([('crm_team_id', '=', int(team_id))])
                  user_ids = [tm['user_id'][0] for tm in team_members.read(['user_id']) if tm['user_id']]
                  employees =[emp.id for emp in self.env['res.users'].browse(user_ids)]
-                 # employee_list = [{'id': emp.id, 'name': emp.name} for emp in employees]
                  if employees:
                      domain.append(['user_id', 'in', employees])
       
@@ -2453,15 +2437,17 @@ class CrmLead(models.Model):
                 domain.append(['user_id', '=', int(user_id)])
         
             today = fields.Date.today()
+            target_year = int(selected_year) if selected_year and str(selected_year).isdigit() and int(selected_year) > 0 else today.year
         
             if filter_by == 'month':
-                start_date = today.replace(day=1)  # First day of the current month
+                start_date = date(target_year, today.month, 1)
+                last_day = calendar.monthrange(target_year, today.month)[1]
+                end_date = date(target_year, today.month, last_day)
             else:  # Default to year filter
-                start_date = today.replace(month=1, day=1)  # First day of the current year
-        
-            end_date = today  # Today's date
+                start_date = date(target_year, 1, 1)
+                end_date = date(target_year, 12, 31)
             
-            # domain.append(['date_deadline', '>=', start_date])
+            domain.append(['date_deadline', '>=', start_date])
             domain.append(['date_deadline', '<=', end_date])
             domain.append(('is_copied_activity', '=', False))
             # Using search_read to fetch only required fields

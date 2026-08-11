@@ -1337,6 +1337,7 @@ export class CrmDashboard extends Component {
                     user_id:this.state.user_id,
                     comp_id:this.state.comp_id,
                     team_id:this.state.team_id,
+                    selected_year:this.state.selected_year
                     // filter_by:this.state.filter_by.b4
                 },
             });
@@ -1460,6 +1461,7 @@ export class CrmDashboard extends Component {
                     comp_id:this.state.comp_id,
                     team_id:this.state.team_id,
                     user_id:this.state.user_id,
+                    selected_year:this.state.selected_year
                     // product_id:this.state.product_id,
                     // job_id:this.state.job_id,
                     
