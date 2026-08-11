@@ -59,7 +59,7 @@ class MonthlyCRMRevenueLine(models.Model):
     revenue_id = fields.Many2one('monthly.crm.revenue', string="Month", ondelete='cascade', tracking=True)
     tag_id = fields.Many2one('crm.tag', string="CRM Tag", required=True, tracking=True)
     revenue_target = fields.Float(string="Revenue Target", required=True, tracking=True)
-    revenue_achieved = fields.Float(string="Revenue Achieved", compute="_compute_revenue_achieved", store=True, tracking=True)
+    revenue_achieved = fields.Float(string="Revenue Achieved", compute="_compute_revenue_achieved", readonly=True, tracking=True)
     achieved_percentage = fields.Float(string="Achieved %", compute="_compute_achieved_percentage", store=True)
     sale_order_ids = fields.Many2many('sale.order', compute='_compute_sales_orders', string="Sales Orders")
     invoice_ids = fields.Many2many('account.move', compute='_compute_achieved_invoices', string="Achieved Customer Invoices")
@@ -171,7 +171,7 @@ class MonthlyCRMRevenueLine(models.Model):
 
             line.invoice_ids = invoices
 
-    @api.depends('invoice_ids', 'invoice_ids.state', 'invoice_ids.amount_untaxed_signed', 'invoice_ids.amount_untaxed')
+    @api.depends('revenue_id.name', 'revenue_id.year', 'tag_id', 'invoice_ids', 'invoice_ids.state', 'invoice_ids.amount_untaxed_signed', 'invoice_ids.amount_untaxed')
     def _compute_revenue_achieved(self):
         for line in self:
             calc = 0.0

@@ -15,7 +15,7 @@
                                 <list editable="bottom">
                                     <field name="tag_id" class="o_list_char_width_40"/>
                                     <field name="revenue_target" class="o_list_number_width_20"/>
-                                    <field name="revenue_achieved" class="o_list_number_width_20"/>
+                                    <field name="revenue_achieved" readonly="1" class="o_list_number_width_20"/>
                                     <field name="achieved_percentage" readonly="1" class="o_list_number_width_20"/>
                                 </list>
                             </field>
@@ -57,7 +57,7 @@
                         </group>
                         <group>
                             <field name="revenue_target"/>
-                            <field name="revenue_achieved"/>
+                            <field name="revenue_achieved" readonly="1"/>
                             <field name="achieved_percentage" readonly="1"/>
                         </group>
                     </group>
