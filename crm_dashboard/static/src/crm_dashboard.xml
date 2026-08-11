@@ -76,10 +76,11 @@
                     </select>
                     <select class="form-select job-selector filter-select  w-64" t-on-change='onchange_Job' t-att-value="state.selected_job_id" aria-label="Default select example">
                         <option value="0" selected="true" >Job Type</option>
-                         <option value="project" >Project</option>
-                          <option value="service" >Service</option>
-                           <option value="supply" >Supply</option>
-                            <option value="amc" >AMC</option>
+                        <t t-if="state.get_job_list.length > 0">
+                            <t t-foreach="state.get_job_list" t-as="job" t-key="job">
+                                <option t-att-value="job" t-esc="job" />
+                            </t>
+                        </t>
                     </select>
                     <t t-if="state.isAdmin">
                     <select class="form-select team-selector filter-select w-64"  t-on-change='onchange_team' t-att-value="state.selected_team_id" aria-label="Default select example">
