@@ -1163,8 +1163,6 @@ class CrmLead(models.Model):
 
         if month_name:
              revenue_rec = self.env['monthly.crm.revenue'].search([('name', '=', month_name), ('year', '=', str(target_year))], limit=1)
-             if not revenue_rec:
-                 revenue_rec = self.env['monthly.crm.revenue'].search([('name', '=', month_name)], limit=1)
              if revenue_rec:
                  target_domain.append(('revenue_id', '=', revenue_rec.id))
              else:
@@ -1173,6 +1171,8 @@ class CrmLead(models.Model):
              revenue_recs = self.env['monthly.crm.revenue'].search([('year', '=', str(target_year))])
              if revenue_recs:
                  target_domain.append(('revenue_id', 'in', revenue_recs.ids))
+             else:
+                 target_domain.append(('revenue_id', '=', 0))
             
         if team_id:
                 if not comp_id:
