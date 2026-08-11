@@ -322,7 +322,11 @@ class MailMail(models.Model):
         mails_with_unfollow_link = self.filtered(lambda m: m.body_html and '/mail/unfollow' in m.body_html)
         recipients_follower_status = (
             None if not mails_with_unfollow_link
-            else self.env['mail.followers']._get_mail_recipients_follower_status(mails_with_unfollow_link.ids)
+            else (
+                self.env['mail.followers']._get_mail_recipients_follower_status(mails_with_unfollow_link.ids)
+                if hasattr(self.env['mail.followers'], '_get_mail_recipients_follower_status')
+                else {}
+            )
         )
 
         mail_len=len(self.ids)
