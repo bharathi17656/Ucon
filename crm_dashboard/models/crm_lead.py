@@ -1085,19 +1085,15 @@ class CrmLead(models.Model):
             end_date=''
         
             if not month_name:
-                today = fields.Date.today()
-                start_date = today.replace(month=1, day=1)
-                end_date = today.replace(month=12, day=31)
+                start_date = date(target_year, 1, 1)
+                end_date = date(target_year, 12, 31)
             else:
-                year = datetime.today().year
                 month = int(month_name)
+                start_date = date(target_year, month, 1)
+                last_day = calendar.monthrange(target_year, month)[1]
+                end_date = date(target_year, month, last_day)
             
-                start_date = datetime(year, month, 1).date()
-                # Get last day of the month
-                last_day = calendar.monthrange(year, month)[1]
-                end_date = datetime(year, month, last_day).date()
-            
-            target_domain = [('year', '=', str(start_date.year))]
+            target_domain = [('year', '=', str(target_year))]
             
             if team_id:
                 team_id = int(team_id)
@@ -1389,8 +1385,12 @@ class CrmLead(models.Model):
             start_date = date(target_year, 1, 1)
             end_date = date(target_year, 12, 31)
 
-        # Filter by the current year
-        domain += [('date_open', '>=', start_date), ('date_open', '<=', end_date)]
+        # Filter by date range (using date_open or create_date fallback)
+        domain += [
+            '|',
+            '&', ('date_open', '>=', start_date), ('date_open', '<=', end_date),
+            '&', ('create_date', '>=', start_date), ('create_date', '<=', end_date)
+        ]
         print("this is probability domain",domain)
 
 
@@ -1813,8 +1813,8 @@ class CrmLead(models.Model):
         else:
             start_date = date(target_year, 1, 1)
             end_date = date(target_year, 12, 31)
-        domain.append(f"crm.date_open >= '{start_date}'")
-        domain.append(f"crm.date_open <= '{end_date}'")
+        domain.append(f"COALESCE(crm.date_open, crm.create_date) >= '{start_date}'")
+        domain.append(f"COALESCE(crm.date_open, crm.create_date) <= '{end_date}'")
         onclick_domain.append(('date_open', '>=', start_date))
         onclick_domain.append(('date_open', '<=', end_date))
     

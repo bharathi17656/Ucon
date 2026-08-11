@@ -1661,6 +1661,7 @@ export class CrmDashboard extends Component {
                     job_id:this.state.job_id,
                     filter_by:this.state.filter_by.b3,
                     month_name:this.state.select_month_forecast,
+                    selected_year:this.state.selected_year
                 },
             });
 
