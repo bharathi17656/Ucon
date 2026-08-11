@@ -1201,20 +1201,65 @@ class CrmLead(models.Model):
 
         
         
-        # Use target_domain in search to filter results
+        # Use target_domain in search to filter target results
         target_data = self.env['monthly.crm.revenue.line'].search(target_domain)
-    
         total_invoice_target = sum(target_data.mapped('revenue_target'))
-        total_invoice_achieved = sum(target_data.mapped('revenue_achieved'))
 
+        # Calculate revenue achieved from posted customer invoices by invoice_date
+        inv_domain = [
+            ('state', '=', 'posted'),
+            ('move_type', 'in', ['out_invoice', 'out_refund']),
+        ]
+
+        month_map_nums = {
+            'january': 1, 'february': 2, 'march': 3, 'april': 4,
+            'may': 5, 'june': 6, 'july': 7, 'august': 8,
+            'september': 9, 'october': 10, 'november': 11, 'december': 12,
+            '01': 1, '02': 2, '03': 3, '04': 4, '05': 5, '06': 6,
+            '07': 7, '08': 8, '09': 9, '10': 10, '11': 11, '12': 12,
+            '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6,
+            '7': 7, '8': 8, '9': 9
+        }
+
+        m_num = None
+        if month_name and str(month_name) != '0':
+            m_num = month_map_nums.get(str(month_name).lower())
+
+        if m_num and 1 <= m_num <= 12:
+            start_date = date(target_year, m_num, 1)
+            last_day = calendar.monthrange(target_year, m_num)[1]
+            end_date = date(target_year, m_num, last_day)
+        else:
+            start_date = date(target_year, 1, 1)
+            end_date = date(target_year, 12, 31)
+
+        inv_domain.append(('invoice_date', '>=', start_date))
+        inv_domain.append(('invoice_date', '<=', end_date))
+
+        if team_id:
+            inv_domain.append(('team_id', '=', int(team_id)))
+
+        if user_id:
+            inv_domain.append(('invoice_user_id', '=', int(user_id)))
+
+        posted_invoices = self.env['account.move'].search(inv_domain)
+        calc_achieved = 0.0
+        for inv in posted_invoices:
+            amount = inv.amount_untaxed_signed or inv.amount_untaxed or 0.0
+            if inv.move_type == 'out_refund':
+                calc_achieved -= abs(amount)
+            else:
+                calc_achieved += abs(amount)
+
+        total_invoice_achieved = round(calc_achieved, 2)
     
         percentage_achieved = round((total_invoice_achieved / total_invoice_target * 100), 2) if total_invoice_target else 0
 
         return {
             'total_target': round(total_invoice_target, 2) if total_invoice_target else 0,
-            'total_achieved': round(total_invoice_achieved, 2) if total_invoice_achieved else 0,
+            'total_achieved': total_invoice_achieved,
             'percentage': percentage_achieved,       
-             'target_domain':target_domain
+            'target_domain': target_domain
         }
 
 
