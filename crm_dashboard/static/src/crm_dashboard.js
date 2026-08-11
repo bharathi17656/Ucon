@@ -114,7 +114,7 @@ export class CrmDashboard extends Component {
             new_select_month:currentMonth,
            
             
-            select_month_revenue:null,
+            select_month_revenue:currentMonth,
 
             select_month_forecast:null,
                 

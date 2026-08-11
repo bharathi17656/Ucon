@@ -59,32 +59,27 @@
                     <select class="form-select year-selector filter-select w-48" t-on-change='onchange_year' t-att-value="state.selected_year" aria-label="Year select">
                         <option value="0">Year</option>
                         <t t-foreach="state.year_list" t-as="yr" t-key="yr.id">
-                            <option t-att-value='yr.id' t-esc="yr.name" />
+                            <option t-att-value='yr.id' t-esc="yr.name" t-att-selected="yr.id == state.selected_year ? 'selected' : undefined"/>
                         </t>
                     </select>
                     <select class="form-select vz company-selector filter-select w-64" t-on-change='onchange_company' t-att-value="state.selected_company_id"  aria-label="Default select example">
-                        
                         <option value="0" selected="true" >Category</option>
-                        <t t-foreach="state.get_divition_list" t-as="comp" t-key="comp.id">
-                            <option t-att-value='comp.id'  t-esc="comp.name" />
+                        <t t-foreach="state.get_divition_list" t-as="company" t-key="company.id">
+                            <option t-att-value='company.id'  t-esc="company.name" />
                         </t>
                     </select>
-                    <select class="form-select product-selector filter-select w-64" t-on-change='onchange_Product' t-att-value="state.selected_product_id" aria-label="Default select example">
-                        <option value="0" selected="true" >Product</option>
-                        <t t-if="state.get_product_list.length > 0">
-                            <t t-foreach="state.get_product_list" t-as="product" t-key="product.id">
-                                <option t-att-value='product.id'  t-esc="product.name" />
-                            </t>
+                    <select class="form-select product-selector filter-select  w-64"  t-on-change='onchange_Product' t-att-value="state.selected_product_id" aria-label="Default select example">
+                        <option value="0" selected="true">Product</option>
+                        <t t-foreach="state.get_product_list" t-as="product" t-key="product.id">
+                            <option t-att-value='product.id'   t-esc="product.name"/>
                         </t>
-                    </select> 
-
-                    <select class="form-select job-selector filter-select w-64" t-on-change='onchange_Job' t-att-value="state.selected_job_id" aria-label="Default select example">
+                    </select>
+                    <select class="form-select job-selector filter-select  w-64" t-on-change='onchange_Job' t-att-value="state.selected_job_id" aria-label="Default select example">
                         <option value="0" selected="true" >Job Type</option>
-                        <t t-if="state.get_job_list.length > 0">
-                            <t t-foreach="state.get_job_list" t-as="job" t-key="job">
-                                <option t-att-value="job"  t-esc="job" />
-                            </t>
-                        </t>
+                         <option value="project" >Project</option>
+                          <option value="service" >Service</option>
+                           <option value="supply" >Supply</option>
+                            <option value="amc" >AMC</option>
                     </select>
                     <t t-if="state.isAdmin">
                     <select class="form-select team-selector filter-select w-64"  t-on-change='onchange_team' t-att-value="state.selected_team_id" aria-label="Default select example">
@@ -118,7 +113,7 @@
                                     <p class="second onclick-box" t-on-click="Onclick_getorderbooking_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderbooking?.total_achieved)"/>
                                     </p>
                                 </div>
-                                 <div class="b3 order-book-person">
+                                 <div class="b3 others-persontage">
                                     <p>
                                         <t t-esc="state.getorderbooking?.percentage || 0" />%
                                     </p>
@@ -128,10 +123,10 @@
                         <div class="booking">
                             <h1 style="display: flex;justify-content: space-between;">Revenue <span> <t t-if="state.isAdmin">
                                 <div class="month-filter-revenue flex">
-                                   <select class="form-select month-selector-revenue filter-select-revenue"  t-on-change='onchange_revenue_month' aria-label="Default select example">
-                                    <option value='0' selected="true">month</option>
+                                   <select class="form-select month-selector-revenue filter-select-revenue"  t-on-change='onchange_revenue_month' t-att-value="state.select_month_revenue" aria-label="Default select example">
+                                    <option value='0'>month</option>
                                     <t t-foreach="state.month_list" t-as="month" t-key="month.id">
-                                        <option t-att-value='month.id' t-esc="month.name" />
+                                        <option t-att-value='month.id' t-esc="month.name" t-att-selected="month.id == state.select_month_revenue ? 'selected' : undefined"/>
                                     </t>
                                   </select>
                                 </div>
