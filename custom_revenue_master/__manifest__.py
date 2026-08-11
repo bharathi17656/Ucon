@@ -8,7 +8,7 @@
     "summary": "Create monthlywise Revenue model for Client requirement.",
     "author": "Bharathikannan.M",
     "maintainer": "bharathikannan17656@gmail.com",
-    "depends": ["sale", "crm",'hr'],
+    "depends": ["sale", "crm", "hr", "account", "mail"],
 
     "data": [
       

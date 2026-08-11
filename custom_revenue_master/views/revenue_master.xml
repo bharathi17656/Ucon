@@ -9,15 +9,20 @@
                         <field name="name"/>
                         <field name="year"/>
                     </group>
-                    <field name="revenue_line_ids">
-                        <list editable="bottom">
-                            <field name="tag_id" class="o_list_char_width_40"/>
-                            <field name="revenue_target" class="o_list_number_width_20"/>
-                            <field name="revenue_achieved" class="o_list_number_width_20"/>
-                            <field name="achieved_percentage" readonly="1" class="o_list_number_width_20"/>
-                        </list>
-                    </field>
+                    <notebook>
+                        <page string="Revenue Lines">
+                            <field name="revenue_line_ids">
+                                <list editable="bottom">
+                                    <field name="tag_id" class="o_list_char_width_40"/>
+                                    <field name="revenue_target" class="o_list_number_width_20"/>
+                                    <field name="revenue_achieved" class="o_list_number_width_20"/>
+                                    <field name="achieved_percentage" readonly="1" class="o_list_number_width_20"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -39,7 +44,6 @@
         <field name="view_mode">list,form</field>
     </record>
 
-
     <record id="view_monthly_crm_revenue_line_form" model="ir.ui.view">
         <field name="name">monthly.crm.revenue.line.form</field>
         <field name="model">monthly.crm.revenue.line</field>
@@ -47,17 +51,33 @@
             <form string="Monthly CRM Revenue Line">
                 <sheet>
                     <group>
-                        <field name="revenue_id" options="{'no_create': True}" readonly="1"/>
+                        <group>
+                            <field name="revenue_id" options="{'no_create': True}" readonly="1"/>
+                            <field name="tag_id"/>
+                        </group>
+                        <group>
+                            <field name="revenue_target"/>
+                            <field name="revenue_achieved"/>
+                            <field name="achieved_percentage" readonly="1"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="tag_id"/>
-                        <field name="revenue_target"/>
-                    </group>
-                    <group>
-                        <field name="revenue_achieved"/>
-                        <field name="achieved_percentage" readonly="1"/>
-                    </group>
+                    <notebook>
+                        <page string="Achieved Invoices">
+                            <field name="invoice_ids" readonly="1">
+                                <list string="Posted Customer Invoices">
+                                    <field name="name" string="Number"/>
+                                    <field name="partner_id" string="Customer"/>
+                                    <field name="invoice_date"/>
+                                    <field name="team_id"/>
+                                    <field name="amount_untaxed_signed" string="Untaxed Amount"/>
+                                    <field name="amount_total_signed" string="Total Amount"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -76,8 +96,7 @@
         </field>
     </record>
 
-
-     <record id="action_monthly_crm_revenue_line" model="ir.actions.act_window">
+    <record id="action_monthly_crm_revenue_line" model="ir.actions.act_window">
         <field name="name">Monthly CRM Revenue Line</field>
         <field name="res_model">monthly.crm.revenue.line</field>
         <field name="view_mode">list,form</field>
