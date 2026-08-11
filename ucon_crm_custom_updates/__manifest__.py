@@ -2,7 +2,7 @@
     'name': 'Ucon CRM Leads Custom Changes  ',
     'version': '19.0.1.0.0',
     'author': 'bharathikannan17656@gmail.com',
-    'depends': ['base','crm', 'web','sale_crm','sale','ucon_update_r1','ucon_crm_custom_updates_models'],
+    'depends': ['base','crm', 'web','sale_crm','sale','crm_custom_updates','ucon_update_r1','ucon_crm_custom_updates_models'],
     'data': [
       
         'security/security_groups.xml',
