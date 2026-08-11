@@ -98,9 +98,13 @@ class MonthlyCRMRevenueLine(models.Model):
                 ('invoice_date', '<=', end_date),
             ]
 
-            teams_with_tag = self.env['crm.team'].search([('x_studio_division', 'in', [line.tag_id.id])])
-            if teams_with_tag:
-                inv_domain.append(('team_id', 'in', teams_with_tag.ids))
+            if 'x_studio_division' in self.env['crm.team']._fields:
+                try:
+                    teams_with_tag = self.env['crm.team'].search([('x_studio_division', 'in', [line.tag_id.id])])
+                    if teams_with_tag:
+                        inv_domain.append(('team_id', 'in', teams_with_tag.ids))
+                except Exception:
+                    pass
 
             invoices = self.env['account.move'].search(inv_domain)
             line.invoice_ids = invoices
