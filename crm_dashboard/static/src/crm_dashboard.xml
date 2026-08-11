@@ -107,18 +107,15 @@
                     <div class="top-grid-left grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2  gap-2">
                         <div class="booking">
                             <h1>Order Booking</h1>
-                            <div class="booking-value">
-                                <div class="b1">
+                            <div class="booking-value others-div">
+                                <div class="b1 justify-div">
                                     <p>Target</p>
                                     <p>Achieved</p>
-                                    <p>Others</p>
                                 </div>
-                                <div class="b2" >
+                                <div class="b2 justify-div">
                                     <p class="first onclick-box" t-on-click="Onclick_getorderbooking_target"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderbooking?.total_target)"/>
                                     </p>
                                     <p class="second onclick-box" t-on-click="Onclick_getorderbooking_achieve"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderbooking?.total_achieved)"/>
-                                    </p>
-                                    <p class="first onclick-box" t-on-click="Onclick_getorderbooking_others"><t t-esc="state.currency_name ? state.currency_name + ' ' : ''"/><t t-esc="formatAmount(state.getorderbooking?.total_achieved_others)"/>
                                     </p>
                                 </div>
                                  <div class="b3 order-book-person">
