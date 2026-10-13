@@ -98,13 +98,16 @@ class CrmLead(models.Model):
         if "stage_id" in vals:
             new_stage = self.env['crm.stage'].browse(vals['stage_id'])
             if new_stage.name == 'Won':
-                sale_order = self.env['sale.order'].search([('opportunity_id', '=', self.id)])
-                if sale_order:
-                    not_sent_orders = sale_order.filtered(lambda so: so.state not in ['sent', 'sale'])
-                    if not_sent_orders:
-                        raise ValidationError("Please send the quotation to the customer before moving to 'Won' stage.")
-                    else:
-                        sale_order.filtered(lambda so: so.state == 'sent').action_confirm()
+                # Only the latest (non-cancelled) quotation of each lead matters; older ones are superseded.
+                for lead in self:
+                    sale_order = self.env['sale.order'].search(
+                        [('opportunity_id', '=', lead.id), ('state', '!=', 'cancel')],
+                        order='create_date desc, id desc', limit=1)
+                    if sale_order:
+                        if sale_order.state not in ['sent', 'sale']:
+                            raise ValidationError("Please send the quotation to the customer before moving to 'Won' stage.")
+                        if sale_order.state == 'sent':
+                            sale_order.action_confirm()
 
         fields_being_updated = any(field in vals for field in required_fields)
         if fields_being_updated and "stage_id" not in vals:

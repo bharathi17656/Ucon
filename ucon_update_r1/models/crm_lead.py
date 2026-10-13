@@ -161,7 +161,9 @@ class Lead(models.Model):
                       for lead in self:
                           # Check if the current stage sequence is within the defined stages
                           if lead.stage_id.sequence < max_discovery_sequence and new_stage.sequence >= max_discovery_sequence:
-                              quotation = self.env['sale.order'].search([('opportunity_id', '=', lead.id)],limit=1)
+                              quotation = self.env['sale.order'].search(
+                                  [('opportunity_id', '=', lead.id), ('state', '!=', 'cancel')],
+                                  order='create_date desc, id desc', limit=1)
       
                               if not quotation:
                                   raise ValidationError("You cannot move to this stage without creating a quotation.")

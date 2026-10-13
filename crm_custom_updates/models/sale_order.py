@@ -27,6 +27,25 @@ class SaleOrder(models.Model):
                 order.opportunity_id.due_days= order.due_days
             else:
                 order.due_days = 0
+    @api.model_create_multi
+    def create(self, vals_list):
+        orders = super().create(vals_list)
+        orders._cancel_previous_quotations()
+        return orders
+
+    def _cancel_previous_quotations(self):
+        """A new quotation supersedes the earlier draft/sent quotations of the same opportunity."""
+        for order in self.filtered('opportunity_id'):
+            previous = self.search([
+                ('opportunity_id', '=', order.opportunity_id.id),
+                ('id', '!=', order.id),
+                ('state', 'in', ['draft', 'sent']),
+            ])
+            if previous:
+                previous.with_context(
+                    disable_cancel_warning=True, skip_lead_stage_sync=True,
+                ).action_cancel()
+
     def action_open_po_entry_wizard(self):
         """Open PO Amount Entry editable list view popup."""
         self.ensure_one()
@@ -284,7 +303,7 @@ class SalePoEntryWizardLine(models.TransientModel):
                                 copied_lead.expected_revenue = copy_expected_revenue
 
             for record in self:
-                if record.opportunity_id:
+                if record.opportunity_id and not self.env.context.get('skip_lead_stage_sync'):
                     mapping = self.env['quotation.stage.mapping'].search(
                         [('sale_order_state', '=', vals['state'])], limit=1)
                     if mapping:
