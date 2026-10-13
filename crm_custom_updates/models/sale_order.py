@@ -36,17 +36,16 @@ class SaleOrder(models.Model):
                 'order_id': self.id,
             })
 
-        view_id = self.env.ref('crm_custom_updates.view_sale_po_entry_wizard_line_tree').id
+        view_id = self.env.ref('crm_custom_updates.view_sale_po_entry_wizard_form').id
         return {
             'name': 'PO Amount Entry',
             'type': 'ir.actions.act_window',
-            'res_model': 'sale.po.entry.wizard.line',
-            'view_mode': 'list',
-            'views': [(view_id, 'list')],
-            'domain': [('wizard_id', '=', wizard.id)],
+            'res_model': 'sale.po.entry.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'views': [(view_id, 'form')],
             'target': 'new',
             'context': {
-                'default_wizard_id': wizard.id,
                 'allowed_product_ids': self.order_line.mapped('product_id').ids,
                 'opportunity_id': self.opportunity_id.id if self.opportunity_id else False,
             }
@@ -77,6 +76,11 @@ class SalePoEntryWizard(models.TransientModel):
                     order._sync_opportunity_products_and_revenue()
                 if hasattr(order, '_sync_opportunity_stage'):
                     order._sync_opportunity_stage()
+
+    def action_save(self):
+        """Write the PO amounts to the order lines and reload the order form behind the popup."""
+        self._sync_po_amounts()
+        return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
 
 
 class SalePoEntryWizardLine(models.TransientModel):
@@ -118,26 +122,14 @@ class SalePoEntryWizardLine(models.TransientModel):
 
     @api.model_create_multi
     def create(self, vals_list):
-        records = super().create(vals_list)
-        records._apply_po_amount()
-        return records
-
-    def write(self, vals):
-        res = super().write(vals)
-        self._apply_po_amount()
-        return res
-
-    def unlink(self):
-        wizards = self.mapped('wizard_id')
-        res = super().unlink()
-        for wizard in wizards:
-            wizard._sync_po_amounts()
-        return res
-
-    def _apply_po_amount(self):
-        wizards = self.mapped('wizard_id')
-        for wizard in wizards:
-            wizard._sync_po_amounts()
+        # order_line_id is not in the list view, so the onchange value is lost; resolve it here
+        for vals in vals_list:
+            if not vals.get('order_line_id') and vals.get('product_id') and vals.get('wizard_id'):
+                order = self.env['sale.po.entry.wizard'].browse(vals['wizard_id']).order_id
+                line = order.order_line.filtered(lambda l: l.product_id.id == vals['product_id'])[:1]
+                if line:
+                    vals['order_line_id'] = line.id
+        return super().create(vals_list)
 
    
 
