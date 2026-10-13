@@ -96,4 +96,21 @@ class CrmLead(models.Model):
                         if discovery_stage:
                             vals["stage_id"] = discovery_stage.id
 
+        if vals.get("stage_id") and self.env["crm.stage"].browse(vals["stage_id"]).name == "Won":
+            self._release_full_po_amount()
+
         return super(CrmLead, self).write(vals)
+
+    def _release_full_po_amount(self):
+        """Moving to Won without a partial release means a full PO: fill every line's PO amount."""
+        for lead in self:
+            orders = lead.order_ids.filtered(lambda o: o.state != 'cancel')
+            order = orders.sorted(key=lambda o: (o.date_order or o.create_date, o.id), reverse=True)[:1]
+            if not order or order.show_amount_fields:
+                continue
+            if lead.stage_id.name == 'Partial Order Released':
+                continue
+            for line in order.order_line.filtered(lambda l: not l.display_type):
+                full_amount = line.cus_price_subtotal or line.price_subtotal
+                if line.cus_po_amount != full_amount:
+                    line.cus_po_amount = full_amount
