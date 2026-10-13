@@ -215,8 +215,17 @@ class SalePoEntryWizardLine(models.TransientModel):
             print("this is my state write method")
 
             if vals['state'] == 'sale':
+                # Full (non-partial) confirmation: release the full PO amount on every line so the
+                # lead can move to Won without any manual partial PO entry.
                 for record in self:
-                    is_partial = record.show_amount_fields or (record.opportunity_id and record.opportunity_id.stage_id and record.opportunity_id.stage_id.name == 'Partial Order Released')
+                    stage_is_partial = record.opportunity_id.stage_id.name == 'Partial Order Released'
+                    if not record.show_amount_fields and not stage_is_partial:
+                        for line in record.order_line.filtered(lambda l: not l.display_type):
+                            full_amount = line.cus_price_subtotal or line.price_subtotal
+                            if line.cus_po_amount != full_amount:
+                                line.cus_po_amount = full_amount
+                for record in self:
+                    is_partial =record.show_amount_fields or (record.opportunity_id and record.opportunity_id.stage_id and record.opportunity_id.stage_id.name == 'Partial Order Released')
                     if is_partial:
                         total_balance = sum(line.cus_bal_amount for line in record.order_line)
                         if total_balance > 0:
